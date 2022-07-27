@@ -1,3 +1,3 @@
 # SafariView
 
-A description of this package.
+A SwiftUI wrapper around `SFSafariViewControllerDelegate`
