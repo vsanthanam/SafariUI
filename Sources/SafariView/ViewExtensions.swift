@@ -26,7 +26,7 @@
 import SwiftUI
 
 public extension View {
-    
+
     /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
     ///
     /// Use this method when you want to present a ``SafariView`` to the user when a Boolean value you provide is true.
@@ -77,6 +77,15 @@ public extension View {
         let modifier = SafariView.ItemModitifer(item: item,
                                                 build: safariView,
                                                 onDismiss: onDismiss ?? {})
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
+    func safari(url: Binding<URL?>,
+                onDismiss: (() -> Void)? = nil,
+                safariView: @escaping (URL) -> SafariView) -> some View {
+        let modifier = SafariView.URLModifier(url: url,
+                                              build: safariView,
+                                              onDismiss: onDismiss ?? {})
         return ModifiedContent(content: self, modifier: modifier)
     }
 

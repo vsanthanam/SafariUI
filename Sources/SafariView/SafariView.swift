@@ -276,7 +276,7 @@ public struct SafariView: View {
         configuration.eventAttribution = eventAttribution
         return self
     }
-    
+
     /// Set a function that is called when the page first loads
     ///
     /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:didCompleteInitialLoad:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621215-safariviewcontroller)
@@ -361,7 +361,16 @@ public struct SafariView: View {
 
                 var isPresented: Bool = false {
                     didSet {
-                        handleChange(from: oldValue, to: isPresented)
+                        switch (oldValue, isPresented) {
+                        case (false, false):
+                            break
+                        case (false, true):
+                            presentSafari()
+                        case (true, false):
+                            dismissSafari()
+                        case (true, true):
+                            updateSafari()
+                        }
                     }
                 }
 
@@ -378,22 +387,9 @@ public struct SafariView: View {
 
                 // MARK: - Private
 
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-
                 private weak var safari: SFSafariViewController?
 
-                private func handleChange(from oldValue: Bool, to newValue: Bool) {
-                    switch (oldValue, newValue) {
-                    case (false, false):
-                        break
-                    case (false, true):
-                        presentSafari()
-                    case (true, false):
-                        dismissSafari()
-                    case (true, true):
-                        updateSafari()
-                    }
-                }
+                private var onInitialLoad: (Bool) -> Void = { _ in }
 
                 private func presentSafari() {
                     let rep = parent.build()
@@ -462,8 +458,8 @@ public struct SafariView: View {
         func body(content: Content) -> some View {
             content.background(
                 Presenter<Item>(item: $item,
-                                onDismiss: onDismiss,
-                                build: build)
+                                build: build,
+                                onDismiss: onDismiss)
             )
         }
 
@@ -476,9 +472,8 @@ public struct SafariView: View {
             @Binding
             var item: Item?
 
-            var onDismiss: () -> Void
-
             var build: (Item) -> SafariView
+            var onDismiss: () -> Void
 
             // MARK: - UIViewRepresentable
 
@@ -497,8 +492,21 @@ public struct SafariView: View {
                 var parent: Presenter
 
                 var item: Item? {
-                    didSet(oldItem) {
-                        handleItemChange(from: oldItem, to: item)
+                    didSet {
+                        switch (oldValue, item) {
+                        case (.none, .none):
+                            break
+                        case let (.none, .some(newItem)):
+                            presentSafari(with: newItem)
+                        case let (.some(oldItem), .some(newItem)) where oldItem.id != newItem.id:
+                            dismissSafari() {
+                                self.presentSafari(with: newItem)
+                            }
+                        case let (.some, .some(newItem)):
+                            updateSafari(with: newItem)
+                        case (.some, .none):
+                            dismissSafari()
+                        }
                     }
                 }
 
@@ -518,23 +526,6 @@ public struct SafariView: View {
                 private var onInitialLoad: (Bool) -> Void = { _ in }
 
                 private weak var safari: SFSafariViewController?
-
-                private func handleItemChange(from oldItem: Item?, to newItem: Item?) {
-                    switch (oldItem, newItem) {
-                    case (.none, .none):
-                        ()
-                    case let (.none, .some(newItem)):
-                        presentSafari(with: newItem)
-                    case let (.some(oldItem), .some(newItem)) where oldItem.id != newItem.id:
-                        dismissSafari() {
-                            self.presentSafari(with: newItem)
-                        }
-                    case let (.some, .some(newItem)):
-                        updateSafari(with: newItem)
-                    case (.some, .none):
-                        dismissSafari()
-                    }
-                }
 
                 private func presentSafari(with item: Item) {
                     let rep = parent.build(item)
@@ -586,6 +577,135 @@ public struct SafariView: View {
                 context.coordinator.item = item
             }
         }
+    }
+
+    struct URLModifier: ViewModifier {
+
+        @Binding
+        var url: URL?
+
+        var build: (URL) -> SafariView
+        var onDismiss: () -> Void
+
+        func body(content: Content) -> some View {
+            content
+                .background(
+                    Presenter(url: $url,
+                              build: build,
+                              onDismiss: onDismiss)
+                )
+        }
+
+        private struct Presenter: UIViewRepresentable {
+
+            @Binding
+            var url: URL?
+
+            var build: (URL) -> SafariView
+            var onDismiss: () -> Void
+
+            final class Coordinator: NSObject, SFSafariViewControllerDelegate {
+
+                // MARK: - Initializers
+
+                init(parent: Presenter) {
+                    self.parent = parent
+                }
+
+                // MARK: - API
+
+                let view = UIView()
+
+                var parent: Presenter
+
+                var url: URL? {
+                    didSet {
+                        switch (oldValue, url) {
+                        case (.none, .none):
+                            break
+                        case let (.none, .some(new)):
+                            presentSafari(with: new)
+                        case let (.some(old), .some(new)) where old != new:
+                            dismissSafari() { [presentSafari] in
+                                presentSafari(new)
+                            }
+                        case let (.some, .some(new)):
+                            updateSafari(with: new)
+                        case (.some, .none):
+                            dismissSafari()
+                        }
+                    }
+                }
+
+                // MARK: - SFSafariViewControllerDelegate
+
+                func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+                    parent.url = nil
+                    parent.onDismiss()
+                }
+
+                func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+                    onInitialLoad(didLoadSuccessfully)
+                }
+
+                // MARK: - Private
+
+                private var onInitialLoad: (Bool) -> Void = { _ in }
+
+                private weak var safari: SFSafariViewController?
+
+                private func presentSafari(with url: URL) {
+                    let rep = parent.build(url)
+                    onInitialLoad = rep.onInitialLoad
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
+                    vc.delegate = self
+                    rep.apply(to: vc)
+                    guard let presenting = view.controller else {
+                        parent.url = url
+                        return
+                    }
+
+                    presenting.present(vc, animated: true)
+
+                    safari = vc
+                }
+
+                private func updateSafari(with url: URL) {
+                    guard let safari = safari else {
+                        return
+                    }
+                    let rep = parent.build(url)
+                    onInitialLoad = rep.onInitialLoad
+                    rep.apply(to: safari)
+                }
+
+                private func dismissSafari(_ completion: (() -> Void)? = nil) {
+                    guard let safari = safari else {
+                        return
+                    }
+
+                    safari.dismiss(animated: true) {
+                        self.parent.onDismiss()
+                        completion?()
+                    }
+                }
+            }
+
+            func makeCoordinator() -> Coordinator {
+                Coordinator(parent: self)
+            }
+
+            func makeUIView(context: Context) -> UIView {
+                context.coordinator.view
+            }
+
+            func updateUIView(_ uiView: UIView, context: Context) {
+                context.coordinator.parent = self
+                context.coordinator.url = url
+            }
+
+        }
+
     }
 
     private struct Safari: UIViewControllerRepresentable {
