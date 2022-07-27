@@ -1,0 +1,6 @@
+version: 1
+builder:
+  configs:
+  - platform: ios
+    scheme: SafariView
+  - documentation_targets: [SafariView]
