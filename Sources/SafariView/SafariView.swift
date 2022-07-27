@@ -28,6 +28,56 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
+///
+/// A `SafariView` is a wrapper around `SFSafariViewController` for use within SwiftUI applications.
+///
+/// You can present a `SafariView` using one of our provided view modifers, like so:
+///
+/// ```
+/// struct MyView: View {
+///
+///     let url: URL(string: "https://www.apple.com")
+///
+///     @State
+///     private var showingSafari = false
+///
+///     private func showSafari() {
+///         showingSafari = true
+///     }
+///
+///     var body: some View {
+///         Button(action: showSafari) {
+///             Text("Show Safari"
+///         }
+///         .safari(isPresented: $showingSafari) {
+///             SafariView(url: url!)
+///         }
+///     }
+///
+/// }
+/// ```
+///
+/// You can also use sheet presentation, or any other presentation mechanism of your choice.
+///
+/// ## Topics
+///
+/// ### Initializers
+///
+/// - ``init(url:)``
+/// - ``init(url:configuration:)``
+///
+/// ### Modifiers
+///
+/// - ``accentColor(_:)``
+/// - ``preferredBarTintColor(_:)``
+/// - ``preferredControlTintColor(_:)``
+/// - ``dismissButtonStyle(_:)``
+/// - ``configuration(_:)``
+/// - ``entersReaderIfAvailable(_:)``
+/// - ``barCollapsingEnabled(_:)``
+/// - ``activityButton(_:)``
+/// - ``eventAttribution(_:)``
+/// - ``onInitialLoad(_:)``
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -51,13 +101,13 @@ public struct SafariView: View {
 
     // MARK: - API
 
-    /// A convenience typealias for `SFSafariViewController.Configuration`
+    /// A convenience typealias for [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
     public typealias Configuration = SFSafariViewController.Configuration
 
-    /// A convenience typealias for `SFSafariViewController.DismissButtonStyle`
+    /// A convenience typealias for [`SFSafariViewController.DismissButtonStyle`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/dismissbuttonstyle)
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
-    /// A convenience typealias for `SFSafariViewController.ActivityButton`
+    /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// Apply an accent color to the view
@@ -114,6 +164,8 @@ public struct SafariView: View {
 
     /// Set the safari view's dismiss button style
     ///
+    /// Use this modifier to set the view's dismiss button style.
+    ///
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
     /// let view = SafariView(url: url)
@@ -129,6 +181,8 @@ public struct SafariView: View {
     }
 
     /// Set the safari view's configuration
+    ///
+    /// Use this modifier to set the view's configuration
     ///
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
@@ -151,6 +205,8 @@ public struct SafariView: View {
 
     /// Set the safari view's automatic reader mode setting
     ///
+    /// Use this modifier to set the automatic reader mode behavior of the view
+    ///
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
     /// let view = SafariView(url: url)
@@ -167,6 +223,8 @@ public struct SafariView: View {
 
     /// Set the safari view's bar collapsing setting
     ///
+    /// Use this modifier to set the bar collapsing behavior of the view
+    ///
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
     /// let view = SafariView(url: url)
@@ -181,6 +239,8 @@ public struct SafariView: View {
     }
 
     /// Set the safari view's activity button
+    ///
+    /// Use this modifier to set the view's activity button
     ///
     /// ```swift
     /// let activityButton = SafarView.ActivityButton( ... )
@@ -198,6 +258,8 @@ public struct SafariView: View {
 
     /// Set the safari view's event attribution
     ///
+    /// Use this modifier to set the view's event attribution
+    ///
     /// ```swift
     /// let attribution = UIEventAttribution( ... )
     /// let url = URL(string: "https://www.apple.com")!
@@ -212,10 +274,28 @@ public struct SafariView: View {
         configuration.eventAttribution = eventAttribution
         return self
     }
-
-    public func onLoad(_ onLoad: @escaping (Bool) -> Void) -> Self {
+    
+    /// Set a function that is called when the page first loads
+    ///
+    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:didCompleteInitialLoad:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621215-safariviewcontroller)
+    ///
+    /// ```swift
+    /// let url = URL(string: "https://www.apple.com")!
+    /// let view = SafariView(url: url)
+    ///     .onInitialLoad { didLoadSuccessfully in
+    ///         if didLoadSuccessfully {
+    ///             print("Success!")
+    ///         } else {
+    ///             print("Failre!")
+    ///         }
+    ///     }
+    /// ```
+    ///
+    /// - Parameter onInitialLoad: The function to execute when page first loads
+    /// - Returns: The safari view
+    public func onInitialLoad(_ onInitialLoad: @escaping (_ didLoadSuccessfully: Bool) -> Void) -> Self {
         var modified = self
-        modified.onLoad = onLoad
+        modified.onInitialLoad = onInitialLoad
         return modified
     }
 
@@ -286,7 +366,7 @@ public struct SafariView: View {
                 // MARK: - SFSafariViewControllerDelegate
 
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onLoad(didLoadSuccessfully)
+                    onInitialLoad(didLoadSuccessfully)
                 }
 
                 func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
@@ -296,7 +376,7 @@ public struct SafariView: View {
 
                 // MARK: - Private
 
-                private var onLoad: (Bool) -> Void = { _ in }
+                private var onInitialLoad: (Bool) -> Void = { _ in }
 
                 private weak var safari: SFSafariViewController?
 
@@ -315,7 +395,7 @@ public struct SafariView: View {
 
                 private func presentSafari() {
                     let rep = parent.build()
-                    onLoad = rep.onLoad
+                    onInitialLoad = rep.onInitialLoad
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -343,7 +423,7 @@ public struct SafariView: View {
                         return
                     }
                     let rep = parent.build()
-                    onLoad = rep.onLoad
+                    onInitialLoad = rep.onInitialLoad
                     rep.apply(to: safari)
                 }
 
@@ -428,12 +508,12 @@ public struct SafariView: View {
                 }
 
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onLoad(didLoadSuccessfully)
+                    onInitialLoad(didLoadSuccessfully)
                 }
 
                 // MARK: - Private
 
-                private var onLoad: (Bool) -> Void = { _ in }
+                private var onInitialLoad: (Bool) -> Void = { _ in }
 
                 private weak var safari: SFSafariViewController?
 
@@ -456,7 +536,7 @@ public struct SafariView: View {
 
                 private func presentSafari(with item: Item) {
                     let rep = parent.build(item)
-                    onLoad = rep.onLoad
+                    onInitialLoad = rep.onInitialLoad
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -475,7 +555,7 @@ public struct SafariView: View {
                         return
                     }
                     let rep = parent.build(item)
-                    onLoad = rep.onLoad
+                    onInitialLoad = rep.onInitialLoad
                     rep.apply(to: safari)
                 }
 
@@ -512,7 +592,7 @@ public struct SafariView: View {
 
         init(parent: SafariView) {
             self.parent = parent
-            delegate = Delegate(onLoad: parent.onLoad)
+            delegate = Delegate(onInitialLoad: parent.onInitialLoad)
         }
 
         // MARK: - UIViewControllerRepresentable
@@ -539,17 +619,17 @@ public struct SafariView: View {
 
         private class Delegate: NSObject, SFSafariViewControllerDelegate {
 
-            init(onLoad: @escaping (Bool) -> Void) {
-                self.onLoad = onLoad
+            init(onInitialLoad: @escaping (Bool) -> Void) {
+                self.onInitialLoad = onInitialLoad
             }
 
             // MARK: - SFSafariViewDelegate
 
             func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                onLoad(didLoadSuccessfully)
+                onInitialLoad(didLoadSuccessfully)
             }
 
-            private let onLoad: (Bool) -> Void
+            private let onInitialLoad: (Bool) -> Void
         }
 
     }
@@ -559,7 +639,7 @@ public struct SafariView: View {
     private var barTintColor: Color?
     private var controlTintColor: Color?
     private var dismissButtonStyle: DismissButtonStyle = .done
-    private var onLoad: (Bool) -> Void = { _ in }
+    private var onInitialLoad: (Bool) -> Void = { _ in }
 
     private func apply(to controller: SFSafariViewController) {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
