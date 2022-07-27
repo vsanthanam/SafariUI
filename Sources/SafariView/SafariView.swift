@@ -277,7 +277,9 @@ public struct SafariView: View {
         return self
     }
 
-    /// Set a function that is called when the page first loads
+    /// Set a function to call when the page first loads
+    ///
+    /// This closure is invoked when `SafariView` completes the loading of the URL that you pass to its initializer. The closure is not invoked for any subsequent page loads in the same `SafariView` instance.
     ///
     /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:didCompleteInitialLoad:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621215-safariviewcontroller)
     ///
@@ -295,9 +297,31 @@ public struct SafariView: View {
     ///
     /// - Parameter onInitialLoad: The function to execute when page first loads
     /// - Returns: The safari view
-    public func onInitialLoad(_ onInitialLoad: @escaping (_ didLoadSuccessfully: Bool) -> Void) -> Self {
+    public func onInitialLoad(_ onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil) -> Self {
         var modified = self
-        modified.onInitialLoad = onInitialLoad
+        modified.onInitialLoad = onInitialLoad ?? { _ in }
+        return modified
+    }
+
+    /// Set a function to call if the first page load causes a redirection
+    ///
+    /// This closure is invoked when `SafariView`'s initial URL results in a redirection. The closure is not invoked for any subsequent page loads in the same `SafariView` instance.
+    ///
+    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:initialLoadDidRedirectTo:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/2923545-safariviewcontroller)
+    ///
+    /// ```swift
+    /// let url = URL(string: "https://www.apple.com")!
+    /// let view = SafariView(url: url)
+    ///     .onInitialRedirect { newURL in
+    ///         print("Redirected to URL \(newURL.description)")
+    ///     }
+    /// ```
+    ///
+    /// - Parameter onInitialRedirect: The function to execute when the initial page load causes a redirection
+    /// - Returns: The safari view
+    public func onInitialRedirect(_ onInitialRedirect: ((_ url: URL) -> Void)? = nil) -> Self {
+        var modified = self
+        modified.onInitialRedirect = onInitialRedirect ?? { _ in }
         return modified
     }
 
@@ -380,6 +404,10 @@ public struct SafariView: View {
                     onInitialLoad(didLoadSuccessfully)
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                    onInitialRedirect(URL)
+                }
+
                 func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
                     parent.isPresented = false
                     parent.onDismiss()
@@ -390,10 +418,12 @@ public struct SafariView: View {
                 private weak var safari: SFSafariViewController?
 
                 private var onInitialLoad: (Bool) -> Void = { _ in }
+                private var onInitialRedirect: (URL) -> Void = { _ in }
 
                 private func presentSafari() {
                     let rep = parent.build()
                     onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -406,6 +436,16 @@ public struct SafariView: View {
                     safari = vc
                 }
 
+                private func updateSafari() {
+                    guard let safari = safari else {
+                        return
+                    }
+                    let rep = parent.build()
+                    onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
+                    rep.apply(to: safari)
+                }
+
                 private func dismissSafari() {
                     guard let safari = safari else {
                         return
@@ -414,15 +454,7 @@ public struct SafariView: View {
                     safari.dismiss(animated: true) {
                         self.parent.onDismiss()
                     }
-                }
 
-                private func updateSafari() {
-                    guard let safari = safari else {
-                        return
-                    }
-                    let rep = parent.build()
-                    onInitialLoad = rep.onInitialLoad
-                    rep.apply(to: safari)
                 }
 
             }
@@ -441,6 +473,7 @@ public struct SafariView: View {
             }
 
         }
+
     }
 
     struct ItemModitifer<Item>: ViewModifier where Item: Identifiable {
@@ -517,19 +550,25 @@ public struct SafariView: View {
                     parent.onDismiss()
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                    onInitialRedirect(URL)
+                }
+
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
                     onInitialLoad(didLoadSuccessfully)
                 }
 
                 // MARK: - Private
 
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-
                 private weak var safari: SFSafariViewController?
+
+                private var onInitialLoad: (Bool) -> Void = { _ in }
+                private var onInitialRedirect: (URL) -> Void = { _ in }
 
                 private func presentSafari(with item: Item) {
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -549,6 +588,7 @@ public struct SafariView: View {
                     }
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
                     rep.apply(to: safari)
                 }
 
@@ -644,19 +684,25 @@ public struct SafariView: View {
                     parent.onDismiss()
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                    onInitialRedirect(URL)
+                }
+
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
                     onInitialLoad(didLoadSuccessfully)
                 }
 
                 // MARK: - Private
 
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-
                 private weak var safari: SFSafariViewController?
+
+                private var onInitialLoad: (Bool) -> Void = { _ in }
+                private var onInitialRedirect: (URL) -> Void = { _ in }
 
                 private func presentSafari(with url: URL) {
                     let rep = parent.build(url)
                     onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -676,6 +722,7 @@ public struct SafariView: View {
                     }
                     let rep = parent.build(url)
                     onInitialLoad = rep.onInitialLoad
+                    onInitialRedirect = rep.onInitialRedirect
                     rep.apply(to: safari)
                 }
 
@@ -714,7 +761,8 @@ public struct SafariView: View {
 
         init(parent: SafariView) {
             self.parent = parent
-            delegate = Delegate(onInitialLoad: parent.onInitialLoad)
+            delegate = Delegate(onInitialLoad: parent.onInitialLoad,
+                                onInitialRedirect: parent.onInitialRedirect)
         }
 
         // MARK: - UIViewControllerRepresentable
@@ -739,10 +787,12 @@ public struct SafariView: View {
         private var parent: SafariView
         private let delegate: Delegate
 
-        private class Delegate: NSObject, SFSafariViewControllerDelegate {
+        private final class Delegate: NSObject, SFSafariViewControllerDelegate {
 
-            init(onInitialLoad: @escaping (Bool) -> Void) {
+            init(onInitialLoad: @escaping (Bool) -> Void,
+                 onInitialRedirect: @escaping (URL) -> Void) {
                 self.onInitialLoad = onInitialLoad
+                self.onInitialRedirect = onInitialRedirect
             }
 
             // MARK: - SFSafariViewDelegate
@@ -751,7 +801,12 @@ public struct SafariView: View {
                 onInitialLoad(didLoadSuccessfully)
             }
 
+            func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                onInitialRedirect(URL)
+            }
+
             private let onInitialLoad: (Bool) -> Void
+            private let onInitialRedirect: (URL) -> Void
         }
 
     }
@@ -762,6 +817,7 @@ public struct SafariView: View {
     private var controlTintColor: Color?
     private var dismissButtonStyle: DismissButtonStyle = .done
     private var onInitialLoad: (Bool) -> Void = { _ in }
+    private var onInitialRedirect: (URL) -> Void = { _ in }
 
     private func apply(to controller: SFSafariViewController) {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
