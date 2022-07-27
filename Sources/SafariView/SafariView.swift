@@ -73,7 +73,6 @@ import UIKit
 /// - ``preferredBarTintColor(_:)``
 /// - ``preferredControlTintColor(_:)``
 /// - ``dismissButtonStyle(_:)``
-/// - ``configuration(_:)``
 /// - ``entersReaderIfAvailable(_:)``
 /// - ``barCollapsingEnabled(_:)``
 /// - ``activityButton(_:)``
@@ -185,29 +184,6 @@ public struct SafariView: View {
         var modified = self
         modified.dismissButtonStyle = style
         return modified
-    }
-
-    /// Set the safari view's configuration
-    ///
-    /// Use this modifier to set the view's configuration
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    ///
-    /// let configuration = SafariView.Configuration()
-    /// configuration.entersReaderIfAvailable = true
-    /// configuration.barCollapsingEnabled = false
-    ///
-    /// let view = SafariView(url: url)
-    ///     .configuration(configuration)
-    /// ```
-    ///
-    /// - Parameter configuration: The new configuration to use
-    /// - Returns: The safari view
-    public func configuration(_ configuration: Configuration) -> Self {
-        var modified = self
-        modified.configuration = configuration
-        return self
     }
 
     /// Set the safari view's automatic reader mode setting
