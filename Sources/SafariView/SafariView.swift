@@ -111,6 +111,9 @@ public struct SafariView: View {
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
+    /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
+    public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
+
     /// Apply an accent color to the view
     ///
     /// Use this modifier to set the view's accent color
@@ -323,6 +326,16 @@ public struct SafariView: View {
         var modified = self
         modified.onInitialRedirect = onInitialRedirect ?? { _ in }
         return modified
+    }
+
+    /// Prewarm the connection to a list of provided URLs
+    ///
+    /// You can use this returned value of this method  to invalidate the prewarmed cache by invoking the `invaldate()` method on the token.
+    ///
+    /// - Parameter URLs: The URLs to prewarm
+    /// - Returns: A prewarming token for the provided URLs.
+    public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
+        SFSafariViewController.prewarmConnections(to: URLs)
     }
 
     // MARK: - View
