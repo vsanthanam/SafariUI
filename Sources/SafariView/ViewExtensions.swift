@@ -26,38 +26,57 @@
 import SwiftUI
 
 public extension View {
-
-    func safari(isPresented: Binding<Bool>,
-                _ safariView: @escaping () -> SafariView) -> some View {
-        let modifier = SafariView.Modifier(isPresented: isPresented,
-                                           build: safariView,
-                                           onDismiss: {})
-        return ModifiedContent(content: self, modifier: modifier)
-    }
     
+    /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
+    ///
+    /// Use this method when you want to present a ``SafariView`` to the user when a Boolean value you provide is true.
+    /// The example below displays a modal view of the mockup for a software license agreement when the user toggles the `isShowingSafari` variable by clicking or tapping on the “Show License Agreement” button:
+    ///
+    /// ```swift
+    /// import Foundation
+    /// import SafariView
+    /// import SwiftUI
+    ///
+    /// struct ShowLicenseAgreement: View {
+    ///
+    ///     let licenseAgreementURL: URL
+    ///
+    ///     @State private var isShowingSafari = false
+    ///
+    ///     var body: some View {
+    ///         Button(action: {
+    ///             isShowingSafari.toggle()
+    ///         }) {
+    ///             Text("Show License Agreement")
+    ///         }
+    ///         .safari(isPresented: $isShowingSafari) {
+    ///             SafariView(url: licenseAgreementURL)
+    ///         }
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - isPresented: A binding to a Boolean value that determines whether to present the ``SafariView`` that you create in the modifier’s content closure.
+    ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
+    ///   - safariView: A closure that returns the ``SafariView`` to present
+    /// - Returns: The modified view
     func safari(isPresented: Binding<Bool>,
-                _ safariView: @escaping () -> SafariView,
-                onDismiss: @escaping () -> Void) -> some View {
+                onDismiss: (() -> Void)? = nil,
+                safariView: @escaping () -> SafariView) -> some View {
         let modifier = SafariView.Modifier(isPresented: isPresented,
                                            build: safariView,
-                                           onDismiss: onDismiss)
+                                           onDismiss: onDismiss ?? {})
         return ModifiedContent(content: self, modifier: modifier)
     }
 
     func safari<Item>(item: Binding<Item?>,
+                      onDismiss: (() -> Void)? = nil,
                       safariView: @escaping (Item) -> SafariView) -> some View where Item: Identifiable {
         let modifier = SafariView.ItemModitifer(item: item,
                                                 build: safariView,
-                                                onDismiss: {})
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
-    func safari<Item>(item: Binding<Item?>,
-                      safariView: @escaping (Item) -> SafariView,
-                      onDismiss: @escaping () -> Void) -> some View where Item: Identifiable {
-        let modifier = SafariView.ItemModitifer(item: item,
-                                                build: safariView,
-                                                onDismiss: onDismiss)
+                                                onDismiss: onDismiss ?? {})
         return ModifiedContent(content: self, modifier: modifier)
     }
 

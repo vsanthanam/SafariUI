@@ -33,24 +33,25 @@ import UIKit
 ///
 /// You can present a `SafariView` using one of our provided view modifers, like so:
 ///
-/// ```
-/// struct MyView: View {
+/// ```swift
+/// import Foundation
+/// import SafariView
+/// import SwiftUI
 ///
-///     let url: URL(string: "https://www.apple.com")
+/// struct ShowLicenseAgreement: View {
 ///
-///     @State
-///     private var showingSafari = false
+///     let licenseAgreementURL: URL
 ///
-///     private func showSafari() {
-///         showingSafari = true
-///     }
+///     @State private var isShowingSafari = false
 ///
 ///     var body: some View {
-///         Button(action: showSafari) {
-///             Text("Show Safari"
+///         Button(action: {
+///             isShowingSafari.toggle()
+///         }) {
+///             Text("Show License Agreement")
 ///         }
-///         .safari(isPresented: $showingSafari) {
-///             SafariView(url: url!)
+///         .safari(isPresented: $isShowingSafari) {
+///             SafariView(url: licenseAgreementURL)
 ///         }
 ///     }
 ///
