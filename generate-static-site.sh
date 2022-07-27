@@ -10,6 +10,7 @@ else
     xcodebuild docbuild -scheme SafariView \
     -destination generic/platform=iOS \
     OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs"
+    tail -n +2 README.md > README-2.md && mv README-2.md README.md
     echo "theme: jekyll-theme-modernist" > _config.yml
     git add .
     git commit -m 'Synchronize Hompage & Publish Documentation'
