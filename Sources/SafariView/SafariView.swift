@@ -79,6 +79,9 @@ import UIKit
 /// - ``activityButton(_:)``
 /// - ``eventAttribution(_:)``
 /// - ``onInitialLoad(_:)``
+/// - ``onInitialRedirect(_:)``
+/// - ``activityItems(_:)-3mpe3``
+/// - ``activityItems(_:)-2yuvl``
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -328,6 +331,51 @@ public struct SafariView: View {
         return modified
     }
 
+    /// Add [`UIActivity`](https://developer.apple.com/documentation/uikit/uiactivity) items to the Safari View
+    ///
+    /// Use this modifier to conditionally add activity items to the view based on the user's current URL or page title.
+    /// If you wish to show activity items that persiste regardless of the user's activity, use the ``activityItems(_:)-3mpe3`` modifier instead
+    ///
+    ///
+    /// ```swift
+    /// let url = URL(string: "https://www.apple.com")!
+    /// let view = SafariView(url: url)
+    ///     .activtyItems { url, title in
+    ///         if title == "MyTitle" {
+    ///             return [item1, item2]
+    ///         } else {
+    ///             return [item3, item4]
+    ///         }
+    ///     }
+    /// ```
+    ///
+    /// - Parameter items: The items to show in the `SafariView`
+    /// - Returns: The safari view
+    public func activityItems(_ itemProvider: ((_ url: URL, _ pageTitle: String?) -> [UIActivity])? = nil) -> Self {
+        var modified = self
+        modified.itemProvider = itemProvider ?? { _, _ in [] }
+        return modified
+    }
+
+    /// Add [`UIActivity`](https://developer.apple.com/documentation/uikit/uiactivity) items to the Safari View
+    ///
+    /// The items you provided are shown with every URL the user might view in the `SafariView`.
+    /// If you wish to conditionally show items based on the current URL or page title, use the ``activityItems(_:)-2yuvl`` modifier instead.
+    ///
+    /// ```swift
+    /// let url = URL(string: "https://www.apple.com")!
+    /// let view = SafariView(url: url)
+    ///     .activtyItems([item1, item1])
+    /// ```
+    ///
+    /// - Parameter items: The items to show in the `SafariView`
+    /// - Returns: The safari view
+    public func activityItems(_ items: [UIActivity]) -> Self {
+        var modified = self
+        modified.activityItems = items
+        return modified
+    }
+
     /// Prewarm the connection to a list of provided URLs
     ///
     /// You can use this returned value of this method  to invalidate the prewarmed cache by invoking the `invaldate()` method on the token.
@@ -426,17 +474,23 @@ public struct SafariView: View {
                     parent.onDismiss()
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
+                    withActivityItems(URL, title)
+                }
+
                 // MARK: - Private
 
                 private weak var safari: SFSafariViewController?
 
                 private var onInitialLoad: (Bool) -> Void = { _ in }
                 private var onInitialRedirect: (URL) -> Void = { _ in }
+                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
 
                 private func presentSafari() {
                     let rep = parent.build()
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -456,6 +510,7 @@ public struct SafariView: View {
                     let rep = parent.build()
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     rep.apply(to: safari)
                 }
 
@@ -571,17 +626,23 @@ public struct SafariView: View {
                     onInitialLoad(didLoadSuccessfully)
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
+                    withActivityItems(URL, title)
+                }
+
                 // MARK: - Private
 
                 private weak var safari: SFSafariViewController?
 
                 private var onInitialLoad: (Bool) -> Void = { _ in }
                 private var onInitialRedirect: (URL) -> Void = { _ in }
+                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
 
                 private func presentSafari(with item: Item) {
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -602,6 +663,7 @@ public struct SafariView: View {
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     rep.apply(to: safari)
                 }
 
@@ -705,17 +767,23 @@ public struct SafariView: View {
                     onInitialLoad(didLoadSuccessfully)
                 }
 
+                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
+                    withActivityItems(URL, title)
+                }
+
                 // MARK: - Private
 
                 private weak var safari: SFSafariViewController?
 
                 private var onInitialLoad: (Bool) -> Void = { _ in }
                 private var onInitialRedirect: (URL) -> Void = { _ in }
+                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
 
                 private func presentSafari(with url: URL) {
                     let rep = parent.build(url)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
@@ -736,6 +804,7 @@ public struct SafariView: View {
                     let rep = parent.build(url)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
+                    withActivityItems = rep.withActivityItems
                     rep.apply(to: safari)
                 }
 
@@ -775,7 +844,8 @@ public struct SafariView: View {
         init(parent: SafariView) {
             self.parent = parent
             delegate = Delegate(onInitialLoad: parent.onInitialLoad,
-                                onInitialRedirect: parent.onInitialRedirect)
+                                onInitialRedirect: parent.onInitialRedirect,
+                                withActivityItems: parent.withActivityItems)
         }
 
         // MARK: - UIViewControllerRepresentable
@@ -803,9 +873,11 @@ public struct SafariView: View {
         private final class Delegate: NSObject, SFSafariViewControllerDelegate {
 
             init(onInitialLoad: @escaping (Bool) -> Void,
-                 onInitialRedirect: @escaping (URL) -> Void) {
+                 onInitialRedirect: @escaping (URL) -> Void,
+                 withActivityItems: @escaping (URL, String?) -> [UIActivity]) {
                 self.onInitialLoad = onInitialLoad
                 self.onInitialRedirect = onInitialRedirect
+                self.withActivityItems = withActivityItems
             }
 
             // MARK: - SFSafariViewDelegate
@@ -818,8 +890,13 @@ public struct SafariView: View {
                 onInitialRedirect(URL)
             }
 
+            func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
+                withActivityItems(URL, title)
+            }
+
             private let onInitialLoad: (Bool) -> Void
             private let onInitialRedirect: (URL) -> Void
+            private let withActivityItems: (URL, String?) -> [UIActivity]
         }
 
     }
@@ -831,6 +908,12 @@ public struct SafariView: View {
     private var dismissButtonStyle: DismissButtonStyle = .done
     private var onInitialLoad: (Bool) -> Void = { _ in }
     private var onInitialRedirect: (URL) -> Void = { _ in }
+    private var itemProvider: (URL, String?) -> [UIActivity] = { _, _ in [] }
+    private var activityItems: [UIActivity] = []
+
+    private func withActivityItems(_ url: URL, _ title: String?) -> [UIActivity] {
+        itemProvider(url, title) + activityItems
+    }
 
     private func apply(to controller: SFSafariViewController) {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
