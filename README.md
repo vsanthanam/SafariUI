@@ -6,7 +6,7 @@
 [![Swift Version](https://img.shields.io/badge/swift-5.6-critical)](https://swift.org)
 [![Supported Platforms](https://img.shields.io/badge/platform-iOS%2015-lightgrey)](https://developer.apple.com)
 
-A SwiftUI wrapper around `SFSafariViewControllerDelegate`
+A SwiftUI wrapper around `SFSafariViewController`
 
 ## Installation
 
