@@ -2,9 +2,9 @@
 
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariView)](https://github.com/vsanthanam/SafariView/blob/main/LICENSE)
 [![Package Releases](https://img.shields.io/github/v/release/vsanthanam/SafariView)](https://github.com/vsanthanam/SafariView/releases)
-[![Build Results](https://img.shields.io/github/workflow/status/vsanthanam/SafariView/spm-build-test)](https://img.shields.io/github/workflow/status/vsanthanam/SafariView/spm-build-test)
+[![Build Results](https://img.shields.io/github/workflow/status/vsanthanam/SafariView/xcode-build-test)](https://img.shields.io/github/workflow/status/vsanthanam/SafariView/xcode-build-test)
 [![Swift Version](https://img.shields.io/badge/swift-5.6-critical)](https://swift.org)
-[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2013%20%7C%20macOS%2010.15%20%7C%20tvOS%2013%20%7C%20watchOS%206-lightgrey)](https://developer.apple.com)
+[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2015-lightgrey)](https://developer.apple.com)
 
 A SwiftUI wrapper around `SFSafariViewControllerDelegate`
 
