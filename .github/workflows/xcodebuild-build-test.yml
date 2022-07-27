@@ -1,0 +1,17 @@
+name: xcodebuild-build-test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: macos-12
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build & Test
+      run: xcodebuild -scheme 'SafariView' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13,OS=15.5' test
