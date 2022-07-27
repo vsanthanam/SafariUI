@@ -29,7 +29,7 @@ import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
 ///
-/// A `SafariView` is a wrapper around `SFSafariViewController` for use within SwiftUI applications.
+/// A `SafariView` is a wrapper around [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller) for use within SwiftUI applications.
 ///
 /// You can present a `SafariView` using one of our provided view modifers, like so:
 ///
@@ -205,7 +205,7 @@ public struct SafariView: View {
 
     /// Set the safari view's automatic reader mode setting
     ///
-    /// Use this modifier to set the automatic reader mode behavior of the view
+    /// Set the value to `true` if Reader mode should be entered automatically when it is available for the webpage; otherwise, `false`. The default value is `false`.
     ///
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
@@ -240,7 +240,7 @@ public struct SafariView: View {
 
     /// Set the safari view's activity button
     ///
-    /// Use this modifier to set the view's activity button
+    /// Use this modifier to set the view's activity button. See ``ActivityButton`` for more information,
     ///
     /// ```swift
     /// let activityButton = SafarView.ActivityButton( ... )
@@ -258,7 +258,8 @@ public struct SafariView: View {
 
     /// Set the safari view's event attribution
     ///
-    /// Use this modifier to set the view's event attribution
+    /// Use this modifier to set the view's event attribution.
+    /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution).
     ///
     /// ```swift
     /// let attribution = UIEventAttribution( ... )
