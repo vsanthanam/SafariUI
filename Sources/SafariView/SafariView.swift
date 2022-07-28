@@ -35,7 +35,7 @@ import UIKit
 ///
 /// - Important: In accordance with [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/), this view must be used to visibly present information to users; the view may not be hidden or obscured by other views or layers. Additionally, an app may not use `SafariView` to track users without their knowledge and consent.
 ///
-/// You can present a `SafariView` using one of our provided view modifes, like so:
+/// You can present a `SafariView` using one of our provided view modifiers, like so:
 ///
 /// ```swift
 /// import Foundation
@@ -57,7 +57,7 @@ import UIKit
 ///        .safari(isPresented: $isShowingSafari,
 ///                onDismiss: didDismiss) {
 ///            SafariView(url: licenseAgreementURL)
-///                 .preferredControlTintColor(.red)
+///                 .preferredBarTintColor(.red)
 ///                 .accentColor(.white)
 ///                 .dismissButtonStyle(.done)
 ///                 .onInitialLoad { successful in
@@ -308,7 +308,7 @@ public struct SafariView: View {
     ///
     /// - Parameter onInitialLoad: The function to execute when page first loads
     /// - Returns: The safari view
-    public func onInitialLoad(_ onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil) -> Self {
+    public func onInitialLoad(_ onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)?) -> Self {
         var copy = self
         copy.onInitialLoad = onInitialLoad ?? { _ in }
         return copy
@@ -330,7 +330,7 @@ public struct SafariView: View {
     ///
     /// - Parameter onInitialRedirect: The function to execute when the initial page load causes a redirection
     /// - Returns: The safari view
-    public func onInitialRedirect(_ onInitialRedirect: ((_ url: URL) -> Void)? = nil) -> Self {
+    public func onInitialRedirect(_ onInitialRedirect: ((_ url: URL) -> Void)?) -> Self {
         var copy = self
         copy.onInitialRedirect = onInitialRedirect ?? { _ in }
         return copy
@@ -350,7 +350,7 @@ public struct SafariView: View {
     ///
     /// - Parameter onOpenInBrowser: The function to execute when the user opens a loaded page in their safari app
     /// - Returns: The safari view
-    public func onOpenInBrowser(_ onOpenInBrowser: (() -> Void)? = nil) -> Self {
+    public func onOpenInBrowser(_ onOpenInBrowser: (() -> Void)?) -> Self {
         var copy = self
         copy.willOpenInBrowser = onOpenInBrowser ?? {}
         return copy
@@ -377,7 +377,7 @@ public struct SafariView: View {
     ///
     /// - Parameter itemProvider: Closure used to build an array of application-specific services you have chosen to include in the `SafariView`, based on the user's current URL and page title.
     /// - Returns: The safari view
-    public func activityItems(_ itemProvider: ((_ url: URL, _ pageTitle: String?) -> [UIActivity])? = nil) -> Self {
+    public func activityItems(_ itemProvider: ((_ url: URL, _ pageTitle: String?) -> [UIActivity])?) -> Self {
         var copy = self
         copy.itemProvider = itemProvider ?? { _, _ in [] }
         return copy
@@ -422,7 +422,7 @@ public struct SafariView: View {
     /// ```
     /// - Parameter excludedActivityProvider: Closure used to build a list of activity types you wish to exclude from the `SafariView`, based on the current URL and page title.
     /// - Returns: The safari view
-    public func excludingActivityItems(_ excludedActivityProvider: ((_ url: URL, _ title: String?) -> [UIActivity.ActivityType])? = nil) -> Self {
+    public func excludingActivityItems(_ excludedActivityProvider: ((_ url: URL, _ title: String?) -> [UIActivity.ActivityType])?) -> Self {
         var copy = self
         copy.excludedActivityProvider = excludedActivityProvider ?? { _, _ in [] }
         return copy
