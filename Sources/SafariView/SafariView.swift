@@ -228,12 +228,12 @@ public struct SafariView: View {
     /// ```swift
     /// let url = URL(string: "https://www.apple.com")!
     /// let view = SafariView(url: url)
-    ///     .barCollapsingEnabled(true)
+    ///     .enableBarCollapsing(true)
     /// ```
     ///
     /// - Parameter barCollapsingEnabled: `true` to enable bar collapsing, otherwise `false`
     /// - Returns: The safari view
-    public func barCollapsingEnabled(_ barCollapsingEnabled: Bool) -> Self {
+    public func enableBarCollapsing(_ barCollapsingEnabled: Bool) -> Self {
         configuration.barCollapsingEnabled = barCollapsingEnabled
         return self
     }
