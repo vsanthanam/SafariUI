@@ -50,10 +50,18 @@ import UIKit
 ///         }) {
 ///             Text("Show License Agreement")
 ///         }
-///         .safari(isPresented: $isShowingSafari,
-///                 onDismiss: didDismiss) {
-///             SafariView(url: licenseAgreementURL)
-///         }
+///        .safari(isPresented: $isShowingSafari,
+///                onDismiss: didDismiss) {
+///            SafariView(url: licenseAgreementURL)
+///                 .preferredControlTintColor(.red)
+///                 .accentColor(.white)
+///                 .dismissButtonStyle(.done)
+///                 .onInitialLoad { successful in
+///                     if !successful {
+///                         // Handle initial load failure
+///                     }
+///                 }
+///             }
 ///     }
 ///
 ///     func didDismiss() {
@@ -78,13 +86,13 @@ import UIKit
 /// - ``preferredBarTintColor(_:)``
 /// - ``preferredControlTintColor(_:)``
 /// - ``dismissButtonStyle(_:)``
+/// - ``enableBarCollapsing(_:)``
 ///
 /// ### Behavior Modifiers
 ///
+/// - ``activityButton(_:)``
 /// - ``entersReaderIfAvailable(_:)``
-/// - ``barCollapsingEnabled(_:)``
 /// - ``eventAttribution(_:)``
-/// - ``activityButton(_:)``[
 ///
 /// ### Lifecycle Modifiers
 ///
@@ -92,7 +100,7 @@ import UIKit
 /// - ``onInitialRedirect(_:)``
 /// - ``onOpenInBrowser(_:)``
 ///
-/// ### UIActivity Modifiers
+/// ### Activity Item Modifiers
 ///
 /// - ``activityItems(_:)-3mpe3``
 /// - ``activityItems(_:)-2yuvl``
