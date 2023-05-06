@@ -8,10 +8,12 @@ on:
 
 jobs:
   build:
-
-    runs-on: macos-12
-
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v3
+    - name: Xcode Version
+      run: sudo xcode-select --switch /Applications/Xcode_14.3.app
+    - name: Lint
+      run: swift package plugin --allow-writing-to-package-directory swiftformat --lint
     - name: Build & Test
-      run: xcodebuild -scheme 'SafariView' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13,OS=15.5' test
+      run: xcodebuild -scheme 'SafariView' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' test
