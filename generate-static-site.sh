@@ -2,9 +2,10 @@
 branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 run_docc () {
-    xcodebuild docbuild -scheme SafariView \
-    -destination generic/platform=iOS \
-    OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs --include-extended-types"
+    swift package -Xswiftc "-sdk" \
+    -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" \
+    -Xswiftc "-target" \
+    -Xswiftc "x86_64-apple-ios16.0-simulator" --allow-writing-to-directory docs generate-documentation --target SafariView --disable-indexing --transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs --include-extended-types
 }
 
 create_branches () {
@@ -14,6 +15,9 @@ create_branches () {
 
 fix_readme () {
     tail -n +2 README.md > README-2.md && mv README-2.md README.md
+}
+
+assign_theme () {
     echo "theme: jekyll-theme-cayman" > _config.yml
 }
 
@@ -33,6 +37,7 @@ generate_documentation () {
     create_branches
     run_docc
     fix_readme
+    assign_theme
     commit_and_publish
     clean_up
 }
