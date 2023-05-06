@@ -2,10 +2,9 @@
 branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 run_docc () {
-    swift package -Xswiftc "-sdk" \
-    -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" \
-    -Xswiftc "-target" \
-    -Xswiftc "x86_64-apple-ios16.0-simulator" --allow-writing-to-directory docs generate-documentation --target SafariView --disable-indexing --transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs --include-extended-types
+    xcodebuild docbuild -scheme SafariView \
+    -destination generic/platform=iOS \
+    OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs"
 }
 
 create_branches () {
