@@ -67,12 +67,14 @@ public extension View {
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
-    func safari(isPresented: Binding<Bool>,
-                onDismiss: (() -> Void)? = nil,
-                safariView: @escaping () -> SafariView) -> some View {
-        let modifier = SafariView.Modifier(isPresented: isPresented,
-                                           build: safariView,
-                                           onDismiss: onDismiss ?? {})
+    func safari(
+        isPresented: Binding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping () -> SafariView
+    ) -> some View {
+        let modifier = SafariView.BoolModifier(isPresented: isPresented,
+                                               build: safariView,
+                                               onDismiss: onDismiss ?? {})
         return ModifiedContent(content: self, modifier: modifier)
     }
 
@@ -127,12 +129,77 @@ public extension View {
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
-    func safari<Item>(item: Binding<Item?>,
-                      onDismiss: (() -> Void)? = nil,
-                      safariView: @escaping (Item) -> SafariView) -> some View where Item: Identifiable {
+    func safari<Item>(
+        item: Binding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping (Item) -> SafariView
+    ) -> some View where Item: Identifiable {
         let modifier = SafariView.ItemModitifer(item: item,
                                                 build: safariView,
                                                 onDismiss: onDismiss ?? {})
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
+    /// Presents a ``SafariView`` using the given item as a data source for the ``SafariView``'s content
+    ///
+    /// Use this method when you need to present a ``SafariView`` with content from a custom data source. The example below shows a custom data source `InventoryItem` that the closure uses to populate the ``SafariView`` before it is shown to the user:
+    ///
+    /// ```swift
+    /// import Foundation
+    /// import SafariView
+    /// import SwiftUI
+    ///
+    /// struct InventoryItem {
+    ///     let id: Int
+    ///     let title: String
+    ///     let url: URL
+    /// }
+    ///
+    /// struct InventoryList: View {
+    ///
+    ///     init(inventory: [InventoryItem]) {
+    ///         self.inventory = inventory
+    ///     }
+    ///
+    ///     var inventory: [InventoryItem]
+    ///
+    ///     @State private var selectedItem: InventoryItem?
+    ///
+    ///     var body: some View {
+    ///         List(inventory) { inventoryItem in
+    ///             Button(action: {
+    ///                 self.selectedItem = inventoryItem
+    ///             }) {
+    ///                 Text(inventoryItem.title)
+    ///             }
+    ///         }
+    ///         .safari(item: $selectedItem,
+    ///                 id: \.id,
+    ///                 onDismiss: dismissAction) { item in
+    ///             SafariView(url: item.url)
+    ///         }
+    ///     }
+    ///
+    ///     func didDismiss() {
+    ///         // Handle the dismissing action.
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the ``SafariView``. When item is non-nil, the system passes the item’s content to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If item changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
+    ///   - id: A keypath used to generate stable identifier for instances of `Item`.
+    ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
+    ///   - safariView: A closure that returns the ``SafariView`` to present
+    /// - Returns: The modified view
+    func safari<Item>(
+        item: Binding<Item?>,
+        id: KeyPath<Item, some Hashable>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping (Item) -> SafariView
+    ) -> some View {
+        let modifier = SafariView.GenericItemModifier(item: item, id: id, onDismiss: onDismiss, safariView: safariView)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
@@ -186,13 +253,17 @@ public extension View {
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
-    func safari(url: Binding<URL?>,
-                onDismiss: (() -> Void)? = nil,
-                safariView: @escaping (URL) -> SafariView) -> some View {
-        let modifier = SafariView.URLModifier(url: url,
-                                              build: safariView,
-                                              onDismiss: onDismiss ?? {})
-        return ModifiedContent(content: self, modifier: modifier)
+    func safari(
+        url: Binding<URL?>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping (URL) -> SafariView
+    ) -> some View {
+        safari(
+            item: url,
+            id: \.hashValue,
+            onDismiss: onDismiss,
+            safariView: safariView
+        )
     }
 
 }

@@ -473,7 +473,7 @@ public struct SafariView: View {
 
     // MARK: - Private
 
-    struct Modifier: ViewModifier {
+    struct BoolModifier: ViewModifier {
 
         // MARK: - API
 
@@ -594,7 +594,7 @@ public struct SafariView: View {
                 }
 
                 private func updateSafari() {
-                    guard let safari = safari else {
+                    guard let safari else {
                         return
                     }
                     let rep = parent.build()
@@ -607,7 +607,7 @@ public struct SafariView: View {
                 }
 
                 private func dismissSafari() {
-                    guard let safari = safari else {
+                    guard let safari else {
                         return
                     }
 
@@ -761,7 +761,7 @@ public struct SafariView: View {
                 }
 
                 private func updateSafari(with item: Item) {
-                    guard let safari = safari else {
+                    guard let safari else {
                         return
                     }
                     let rep = parent.build(item)
@@ -774,7 +774,7 @@ public struct SafariView: View {
                 }
 
                 private func dismissSafari(completion: (() -> Void)? = nil) {
-                    guard let safari = safari else {
+                    guard let safari else {
                         return
                     }
 
@@ -800,161 +800,69 @@ public struct SafariView: View {
         }
     }
 
-    struct URLModifier: ViewModifier {
+    struct GenericItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
 
-        @Binding
-        var url: URL?
+        // MARK: - Initializers
 
-        var build: (URL) -> SafariView
-        var onDismiss: () -> Void
+        init(
+            item: Binding<Item?>,
+            id: KeyPath<Item, Identifier>,
+            onDismiss: (() -> Void)? = nil,
+            @ViewBuilder safariView: @escaping (Item) -> SafariView
+        )
+        {
+            self.item = item
+            self.id = id
+            self.onDismiss = onDismiss
+            self.safariView = safariView
+        }
 
+        // MARK: - ViewModifier
+
+        @ViewBuilder
         func body(content: Content) -> some View {
             content
-                .background(
-                    Presenter(url: $url,
-                              build: build,
-                              onDismiss: onDismiss)
-                )
+                .safari(item: binding, onDismiss: onDismiss) { wrappedItem in
+                    safariView(wrappedItem.item)
+                }
         }
 
-        private struct Presenter: UIViewRepresentable {
+        // MARK: - Private
 
-            @Binding
-            var url: URL?
+        private let item: Binding<Item?>
+        private let id: KeyPath<Item, Identifier>
+        private let onDismiss: (() -> Void)?
+        private let safariView: (Item) -> SafariView
 
-            var build: (URL) -> SafariView
-            var onDismiss: () -> Void
-
-            final class Coordinator: NSObject, SFSafariViewControllerDelegate {
-
-                // MARK: - Initializers
-
-                init(parent: Presenter) {
-                    self.parent = parent
+        private var binding: Binding<WrappedItem?> {
+            Binding<WrappedItem?> {
+                guard let item = item.wrappedValue else {
+                    return nil
                 }
-
-                // MARK: - API
-
-                let view = UIView()
-
-                var parent: Presenter
-
-                var url: URL? {
-                    didSet {
-                        switch (oldValue, url) {
-                        case (.none, .none):
-                            break
-                        case let (.none, .some(new)):
-                            presentSafari(with: new)
-                        case let (.some(old), .some(new)) where old != new:
-                            dismissSafari() { [presentSafari] in
-                                presentSafari(new)
-                            }
-                        case let (.some, .some(new)):
-                            updateSafari(with: new)
-                        case (.some, .none):
-                            dismissSafari()
-                        }
-                    }
-                }
-
-                // MARK: - SFSafariViewControllerDelegate
-
-                func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-                    parent.url = nil
-                    parent.onDismiss()
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                    onInitialRedirect(URL)
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onInitialLoad(didLoadSuccessfully)
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
-                    withActivityItems(URL, title)
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, excludedActivityTypesFor URL: URL, title: String?) -> [UIActivity.ActivityType] {
-                    withoutActivityItems(URL, title)
-                }
-
-                func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                    willOpenInBrowser()
-                }
-
-                // MARK: - Private
-
-                private weak var safari: SFSafariViewController?
-
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-                private var onInitialRedirect: (URL) -> Void = { _ in }
-                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
-                private var withoutActivityItems: (URL, String?) -> [UIActivity.ActivityType] = { _, _ in [] }
-                private var willOpenInBrowser: () -> Void = {}
-
-                private func presentSafari(with url: URL) {
-                    let rep = parent.build(url)
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
-                    vc.delegate = self
-                    rep.apply(to: vc)
-                    guard let presenting = view.controller else {
-                        parent.url = url
-                        return
-                    }
-
-                    presenting.present(vc, animated: true)
-
-                    safari = vc
-                }
-
-                private func updateSafari(with url: URL) {
-                    guard let safari = safari else {
-                        return
-                    }
-                    let rep = parent.build(url)
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
-                    rep.apply(to: safari)
-                }
-
-                private func dismissSafari(_ completion: (() -> Void)? = nil) {
-                    guard let safari = safari else {
-                        return
-                    }
-
-                    safari.dismiss(animated: true) {
-                        self.parent.onDismiss()
-                        completion?()
-                    }
-                }
+                return WrappedItem(item, id)
+            } set: { newValue in
+                item.wrappedValue = newValue?.item
             }
-
-            func makeCoordinator() -> Coordinator {
-                Coordinator(parent: self)
-            }
-
-            func makeUIView(context: Context) -> UIView {
-                context.coordinator.view
-            }
-
-            func updateUIView(_ uiView: UIView, context: Context) {
-                context.coordinator.parent = self
-                context.coordinator.url = url
-            }
-
         }
 
+        private struct WrappedItem: Identifiable {
+            init(
+                _ item: Item,
+                _ keyPath: KeyPath<Item, Identifier>
+            ) {
+                self.item = item
+                self.keyPath = keyPath
+            }
+
+            let item: Item
+            private let keyPath: KeyPath<Item, Identifier>
+
+            typealias ID = Identifier
+
+            var id: ID {
+                item[keyPath: keyPath]
+            }
+        }
     }
 
     private struct Safari: UIViewControllerRepresentable {
