@@ -28,113 +28,25 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
-///
-/// A `SafariView` is a wrapper around [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller) for use within SwiftUI applications.
-///
-/// The view includes Safari features such as Reader, AutoFill, Fraudulent Website Detection, and content blocking. The user's activity and interaction with `SafariView` are not visible to your app, which cannot access AutoFill data, browsing history, or website data. You do not need to secure data between your app and Safari. If you would like to share data between your app and Safari, so it is easier for a user to log in only one time, use [`ASWebAuthenticationSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession) instead.
-///
-/// - Important: In accordance with [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/), this view must be used to visibly present information to users; the view may not be hidden or obscured by other views or layers. Additionally, an app may not use `SafariView` to track users without their knowledge and consent.
-///
-/// You can present a `SafariView` using one of our provided view modifiers, like so:
-///
-/// ```swift
-/// import Foundation
-/// import SafariView
-/// import SwiftUI
-///
-/// struct ShowLicenseAgreement: View {
-///
-///     let licenseAgreementURL: URL
-///
-///     @State private var isShowingSafari = false
-///
-///     var body: some View {
-///         Button(action: {
-///             isShowingSafari.toggle()
-///         }) {
-///             Text("Show License Agreement")
-///         }
-///        .safari(isPresented: $isShowingSafari,
-///                onDismiss: didDismiss) {
-///            SafariView(url: licenseAgreementURL)
-///                 .preferredBarTintColor(.red)
-///                 .accentColor(.white)
-///                 .dismissButtonStyle(.done)
-///                 .onInitialLoad { successful in
-///                     if !successful {
-///                         // Handle initial load failure
-///                     }
-///                 }
-///             }
-///     }
-///
-///     func didDismiss() {
-///         // Handle the dismissing action.
-///     }
-///
-/// }
-/// ```
-///
-/// You can also use sheet presentation, or any other presentation mechanism of your choice.
-///
-/// ## Topics
-///
-/// ### Initializers
-///
-/// - ``init(url:)``
-/// - ``init(url:configuration:)``
-///
-/// ### Appearance Modifiers
-///
-/// - ``accentColor(_:)``
-/// - ``preferredBarTintColor(_:)``
-/// - ``preferredControlTintColor(_:)``
-/// - ``dismissButtonStyle(_:)``
-/// - ``enableBarCollapsing(_:)``
-///
-/// ### Behavior Modifiers
-///
-/// - ``activityButton(_:)``
-/// - ``entersReaderIfAvailable(_:)``
-/// - ``eventAttribution(_:)``
-///
-/// ### Lifecycle Modifiers
-///
-/// - ``onInitialLoad(_:)``
-/// - ``onInitialRedirect(_:)``
-/// - ``onOpenInBrowser(_:)``
-///
-/// ### Activity Item Modifiers
-///
-/// - ``activityItems(_:)-3mpe3``
-/// - ``activityItems(_:)-2yuvl``
-/// - ``excludingActivityItems(_:)-5m53s``
-/// - ``excludingActivityItems(_:)-6whri``
 public struct SafariView: View {
 
     // MARK: - Initializers
 
     /// Create a `SafariView`
     /// - Parameter url: The URL to load in the view
-    public init(url: URL) {
-        self.init(url: url,
-                  configuration: .init())
-    }
-
-    /// Create a `SafariView`
-    ///
-    /// - Parameters:
-    ///   - url: The URL to load in the view
-    ///   - configuration: The ``Configuration`` to use
-    public init(url: URL, configuration: Configuration) {
+    public init(
+        url: URL,
+        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (() -> Void)? = nil
+    ) {
         self.url = url
-        self.configuration = configuration
+        self.onInitialLoad = onInitialLoad
+        self.onInitialRedirect = onInitialRedirect
+        self.onOpenInBrowser = onOpenInBrowser
     }
 
     // MARK: - API
-
-    /// A convenience typealias for [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
-    public typealias Configuration = SFSafariViewController.Configuration
 
     /// A convenience typealias for [`SFSafariViewController.DismissButtonStyle`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/dismissbuttonstyle)
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
@@ -145,306 +57,77 @@ public struct SafariView: View {
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
     public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
-    /// Apply an accent color to the view
-    ///
-    /// Use this modifier to set the view's accent color
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .accentColor(.blue)
-    /// ```
-    ///
-    /// - Parameter color: The color to use
-    /// - Returns: The safari view
-    public func accentColor(_ accentColor: Color?) -> Self {
-        preferredControlTintColor(accentColor)
+    /// A convenience typealias for [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
+    public typealias Configuration = SFSafariViewController.Configuration
+
+    public struct IncludedActivities: ExpressibleByArrayLiteral {
+
+        // MARK: - Initializers
+
+        public init(_ includedActivities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
+            self.includedActivities = includedActivities
+        }
+
+        // MARK: - API
+
+        public static let `default`: IncludedActivities = .init { _, _ in [] }
+
+        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity] {
+            includedActivities(url, pageTitle)
+        }
+
+        public static func + (lhs: IncludedActivities, rhs: IncludedActivities) -> IncludedActivities {
+            .init { url, pageTitle in
+                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+            }
+        }
+
+        // MARK: - ExpressiblyByArrayLiteral
+
+        public typealias ArrayLiteralElement = UIActivity
+
+        public init(arrayLiteral elements: ArrayLiteralElement...) {
+            self.init { _, _ in elements }
+        }
+
+        // MARK: - Private
+
+        private let includedActivities: (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+
     }
 
-    /// Apply an bar tint color to the view
-    ///
-    /// This modifier is equivelent to `SFSafariViewController`'s `.preferredBarTintColor` property
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .preferredBarTintColor(.blue)
-    /// ```
-    ///
-    /// - Parameter color: The color to use
-    /// - Returns: The safari view
-    public func preferredBarTintColor(_ color: Color?) -> Self {
-        var copy = self
-        copy.barTintColor = color
-        return copy
-    }
+    public struct ExcludedActivityTypes: ExpressibleByArrayLiteral {
 
-    /// Apply a control tint color to the view
-    ///
-    /// This modifier is equivelent to `SFSafariViewController`'s `.preferredControlTintColor` property
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .preferredControlTintColor(.blue)
-    /// ```
-    ///
-    /// - Parameter color: The color to use
-    /// - Returns: The safari view
-    public func preferredControlTintColor(_ color: Color?) -> Self {
-        var copy = self
-        copy.controlTintColor = color
-        return copy
-    }
+        public init(_ excludedActivities: @escaping (URL, String?) -> [UIActivity.ActivityType]) {
+            self.excludedActivities = excludedActivities
+        }
 
-    /// Set the safari view's dismiss button style
-    ///
-    /// Use this modifier to set the view's dismiss button style.
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .dismissButtonStyle(.cancel)
-    /// ```
-    ///
-    /// - Parameter style: The dismiss button style of the safari view
-    /// - Returns: The safari view
-    public func dismissButtonStyle(_ style: DismissButtonStyle) -> Self {
-        var copy = self
-        copy.dismissButtonStyle = style
-        return copy
-    }
+        // MARK: - API
 
-    /// Set the safari view's automatic reader mode setting
-    ///
-    /// Set the value to `true` if Reader mode should be entered automatically when it is available for the webpage; otherwise, `false`. The default value is `false`.
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .entersReaderIfAvailable(true)
-    /// ```
-    ///
-    /// This value that specifies whether Safari should enter Reader mode, if it is available.
-    /// - Parameter entersReaderIfAvailable: `true` to automatically enter reader mode when available, otherwise `false`
-    /// - Returns: The safari view
-    public func entersReaderIfAvailable(_ entersReaderIfAvailable: Bool) -> Self {
-        configuration.entersReaderIfAvailable = entersReaderIfAvailable
-        return self
-    }
+        public static let `default`: ExcludedActivityTypes = .init { _, _ in [] }
 
-    /// Set the safari view's bar collapsing setting
-    ///
-    /// Use this modifier to set the bar collapsing behavior of the view
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .enableBarCollapsing(true)
-    /// ```
-    ///
-    /// - Parameter barCollapsingEnabled: `true` to enable bar collapsing, otherwise `false`
-    /// - Returns: The safari view
-    public func enableBarCollapsing(_ barCollapsingEnabled: Bool) -> Self {
-        configuration.barCollapsingEnabled = barCollapsingEnabled
-        return self
-    }
+        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity.ActivityType] {
+            excludedActivities(url, pageTitle)
+        }
 
-    /// Set the safari view's activity button
-    ///
-    /// Use this modifier to set the view's activity button. See ``ActivityButton`` for more information,
-    ///
-    /// ```swift
-    /// let activityButton = SafarView.ActivityButton( ... )
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .activityButton(activityButton)
-    /// ```
-    ///
-    /// - Parameter activityButton: The activity button
-    /// - Returns: The safari view
-    public func activityButton(_ activityButton: ActivityButton?) -> Self {
-        configuration.activityButton = activityButton
-        return self
-    }
+        public static func + (lhs: ExcludedActivityTypes, rhs: ExcludedActivityTypes) -> ExcludedActivityTypes {
+            .init { url, pageTitle in
+                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+            }
+        }
 
-    /// Set the safari view's event attribution
-    ///
-    /// Use this modifier to set the view's event attribution.
-    /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution).
-    ///
-    /// ```swift
-    /// let attribution = UIEventAttribution( ... )
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .eventAttribution(attribution)
-    /// ```
-    ///
-    /// - Parameter eventAttribution: The event attribution to use
-    /// - Returns: The safari view
-    @available(iOS 15.2, *)
-    public func eventAttribution(_ eventAttribution: UIEventAttribution?) -> Self {
-        configuration.eventAttribution = eventAttribution
-        return self
-    }
+        // MARK: - ExpressiblyByArrayLiteral
 
-    /// Set a function to call when the page first loads
-    ///
-    /// This closure is invoked when `SafariView` completes the loading of the URL that you pass to its initializer. The closure is not invoked for any subsequent page loads in the same `SafariView` instance.
-    ///
-    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:didCompleteInitialLoad:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621215-safariviewcontroller)
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .onInitialLoad { didLoadSuccessfully in
-    ///         if didLoadSuccessfully {
-    ///             print("Success!")
-    ///         } else {
-    ///             print("Failre!")
-    ///         }
-    ///     }
-    /// ```
-    ///
-    /// - Parameter onInitialLoad: The function to execute when page first loads
-    /// - Returns: The safari view
-    public func onInitialLoad(_ onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)?) -> Self {
-        var copy = self
-        copy.onInitialLoad = onInitialLoad ?? { _ in }
-        return copy
-    }
+        public typealias ArrayLiteralElement = UIActivity.ActivityType
 
-    /// Set a function to call if the first page load causes a redirection
-    ///
-    /// This closure is invoked when `SafariView`'s initial URL results in a redirection. The closure is not invoked for any subsequent page loads in the same `SafariView` instance.
-    ///
-    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:initialLoadDidRedirectTo:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/2923545-safariviewcontroller)
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .onInitialRedirect { newURL in
-    ///         print("Redirected to URL \(newURL.description)")
-    ///     }
-    /// ```
-    ///
-    /// - Parameter onInitialRedirect: The function to execute when the initial page load causes a redirection
-    /// - Returns: The safari view
-    public func onInitialRedirect(_ onInitialRedirect: ((_ url: URL) -> Void)?) -> Self {
-        var copy = self
-        copy.onInitialRedirect = onInitialRedirect ?? { _ in }
-        return copy
-    }
+        public init(arrayLiteral elements: ArrayLiteralElement...) {
+            self.init { _, _ in elements }
+        }
 
-    /// Set a function to call if the user open's a loaded page in `Safari.app`
-    ///
-    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewControllerWillOpenInBrowser(_:)`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/3650426-safariviewcontrollerwillopeninbr)
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .onOpenInBrowser {
-    ///         print("Opened in Safari!")
-    ///     }
-    /// ```
-    ///
-    /// - Parameter onOpenInBrowser: The function to execute when the user opens a loaded page in their safari app
-    /// - Returns: The safari view
-    public func onOpenInBrowser(_ onOpenInBrowser: (() -> Void)?) -> Self {
-        var copy = self
-        copy.willOpenInBrowser = onOpenInBrowser ?? {}
-        return copy
-    }
+        // MARK: - Private
 
-    /// Add [`UIActivity`](https://developer.apple.com/documentation/uikit/uiactivity) items to the Safari View
-    ///
-    /// Use this modifier to conditionally add activity items to the view based on the user's current URL or page title.
-    /// If you wish to show activity items that persist regardless of the user's activity, use the ``activityItems(_:)-3mpe3`` modifier instead
-    ///
-    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:activityItemsFor:title:))`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621216-safariviewcontroller)
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .activtyItems { url, title in
-    ///         if title == "MyTitle" {
-    ///             return [item1, item2]
-    ///         } else {
-    ///             return [item3, item4]
-    ///         }
-    ///     }
-    /// ```
-    ///
-    /// - Parameter itemProvider: Closure used to build an array of application-specific services you have chosen to include in the `SafariView`, based on the user's current URL and page title.
-    /// - Returns: The safari view
-    public func activityItems(_ itemProvider: ((_ url: URL, _ pageTitle: String?) -> [UIActivity])?) -> Self {
-        var copy = self
-        copy.itemProvider = itemProvider ?? { _, _ in [] }
-        return copy
-    }
+        private let excludedActivities: (URL, String?) -> [UIActivity.ActivityType]
 
-    /// Add [`UIActivity`](https://developer.apple.com/documentation/uikit/uiactivity) items to the Safari View
-    ///
-    /// The items you provide are shown with every page the user might load in the `SafariView`.
-    /// If you wish to conditionally show items based on the current URL or page title, use the ``activityItems(_:)-2yuvl`` modifier instead.
-    ///
-    /// This method behaves similarly to [`SFSafariViewControllerDelegate`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate) method [`safariViewController(_:activityItemsFor:title:))`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/1621216-safariviewcontroller)
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .activtyItems([item1, item1])
-    /// ```
-    ///
-    /// - Parameter items: An array of application-specific services you have chosen to include in the `SafariView`
-    /// - Returns: The safari view
-    public func activityItems(_ items: [UIActivity]) -> Self {
-        var copy = self
-        copy.activityItems = items
-        return copy
-    }
-
-    /// Exclude [`UIActivity.ActivityType`](https://developer.apple.com/documentation/uikit/uiactivity/activitytype)s from the Safari View
-    ///
-    /// Use this modifier to conditionally exclude activity types based on the user's current URL or page title.
-    /// If you wish to exclude activity types from every page visited by the user, use the ``excludingActivityItems(_:)-5m53s`` modifier instead
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .excludingActivityItems { url, title in
-    ///         if title == "MyTitle" {
-    ///             return [type1, type2]
-    ///         } else {
-    ///             return [type3, type4]
-    ///         }
-    ///     }
-    /// ```
-    /// - Parameter excludedActivityProvider: Closure used to build a list of activity types you wish to exclude from the `SafariView`, based on the current URL and page title.
-    /// - Returns: The safari view
-    public func excludingActivityItems(_ excludedActivityProvider: ((_ url: URL, _ title: String?) -> [UIActivity.ActivityType])?) -> Self {
-        var copy = self
-        copy.excludedActivityProvider = excludedActivityProvider ?? { _, _ in [] }
-        return copy
-    }
-
-    /// Exclude [`UIActivity.ActivityType`](https://developer.apple.com/documentation/uikit/uiactivity/activitytype)s from the Safari View
-    ///
-    /// The activity types you provide are exlouded from every page the user might load in the `SafariView`
-    /// If you wish to conditionally exclude activity types based on the current URL or page title, use the ``excludingActivityItems(_:)-6whri`` modifier instead.
-    ///
-    /// ```swift
-    /// let url = URL(string: "https://www.apple.com")!
-    /// let view = SafariView(url: url)
-    ///     .excludingActivityItems: [type1, type2])
-    /// ```
-    ///
-    /// - Parameter activityTypes: A list of activity types you wish to exclude from every page loaded by the `SafariView`
-    /// - Returns: The Safari View
-    public func excludingActivityItems(_ activityTypes: [UIActivity.ActivityType]) -> Self {
-        var copy = self
-        copy.excludedActivities = activityTypes
-        return copy
     }
 
     /// Prewarm the connection to a list of provided URLs
@@ -472,6 +155,126 @@ public struct SafariView: View {
     }
 
     // MARK: - Private
+
+    @Environment(\.safariViewConfiguration)
+    private var configuration: SafariView.Configuration
+
+    @Environment(\.safariViewBarTintColor)
+    private var barTintColor: Color?
+
+    @Environment(\.safariViewDismissButtonStyle)
+    private var dismissButtonStyle: DismissButtonStyle
+
+    @Environment(\.safariViewIncludedActivities)
+    private var includedActivities: IncludedActivities
+
+    @Environment(\.safariViewExcludedActivityTypes)
+    private var excludedActivityTypes: ExcludedActivityTypes
+
+    private let url: URL
+    private let onInitialLoad: ((Bool) -> Void)?
+    private let onInitialRedirect: ((URL) -> Void)?
+    private let onOpenInBrowser: (() -> Void)?
+
+    private func apply(to controller: SFSafariViewController) {
+        controller.preferredBarTintColor = barTintColor.map(UIColor.init)
+        controller.preferredControlTintColor = UIColor(Color.accentColor)
+        controller.dismissButtonStyle = dismissButtonStyle
+    }
+
+    private struct Safari: UIViewControllerRepresentable {
+
+        // MARK: - Initializers
+
+        init(parent: SafariView) {
+            self.parent = parent
+            delegate = Delegate(
+                onInitialLoad: parent.onInitialLoad,
+                onInitialRedirect: parent.onInitialRedirect,
+                onOpenInBrowser: parent.onOpenInBrowser,
+                includedActivities: parent.includedActivities,
+                excludedActivityTypes: parent.excludedActivityTypes
+            )
+        }
+
+        // MARK: - UIViewControllerRepresentable
+
+        func makeUIViewController(context: Context) -> SFSafariViewController {
+            let safari = SFSafariViewController(url: parent.url,
+                                                configuration: parent.configuration.buildUIKitConfiguration())
+            safari.modalPresentationStyle = .none
+            safari.delegate = delegate
+            parent.apply(to: safari)
+            return safari
+        }
+
+        func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
+            parent.apply(to: uiViewController)
+            uiViewController.delegate = delegate
+        }
+
+        // MARK: - Private
+
+        private var parent: SafariView
+        private let delegate: Delegate
+
+        private final class Delegate: NSObject, SFSafariViewControllerDelegate {
+
+            init(
+                onInitialLoad: ((Bool) -> Void)?,
+                onInitialRedirect: ((URL) -> Void)?,
+                onOpenInBrowser: (() -> Void)?,
+                includedActivities: IncludedActivities,
+                excludedActivityTypes: ExcludedActivityTypes
+            ) {
+                self.onInitialLoad = onInitialLoad
+                self.onInitialRedirect = onInitialRedirect
+                self.onOpenInBrowser = onOpenInBrowser
+                self.includedActivities = includedActivities
+                self.excludedActivityTypes = excludedActivityTypes
+            }
+
+            // MARK: - SFSafariViewControllerDelegate
+
+            func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+                onInitialLoad?(didLoadSuccessfully)
+            }
+
+            func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                onInitialRedirect?(URL)
+            }
+
+            func safariViewController(
+                _ controller: SFSafariViewController,
+                activityItemsFor URL: URL,
+                title: String?
+            ) -> [UIActivity] {
+                includedActivities(url: URL, pageTitle: title)
+            }
+
+            func safariViewController(
+                _ controller: SFSafariViewController,
+                excludedActivityTypesFor URL: URL,
+                title: String?
+            ) -> [UIActivity.ActivityType] {
+                excludedActivityTypes(url: URL, pageTitle: title)
+            }
+
+            func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
+                onOpenInBrowser?()
+            }
+
+            // MARK: - Private
+
+            private let onInitialLoad: ((Bool) -> Void)?
+            private let onInitialRedirect: ((URL) -> Void)?
+            private let onOpenInBrowser: (() -> Void)?
+            private var includedActivities: IncludedActivities
+            private let excludedActivityTypes: ExcludedActivityTypes
+
+        }
+
+    }
 
     struct BoolModifier: ViewModifier {
 
@@ -540,11 +343,11 @@ public struct SafariView: View {
                 // MARK: - SFSafariViewControllerDelegate
 
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onInitialLoad(didLoadSuccessfully)
+                    onInitialLoad?(didLoadSuccessfully)
                 }
 
                 func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                    onInitialRedirect(URL)
+                    onInitialRedirect?(URL)
                 }
 
                 func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
@@ -552,36 +355,44 @@ public struct SafariView: View {
                     parent.onDismiss()
                 }
 
-                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
-                    withActivityItems(URL, title)
+                func safariViewController(
+                    _ controller: SFSafariViewController,
+                    activityItemsFor URL: URL,
+                    title: String?
+                ) -> [UIActivity] {
+                    includedActivities?(url: URL, pageTitle: title) ?? []
                 }
 
-                func safariViewController(_ controller: SFSafariViewController, excludedActivityTypesFor URL: URL, title: String?) -> [UIActivity.ActivityType] {
-                    withoutActivityItems(URL, title)
+                func safariViewController(
+                    _ controller: SFSafariViewController,
+                    excludedActivityTypesFor URL: URL,
+                    title: String?
+                ) -> [UIActivity.ActivityType] {
+                    excludedActivityTypes?(url: URL, pageTitle: title) ?? []
                 }
 
                 func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                    willOpenInBrowser()
+                    onOpenInBrowser?()
                 }
 
                 // MARK: - Private
 
                 private weak var safari: SFSafariViewController?
 
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-                private var onInitialRedirect: (URL) -> Void = { _ in }
-                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
-                private var withoutActivityItems: (URL, String?) -> [UIActivity.ActivityType] = { _, _ in [] }
-                private var willOpenInBrowser: () -> Void = {}
+                private var onInitialLoad: ((Bool) -> Void)?
+                private var onInitialRedirect: ((URL) -> Void)?
+                private var onOpenInBrowser: (() -> Void)?
+                private var includedActivities: IncludedActivities?
+                private var excludedActivityTypes: ExcludedActivityTypes?
 
                 private func presentSafari() {
                     let rep = parent.build()
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
+                    onOpenInBrowser = rep.onOpenInBrowser
+                    includedActivities = rep.includedActivities
+                    excludedActivityTypes = rep.excludedActivityTypes
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildUIKitConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
 
@@ -600,9 +411,9 @@ public struct SafariView: View {
                     let rep = parent.build()
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
+                    onOpenInBrowser = rep.onOpenInBrowser
+                    includedActivities = rep.includedActivities
+                    excludedActivityTypes = rep.excludedActivityTypes
                     rep.apply(to: safari)
                 }
 
@@ -610,11 +421,9 @@ public struct SafariView: View {
                     guard let safari else {
                         return
                     }
-
                     safari.dismiss(animated: true) {
                         self.parent.onDismiss()
                     }
-
                 }
 
             }
@@ -636,7 +445,7 @@ public struct SafariView: View {
 
     }
 
-    struct ItemModitifer<Item>: ViewModifier where Item: Identifiable {
+    struct IdentifiableItemModitifer<Item>: ViewModifier where Item: Identifiable {
 
         // MARK: - API
 
@@ -711,43 +520,51 @@ public struct SafariView: View {
                 }
 
                 func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                    onInitialRedirect(URL)
+                    onInitialRedirect?(URL)
                 }
 
                 func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onInitialLoad(didLoadSuccessfully)
+                    onInitialLoad?(didLoadSuccessfully)
                 }
 
-                func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
-                    withActivityItems(URL, title)
+                func safariViewController(
+                    _ controller: SFSafariViewController,
+                    activityItemsFor URL: URL,
+                    title: String?
+                ) -> [UIActivity] {
+                    includedActivities?(url: URL, pageTitle: title) ?? []
                 }
 
-                func safariViewController(_ controller: SFSafariViewController, excludedActivityTypesFor URL: URL, title: String?) -> [UIActivity.ActivityType] {
-                    withoutActivityItems(URL, title)
+                func safariViewController(
+                    _ controller: SFSafariViewController,
+                    excludedActivityTypesFor URL: URL,
+                    title: String?
+                ) -> [UIActivity.ActivityType] {
+                    excludedActivityTypes?(url: URL, pageTitle: title) ?? []
                 }
 
                 func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                    willOpenInBrowser()
+                    onOpenInBrowser?()
                 }
 
                 // MARK: - Private
 
                 private weak var safari: SFSafariViewController?
 
-                private var onInitialLoad: (Bool) -> Void = { _ in }
-                private var onInitialRedirect: (URL) -> Void = { _ in }
-                private var withActivityItems: (URL, String?) -> [UIActivity] = { _, _ in [] }
-                private var withoutActivityItems: (URL, String?) -> [UIActivity.ActivityType] = { _, _ in [] }
-                private var willOpenInBrowser: () -> Void = {}
+                private var onInitialLoad: ((Bool) -> Void)?
+                private var onInitialRedirect: ((URL) -> Void)?
+                private var onOpenInBrowser: (() -> Void)?
+                private var includedActivities: IncludedActivities?
+                private var excludedActivityTypes: ExcludedActivityTypes?
 
                 private func presentSafari(with item: Item) {
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
+                    onOpenInBrowser = rep.onOpenInBrowser
+                    includedActivities = rep.includedActivities
+                    excludedActivityTypes = rep.excludedActivityTypes
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildUIKitConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
                     guard let presenting = view.controller else {
@@ -767,9 +584,9 @@ public struct SafariView: View {
                     let rep = parent.build(item)
                     onInitialLoad = rep.onInitialLoad
                     onInitialRedirect = rep.onInitialRedirect
-                    withActivityItems = rep.withActivityItems
-                    withoutActivityItems = rep.withoutActivityItems
-                    willOpenInBrowser = rep.willOpenInBrowser
+                    onOpenInBrowser = rep.onOpenInBrowser
+                    includedActivities = rep.includedActivities
+                    excludedActivityTypes = rep.excludedActivityTypes
                     rep.apply(to: safari)
                 }
 
@@ -800,7 +617,7 @@ public struct SafariView: View {
         }
     }
 
-    struct GenericItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
+    struct ItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
 
         // MARK: - Initializers
 
@@ -809,8 +626,7 @@ public struct SafariView: View {
             id: KeyPath<Item, Identifier>,
             onDismiss: (() -> Void)? = nil,
             @ViewBuilder safariView: @escaping (Item) -> SafariView
-        )
-        {
+        ) {
             self.item = item
             self.id = id
             self.onDismiss = onDismiss
@@ -865,115 +681,6 @@ public struct SafariView: View {
         }
     }
 
-    private struct Safari: UIViewControllerRepresentable {
-
-        // MARK: - Initializers
-
-        init(parent: SafariView) {
-            self.parent = parent
-            delegate = Delegate(onInitialLoad: parent.onInitialLoad,
-                                onInitialRedirect: parent.onInitialRedirect,
-                                withActivityItems: parent.withActivityItems,
-                                withoutActivityItems: parent.withoutActivityItems,
-                                willOpenInBrowser: parent.willOpenInBrowser)
-        }
-
-        // MARK: - UIViewControllerRepresentable
-
-        func makeUIViewController(context: Context) -> SFSafariViewController {
-            let safari = SFSafariViewController(url: parent.url,
-                                                configuration: parent.configuration)
-
-            safari.modalPresentationStyle = .none
-            safari.delegate = delegate
-            parent.apply(to: safari)
-            return safari
-        }
-
-        func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
-            parent.apply(to: uiViewController)
-            uiViewController.delegate = delegate
-        }
-
-        // MARK: - Private
-
-        private var parent: SafariView
-        private let delegate: Delegate
-
-        private final class Delegate: NSObject, SFSafariViewControllerDelegate {
-
-            init(onInitialLoad: @escaping (Bool) -> Void,
-                 onInitialRedirect: @escaping (URL) -> Void,
-                 withActivityItems: @escaping (URL, String?) -> [UIActivity],
-                 withoutActivityItems: @escaping (URL, String?) -> [UIActivity.ActivityType],
-                 willOpenInBrowser: @escaping () -> Void) {
-                self.onInitialLoad = onInitialLoad
-                self.onInitialRedirect = onInitialRedirect
-                self.withActivityItems = withActivityItems
-                self.withoutActivityItems = withoutActivityItems
-                self.willOpenInBrowser = willOpenInBrowser
-            }
-
-            // MARK: - SFSafariViewDelegate
-
-            func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                onInitialLoad(didLoadSuccessfully)
-            }
-
-            func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                onInitialRedirect(URL)
-            }
-
-            func safariViewController(_ controller: SFSafariViewController, activityItemsFor URL: URL, title: String?) -> [UIActivity] {
-                withActivityItems(URL, title)
-            }
-
-            func safariViewController(_ controller: SFSafariViewController, excludedActivityTypesFor URL: URL, title: String?) -> [UIActivity.ActivityType] {
-                withoutActivityItems(URL, title)
-            }
-
-            func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                willOpenInBrowser()
-            }
-
-            // MARK: - PRivate
-
-            private let onInitialLoad: (Bool) -> Void
-            private let onInitialRedirect: (URL) -> Void
-            private let withActivityItems: (URL, String?) -> [UIActivity]
-            private let withoutActivityItems: (URL, String?) -> [UIActivity.ActivityType]
-            private let willOpenInBrowser: () -> Void
-        }
-
-    }
-
-    private let url: URL
-    private var configuration: Configuration
-    private var barTintColor: Color?
-    private var controlTintColor: Color?
-    private var dismissButtonStyle: DismissButtonStyle = .done
-    private var onInitialLoad: (Bool) -> Void = { _ in }
-    private var onInitialRedirect: (URL) -> Void = { _ in }
-    private var itemProvider: (URL, String?) -> [UIActivity] = { _, _ in [] }
-    private var activityItems: [UIActivity] = []
-    private var excludedActivities: [UIActivity.ActivityType] = []
-    private var excludedActivityProvider: (URL, String?) -> [UIActivity.ActivityType] = { _, _ in [] }
-    private var willOpenInBrowser: () -> Void = {}
-
-    private func withActivityItems(_ url: URL, _ title: String?) -> [UIActivity] {
-        itemProvider(url, title) + activityItems
-    }
-
-    private func withoutActivityItems(_ url: URL, _ title: String?) -> [UIActivity.ActivityType] {
-        excludedActivityProvider(url, title) + excludedActivities
-    }
-
-    private func apply(to controller: SFSafariViewController) {
-        controller.preferredBarTintColor = barTintColor.map(UIColor.init)
-        controller.preferredControlTintColor = controlTintColor.map(UIColor.init)
-        controller.dismissButtonStyle = dismissButtonStyle
-    }
-
 }
 
 private extension UIView {
@@ -986,4 +693,17 @@ private extension UIView {
             return nil
         }
     }
+}
+
+private extension SafariView.Configuration {
+
+    func buildUIKitConfiguration() -> SFSafariViewController.Configuration {
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = entersReaderIfAvailable
+        config.barCollapsingEnabled = barCollapsingEnabled
+        config.activityButton = activityButton
+        config.eventAttribution = eventAttribution
+        return config
+    }
+
 }
