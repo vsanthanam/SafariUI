@@ -459,15 +459,15 @@ public struct SafariView: View {
 
         func body(content: Content) -> some View {
             content.background(
-                Presenter<Item>(item: $item,
-                                build: build,
-                                onDismiss: onDismiss)
+                Presenter(item: $item,
+                          build: build,
+                          onDismiss: onDismiss)
             )
         }
 
         // MARK: - Private
 
-        private struct Presenter<Item>: UIViewRepresentable where Item: Identifiable {
+        private struct Presenter: UIViewRepresentable {
 
             // MARK: - API
 
