@@ -1,5 +1,5 @@
 // SafariView
-// ViewExtensions.swift
+// Presentation.swift
 //
 // MIT License
 //
@@ -134,9 +134,11 @@ public extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder safariView: @escaping (Item) -> SafariView
     ) -> some View where Item: Identifiable {
-        let modifier = SafariView.ItemModitifer(item: item,
-                                                build: safariView,
-                                                onDismiss: onDismiss ?? {})
+        let modifier = SafariView.IdentifiableItemModitifer(
+            item: item,
+            build: safariView,
+            onDismiss: onDismiss ?? {}
+        )
         return ModifiedContent(content: self, modifier: modifier)
     }
 
@@ -199,7 +201,12 @@ public extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder safariView: @escaping (Item) -> SafariView
     ) -> some View {
-        let modifier = SafariView.GenericItemModifier(item: item, id: id, onDismiss: onDismiss, safariView: safariView)
+        let modifier = SafariView.ItemModifier(
+            item: item,
+            id: id,
+            onDismiss: onDismiss,
+            safariView: safariView
+        )
         return ModifiedContent(content: self, modifier: modifier)
     }
 
