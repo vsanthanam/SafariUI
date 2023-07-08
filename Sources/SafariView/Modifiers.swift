@@ -27,16 +27,29 @@ import SwiftUI
 
 public extension View {
 
+    /// Set the configuration of safari views within this view.
+    /// - Parameter configuration: The safari configuration to use
+    /// - Returns: The modified view
     func safariConfiguration(_ configuration: SafariView.Configuration) -> some View {
         let modifier = SafariViewConfigurationModifier(configuration: configuration)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
+    /// Set the bar tint color of safari views within this view
+    ///
+    /// This modifier is the equivelent of the [`.preferredBarTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274394-preferredbartintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
+    /// - Parameter color: The color to use, or `nil` for the system default
+    /// - Returns: The modified view
     func safariBarTintColor(_ color: Color?) -> some View {
         let modifier = SafariViewBarTintColorModifier(safariViewBarTintColor: color)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
+    /// Set the controk tint color of safari views within this view
+    ///
+    /// This modifier is the equivelent of the [`.preferredControlTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274393-preferredcontroltintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
+    /// - Parameter color: The color to use
+    /// - Returns: The modified view
     func safariControlTintColor(_ color: Color) -> some View {
         let modifier = SafariViewControlTintColorModifier(safariViewControlTintColor: color)
         return ModifiedContent(content: self, modifier: modifier)
@@ -44,7 +57,7 @@ public extension View {
 
     /// Set the safari view's dismiss button style
     ///
-    /// This property is equivelent to `SFSafariViewController`'s `.dismissButtonStyle` property
+    /// This modifer is the equivelent of the [`.dismissButtonStyle` ](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2875838-dismissbuttonstyle) property of a  [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
     ///
     /// - Parameter dismissButtonStyle: The desired dismiss button style
     /// - Returns: The modified content

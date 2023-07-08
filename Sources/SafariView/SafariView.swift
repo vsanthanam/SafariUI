@@ -32,8 +32,12 @@ public struct SafariView: View {
 
     // MARK: - Initializers
 
-    /// Create a `SafariView`
-    /// - Parameter url: The URL to load in the view
+    /// Create a SafariView
+    /// - Parameters:
+    ///   - url: URL to load
+    ///   - onInitialLoad: Closure to execute on initial load
+    ///   - onInitialRedirect: Closure to execute on intial redirect
+    ///   - onOpenInBrowser: Closure to execute if a user moves from a SafariView to Safari.app
     public init(
         url: URL,
         onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
@@ -52,83 +56,15 @@ public struct SafariView: View {
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
+    @available(iOS 15.0, *)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
+    @available(iOS 15.0, *)
     public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
     /// A convenience typealias for [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
     public typealias Configuration = SFSafariViewController.Configuration
-
-    public struct IncludedActivities: ExpressibleByArrayLiteral {
-
-        // MARK: - Initializers
-
-        public init(_ includedActivities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
-            self.includedActivities = includedActivities
-        }
-
-        // MARK: - API
-
-        public static let `default`: IncludedActivities = .init { _, _ in [] }
-
-        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity] {
-            includedActivities(url, pageTitle)
-        }
-
-        public static func + (lhs: IncludedActivities, rhs: IncludedActivities) -> IncludedActivities {
-            .init { url, pageTitle in
-                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
-            }
-        }
-
-        // MARK: - ExpressiblyByArrayLiteral
-
-        public typealias ArrayLiteralElement = UIActivity
-
-        public init(arrayLiteral elements: ArrayLiteralElement...) {
-            self.init { _, _ in elements }
-        }
-
-        // MARK: - Private
-
-        private let includedActivities: (_ url: URL, _ pageTitle: String?) -> [UIActivity]
-
-    }
-
-    public struct ExcludedActivityTypes: ExpressibleByArrayLiteral {
-
-        public init(_ excludedActivities: @escaping (URL, String?) -> [UIActivity.ActivityType]) {
-            self.excludedActivities = excludedActivities
-        }
-
-        // MARK: - API
-
-        public static let `default`: ExcludedActivityTypes = .init { _, _ in [] }
-
-        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity.ActivityType] {
-            excludedActivities(url, pageTitle)
-        }
-
-        public static func + (lhs: ExcludedActivityTypes, rhs: ExcludedActivityTypes) -> ExcludedActivityTypes {
-            .init { url, pageTitle in
-                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
-            }
-        }
-
-        // MARK: - ExpressiblyByArrayLiteral
-
-        public typealias ArrayLiteralElement = UIActivity.ActivityType
-
-        public init(arrayLiteral elements: ArrayLiteralElement...) {
-            self.init { _, _ in elements }
-        }
-
-        // MARK: - Private
-
-        private let excludedActivities: (URL, String?) -> [UIActivity.ActivityType]
-
-    }
 
     /// Prewarm the connection to a list of provided URLs
     ///
@@ -142,6 +78,7 @@ public struct SafariView: View {
     ///
     /// - Parameter URLs: The URLs to prewarm
     /// - Returns: A prewarming token for the provided URLs.
+    @available(iOS 15.0, *)
     @discardableResult
     public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
         SFSafariViewController.prewarmConnections(to: URLs)
@@ -201,7 +138,7 @@ public struct SafariView: View {
 
         func makeUIViewController(context: Context) -> SFSafariViewController {
             let safari = SFSafariViewController(url: parent.url,
-                                                configuration: parent.configuration.buildUIKitConfiguration())
+                                                configuration: parent.configuration)
             safari.modalPresentationStyle = .none
             safari.delegate = delegate
             parent.apply(to: safari)
@@ -392,7 +329,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildUIKitConfiguration())
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
 
@@ -564,7 +501,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildUIKitConfiguration())
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
                     vc.delegate = self
                     rep.apply(to: vc)
                     guard let presenting = view.controller else {
@@ -662,10 +599,8 @@ public struct SafariView: View {
         }
 
         private struct WrappedItem: Identifiable {
-            init(
-                _ item: Item,
-                _ keyPath: KeyPath<Item, Identifier>
-            ) {
+            init(_ item: Item,
+                 _ keyPath: KeyPath<Item, Identifier>) {
                 self.item = item
                 self.keyPath = keyPath
             }
@@ -693,17 +628,4 @@ private extension UIView {
             return nil
         }
     }
-}
-
-private extension SafariView.Configuration {
-
-    func buildUIKitConfiguration() -> SFSafariViewController.Configuration {
-        let config = SFSafariViewController.Configuration()
-        config.entersReaderIfAvailable = entersReaderIfAvailable
-        config.barCollapsingEnabled = barCollapsingEnabled
-        config.activityButton = activityButton
-        config.eventAttribution = eventAttribution
-        return config
-    }
-
 }

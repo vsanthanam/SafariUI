@@ -10,9 +10,11 @@ Using a `Binding<Bool>`:
 
 ```swift
 extension View {
-    func safari(isPresented: Binding<Bool>,
-                onDismiss: (() -> Void)? = nil,
-                safariView: @escaping () -> SafariView) -> some View
+    func safari(
+        isPresented: Binding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping () -> SafariView
+    ) -> some View
 }
 ```
 
@@ -30,15 +32,17 @@ Using a generic `Binding`:
 
 ```swift
 extension View {
-    func safari<Item>(item: Binding<Item?>,
-                      onDismiss: (() -> Void)? = nil,
-                      safariView: @escaping (Item) -> SafariView) -> some View where Item: Identifiable
+    func safari(
+        url: Binding<URL?>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder safariView: @escaping (URL) -> SafariView
+    ) -> some View 
 }
 ```
 
 Alternatively, you can use sheet presentation or any other presentation mechanism of your choosing.
 
-The library contains a single `View`-conforming struct, also named `SafariView`
+The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance and behavior of a ``SafariView/SafariView``
 
 ## Topics
 
