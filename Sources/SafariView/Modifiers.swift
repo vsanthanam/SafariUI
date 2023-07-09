@@ -37,6 +37,19 @@ public extension View {
 
     /// Set the bar tint color of safari views within this view
     ///
+    /// Use this modifier to set the bar tint color of safari views within this view:
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///     var body: some View {
+    ///         HStack {
+    ///             SafariView(url: URL("https://www.apple.com")!)
+    ///         }
+    ///         .safariBarTintColor(Color.purple)
+    ///     }
+    /// }
+    /// ```
+    ///
     /// This modifier is the equivelent of the [`.preferredBarTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274394-preferredbartintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
     /// - Parameter color: The color to use, or `nil` for the system default
     /// - Returns: The modified view

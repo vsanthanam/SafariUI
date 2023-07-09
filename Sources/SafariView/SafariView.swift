@@ -53,15 +53,23 @@ public struct SafariView: View {
     // MARK: - API
 
     /// A convenience typealias for [`SFSafariViewController.DismissButtonStyle`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/dismissbuttonstyle)
+    ///
+    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
+    ///
+    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
+    ///
+    /// You can generate prewarming tokens for invalidation using the ``prewarmConnections(to:)`` static method.
     public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
     /// The configuration for a ``SafariView/SafariView``
+    ///
+    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     public struct Configuration {
 
         /// Create a configuration for a ``SafariView/SafariView``

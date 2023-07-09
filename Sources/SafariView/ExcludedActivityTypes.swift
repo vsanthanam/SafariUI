@@ -28,6 +28,7 @@ import UIKit
 
 public extension SafariView {
 
+    /// A struct used to exclude activity types from a SafariView
     struct ExcludedActivityTypes: ExpressibleByArrayLiteral {
 
         public init(_ excludedActivityTypes: @escaping (URL, String?) -> [UIActivity.ActivityType]) {
@@ -39,12 +40,6 @@ public extension SafariView {
         }
 
         // MARK: - API
-
-        public static let `default`: ExcludedActivityTypes = .init()
-
-        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity.ActivityType] {
-            excludedActivityTypes(url, pageTitle)
-        }
 
         public static func + (lhs: ExcludedActivityTypes, rhs: ExcludedActivityTypes) -> ExcludedActivityTypes {
             .init { url, pageTitle in
@@ -60,11 +55,13 @@ public extension SafariView {
             self.init { _, _ in elements }
         }
 
-        // MARK: - Sequence
-
-        public typealias Element = UIActivity.ActivityType
-
         // MARK: - Private
+
+        static let `default`: ExcludedActivityTypes = .init()
+
+        func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity.ActivityType] {
+            excludedActivityTypes(url, pageTitle)
+        }
 
         private let excludedActivityTypes: (URL, String?) -> [UIActivity.ActivityType]
 
