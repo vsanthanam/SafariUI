@@ -54,13 +54,22 @@ You can also use sheet presentation, or any other presentation mechanism of your
 
 ### Configuring the View
 
+
+- ``SwiftUI/View/safariConfiguration(_:)``
 - ``Configuration``
 - ``ActivityButton``
+- ``SwiftUI/View/safariBarTintColor(_:)``
+- ``SwiftUI/View/safariControlTintColor(_:)``
+- ``SwiftUI/View/safariDismissButtonStyle(_:)``
 - ``DismissButtonStyle``
 
 ### Custom Activities
 
+- ``SwiftUI/View/includedSafariActivities(_:)-362lz``
+- ``SwiftUI/View/includedSafariActivities(_:)-2u8l9``
 - ``IncludedActivities``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-1v8zq``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-tvrg``
 - ``ExcludedActivityTypes``
 
 ### Connection Prewarming
