@@ -4,48 +4,30 @@ SafariServices in SwiftUI
 
 ## Overview
 
-SafariView is a SwiftUI wrapper around [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller) You can present a `SafariView` using our provided view modifiers:
+`SafariView` is a wrapper around [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller) for use within SwiftUI applications. The view includes Safari features such as Reader, AutoFill, Fraudulent Website Detection, and content blocking. The user's activity and interaction with `SafariView` are not visible to your app, which cannot access AutoFill data, browsing history, or website data. You do not need to secure data between your app and Safari. If you would like to share data between your app and Safari, so it is easier for a user to log in only one time, use [`ASWebAuthenticationSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession) instead.
 
-Using a `Binding<Bool>`:
+- Important: In accordance with [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/), this view must be used to visibly present information to users; the view may not be hidden or obscured by other views or layers. Additionally, an app may not use `SafariView` to track users without their knowledge and consent.
 
-```swift
-extension View {
-    func safari(
-        isPresented: Binding<Bool>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder safariView: @escaping () -> SafariView
-    ) -> some View
-}
-```
+UI features include the following:
+- A read-only address field with a security indicator and a Reader button
+- An Action button that invokes an activity view controller offering custom services from your app, and activities, such as messaging, from the system and other extensions
+- A Done button, back and forward navigation buttons, and a button to open the page directly in Safari
+- On devices that support 3D Touch, automatic Peek and Pop for links and detected data
 
-Using a `Binding<URL>`:
+To learn about 3D Touch, see [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) and [Adopting 3D Touch on iPhone](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/Adopting3DTouchOniPhone/index.html#//apple_ref/doc/uid/TP40016543).
 
-```swift
-extension View {
-    func safari(url: Binding<URL?>,
-                onDismiss: (() -> Void)? = nil,
-                safariView: @escaping (URL) -> SafariView) -> some View
-}
-```
-
-Using a generic `Binding`:
-
-```swift
-extension View {
-    func safari(
-        url: Binding<URL?>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder safariView: @escaping (URL) -> SafariView
-    ) -> some View 
-}
-```
-
-Alternatively, you can use sheet presentation or any other presentation mechanism of your choosing.
-
-The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance and behavior of a ``SafariView/SafariView``
+The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance, behavior and presentation of a ``SafariView/SafariView``
 
 ## Topics
 
 ### Views
 
-- ``SafariView/SafariView``
+- ``SafariView``
+
+### Modifiers
+
+- ``SwiftUI/View``
+
+### Environment
+
+- ``SwiftUI/EnvironmentValues``

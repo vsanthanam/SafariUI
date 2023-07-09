@@ -1,5 +1,5 @@
 // SafariView
-// Environment.swift
+// EnvironmentValues.swift
 //
 // MIT License
 //
@@ -27,12 +27,37 @@ import SwiftUI
 
 public extension EnvironmentValues {
 
+    /// The configuration used  for ``SafariView``
+    ///
+    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewConfiguration)
+    ///     var safariViewConriguration
+    ///
+    /// }
+    /// ```
+    ///
+    /// This property is equivelent to `SFSafariViewController`'s `.preferredControlTintColor` property
     var safariViewConfiguration: SafariView.Configuration {
         get { self[SafariViewConfigurationEnvironmentKey.self] }
         set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
     }
 
-    /// Apply a control tint color to the view
+    /// The control tint color used for ``SafariView``
+    ///
+    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewControlTintColor)
+    ///     var safariControlTintColor
+    ///
+    /// }
+    /// ```
     ///
     /// This property is equivelent to `SFSafariViewController`'s `.preferredControlTintColor` property
     var safariViewControlTintColor: Color {
@@ -40,7 +65,16 @@ public extension EnvironmentValues {
         set { self[SafariViewControlTintColorEnvironmentKey.self] = newValue }
     }
 
-    /// Apply an bar tint color to the view
+    /// The bar tint color used for ``SafariView``
+    ///
+    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///     @Environment(\.safariViewControlBarColor)
+    ///     var safariBarTintColor
+    /// }
+    /// ```
     ///
     /// This property is equivelent to `SFSafariViewController`'s `.preferredBarTintColor` property
     var safariViewBarTintColor: Color? {
@@ -49,6 +83,17 @@ public extension EnvironmentValues {
     }
 
     /// Set the safari view's dismiss button style
+    ///
+    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewDismissButtonStyle)
+    ///     var safariViewDismissButtonStyle
+    ///
+    /// }
+    /// ```
     ///
     /// This property is equivelent to `SFSafariViewController`'s `.dismissButtonStyle` property
     var safariViewDismissButtonStyle: SafariView.DismissButtonStyle {

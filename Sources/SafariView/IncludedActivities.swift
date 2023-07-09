@@ -36,13 +36,11 @@ public extension SafariView {
             self.includedActivities = includedActivities
         }
 
-        // MARK: - API
-
-        public static let `default`: IncludedActivities = .init { _, _ in [] }
-
-        public func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity] {
-            includedActivities(url, pageTitle)
+        public init(_ includedActivities: [UIActivity]) {
+            self.includedActivities = { _, _ in includedActivities }
         }
+
+        // MARK: - API
 
         public static func + (lhs: IncludedActivities, rhs: IncludedActivities) -> IncludedActivities {
             .init { url, pageTitle in
@@ -59,6 +57,12 @@ public extension SafariView {
         }
 
         // MARK: - Private
+
+        static let `default`: IncludedActivities = .init()
+
+        func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity] {
+            includedActivities(url, pageTitle)
+        }
 
         private let includedActivities: (_ url: URL, _ pageTitle: String?) -> [UIActivity]
 
