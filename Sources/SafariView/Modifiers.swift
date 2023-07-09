@@ -58,7 +58,7 @@ public extension View {
         return ModifiedContent(content: self, modifier: modifier)
     }
 
-    /// Set the controk tint color of safari views within this view
+    /// Set the control tint color of safari views within this view
     ///
     /// This modifier is the equivelent of the [`.preferredControlTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274393-preferredcontroltintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
     /// - Parameter color: The color to use
@@ -143,7 +143,7 @@ public extension View {
     ///
     /// Use this modifier to exclude a list of activity types from the share sheet of a ``SafariView``
     ///
-    /// This modifier replaces the the supplied activity types to the existing values in the environment.
+    /// This modifier replaces the previous values in the environment with the supplied values.
     /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
     ///
     /// ```swift
@@ -171,7 +171,7 @@ public extension View {
     ///
     /// Use this modifier to conditionally exclude activity types from the share sheet of a ``SafariView``, based on the URL and page title.
     ///
-    /// This modifier replaces the the supplied activity types to the existing values in the environment.
+    /// This modifier replaces the previous values in the environment with the supplied values.
     /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
     ///
     /// ```swift
@@ -301,13 +301,10 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewIncludedActivities, safariViewIncludedActivities + activities)
+            .environment(\.safariViewIncludedActivities, activities)
     }
 
     // MARK: - Private
-
-    @Environment(\.safariViewIncludedActivities)
-    private var safariViewIncludedActivities: SafariView.IncludedActivities
 
     private let activities: SafariView.IncludedActivities
 
@@ -326,13 +323,10 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewExcludedActivityTypes, safariExcludedActivityTypes + activityTypes)
+            .environment(\.safariViewExcludedActivityTypes, activityTypes)
     }
 
     // MARK: - Private
-
-    @Environment(\.safariViewExcludedActivityTypes)
-    private var safariExcludedActivityTypes: SafariView.ExcludedActivityTypes
 
     private let activityTypes: SafariView.ExcludedActivityTypes
 
