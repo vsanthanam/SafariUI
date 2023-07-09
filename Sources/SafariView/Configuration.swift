@@ -25,6 +25,7 @@
 
 import UIKit
 
+@available(iOS 15.0, *)
 public extension SafariView {
 
     /// The configuration for a ``SafariView/SafariView``
@@ -38,6 +39,7 @@ public extension SafariView {
         ///   - barCollapsingEnabled: Whether or not the view should support bar collapsing.
         ///   - activityButton: A custom activity button.
         ///   - eventAttribution: Event attribution data for Private Click Measurement.
+        @available(iOS 15.2, *)
         public init(
             entersReaderIfAvailable: Bool = false,
             barCollapsingEnabled: Bool = false,
@@ -47,7 +49,24 @@ public extension SafariView {
             self.entersReaderIfAvailable = entersReaderIfAvailable
             self.barCollapsingEnabled = barCollapsingEnabled
             self.activityButton = activityButton
-            self.eventAttribution = eventAttribution
+            _eventAttribution = eventAttribution
+        }
+
+        /// Create a new safari view configuration
+        /// - Parameters:
+        ///   - entersReaderIfAvailable: Whether or not the view should enter reader mode automatically, if available.
+        ///   - barCollapsingEnabled: Whether or not the view should support bar collapsing.
+        ///   - activityButton: A custom activity button.
+        @available(iOS, deprecated: 15.2)
+        public init(
+            entersReaderIfAvailable: Bool = false,
+            barCollapsingEnabled: Bool = false,
+            activityButton: ActivityButton? = nil
+        ) {
+            self.entersReaderIfAvailable = entersReaderIfAvailable
+            self.barCollapsingEnabled = barCollapsingEnabled
+            self.activityButton = activityButton
+            _eventAttribution = nil
         }
 
         /// A value that specifies whether Safari should enter Reader mode, if it is available.
@@ -66,8 +85,17 @@ public extension SafariView {
         /// An object you use to send tap event attribution data to the browser for Private Click Measurement.
         ///
         /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution).
-        public var eventAttribution: UIEventAttribution?
+        @available(iOS 15.2, *)
+        public var eventAttribution: UIEventAttribution? {
+            get {
+                _eventAttribution as? UIEventAttribution? ?? nil
+            }
+            set {
+                _eventAttribution = newValue
+            }
+        }
 
+        private var _eventAttribution: Any?
     }
 
 }

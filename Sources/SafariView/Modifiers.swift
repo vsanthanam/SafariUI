@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, *)
 public extension View {
 
     /// Set the configuration of safari views within this view.
