@@ -56,15 +56,50 @@ public struct SafariView: View {
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
-    @available(iOS 15.0, *)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
-    @available(iOS 15.0, *)
     public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
-    /// A convenience typealias for [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
-    public typealias Configuration = SFSafariViewController.Configuration
+    /// The configuration for a ``SafariView/SafariView``
+    public struct Configuration {
+
+        /// Create a configuration for a ``SafariView/SafariView``
+        /// - Parameters:
+        ///   - entersReaderIfAvailable: Whether or not Safari should enter reader mode, if it is available.
+        ///   - barCollapsingEnabled: Whether or not Safari should support bar collapsing.
+        ///   - eventAttribution: Event attribution for Private Click Measurement.
+        ///   - activityButton: A custom activity button.
+        public init(
+            entersReaderIfAvailable: Bool = false,
+            barCollapsingEnabled: Bool = false,
+            eventAttribution: UIEventAttribution? = nil,
+            activityButton: ActivityButton? = nil
+        ) {
+            self.entersReaderIfAvailable = entersReaderIfAvailable
+            self.barCollapsingEnabled = barCollapsingEnabled
+            self.eventAttribution = eventAttribution
+            self.activityButton = activityButton
+        }
+
+        /// A value that specifies whether Safari should enter Reader mode, if it is available.
+        ///
+        /// Set the value to `true` if Reader mode should be entered automatically when it is available for the webpage; otherwise, false. The default value is `false`.
+        public var entersReaderIfAvailable: Bool
+
+        /// A value that specifies whether Safari should allow bar collapsing
+        ///
+        /// Set the value `true` if bar collapsing should be enabled when the user scrolls; otherwise, false. The default value is `false`.
+        public var barCollapsingEnabled: Bool
+
+        /// An object you use to send tap event attribution data to the browser for Private Click Measurement.
+        ///
+        /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution).
+        public var eventAttribution: UIEventAttribution?
+
+        /// The activity button to use in the Safari View.
+        public var activityButton: ActivityButton?
+    }
 
     /// Prewarm the connection to a list of provided URLs
     ///
@@ -78,7 +113,6 @@ public struct SafariView: View {
     ///
     /// - Parameter URLs: The URLs to prewarm
     /// - Returns: A prewarming token for the provided URLs.
-    @available(iOS 15.0, *)
     @discardableResult
     public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
         SFSafariViewController.prewarmConnections(to: URLs)
@@ -138,7 +172,7 @@ public struct SafariView: View {
 
         func makeUIViewController(context: Context) -> SFSafariViewController {
             let safari = SFSafariViewController(url: parent.url,
-                                                configuration: parent.configuration)
+                                                configuration: parent.configuration.buildConfiguration())
             safari.modalPresentationStyle = .none
             safari.delegate = delegate
             parent.apply(to: safari)
@@ -329,7 +363,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
 
@@ -501,7 +535,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration)
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
                     guard let presenting = view.controller else {
@@ -628,4 +662,17 @@ private extension UIView {
             return nil
         }
     }
+}
+
+private extension SafariView.Configuration {
+
+    func buildConfiguration() -> SFSafariViewController.Configuration {
+        let configuration = SFSafariViewController.Configuration()
+        configuration.entersReaderIfAvailable = entersReaderIfAvailable
+        configuration.barCollapsingEnabled = barCollapsingEnabled
+        configuration.eventAttribution = eventAttribution
+        configuration.activityButton = activityButton
+        return configuration
+    }
+
 }

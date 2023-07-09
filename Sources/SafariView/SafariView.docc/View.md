@@ -45,3 +45,26 @@ struct ShowLicenseAgreement: View {
 ```
 
 You can also use sheet presentation, or any other presentation mechanism of your choice.
+
+## Topics
+
+### Creating a Safari View
+
+- ``init(url:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
+
+### Configuring the View
+
+- ``Configuration``
+- ``ActivityButton``
+- ``DismissButtonStyle``
+
+### Custom Activities
+
+- ``IncludedActivities``
+- ``ExcludedActivityTypes``
+
+### Connection Prewarming
+
+- ``prewarmConnections(to:)``
+- ``PrewarmingToken``
+
