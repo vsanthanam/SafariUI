@@ -79,25 +79,122 @@ public extension View {
         return ModifiedContent(content: self, modifier: modifier)
     }
 
-    func includedSafariActivities(_ includedActivities: SafariView.IncludedActivities) -> some View {
-        let modifier = SafariViewIncludedActivitiesModifier(includedActivities: includedActivities)
+    /// Include additional activities in the share sheet of safari views within this view.
+    ///
+    /// Use this modifier to include a list of activities to display in the share sheet of a ``SafariView``
+    ///
+    /// This modifier replaces the the supplied activities to the existing values in the environment.
+    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewIncludedActivities)
+    ///     var safariActivities
+    ///
+    ///     var body: some View {
+    ///         SafariView(url: some_url)
+    ///             .includedSafariActivities(safariActivities + newValues)
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameter activities: The activities to include. You may use an array literal of `UIActivity` types.
+    /// - Returns: The modified content
+    func includedSafariActivities(_ activities: SafariView.IncludedActivities) -> some View {
+        let modifier = SafariViewIncludedActivitiesModifier(activities: activities)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
-    func includedSafariActivities(_ includedActivities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
-        let activities = SafariView.IncludedActivities(includedActivities)
-        let modifier = SafariViewIncludedActivitiesModifier(includedActivities: activities)
+    /// Conditionally include activities in the share sheet of safari views within this view.
+    ///
+    /// Use this modifier to conditionally include additional activities to display in the share sheet of a ``SafariView``, based in the URL and page title.
+    ///
+    /// This modifier replaces the the supplied activities to the existing values in the environment.
+    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewIncludedActivities)
+    ///     var safariActivities
+    ///
+    ///     var body: some View {
+    ///         SafariView(url: some_url)
+    ///             .includedSafariActivities { url, pageTitle in
+    ///                 // custom logic
+    ///                 return safariActivities + newValues
+    ///             }
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameter activities: Closure used to conditionally include activities
+    /// - Returns: The modified content
+    func includedSafariActivities(_ activities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
+        let activities = SafariView.IncludedActivities(activities)
+        let modifier = SafariViewIncludedActivitiesModifier(activities: activities)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
-    func excludedSafariActivityTypes(_ excludedActivityTypes: SafariView.ExcludedActivityTypes) -> some View {
-        let modifier = SafariViewExcludedActivityTypesModifier(excludedActivityTypes: excludedActivityTypes)
+    /// Exclude activity types from the share sheet of safari views within this view.
+    ///
+    /// Use this modifier to exclude a list of activity types from the share sheet of a ``SafariView``
+    ///
+    /// This modifier replaces the the supplied activity types to the existing values in the environment.
+    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewExcludedActivityTypes)
+    ///     var excludedTypes
+    ///
+    ///     var body: some View {
+    ///         SafariView(url: some_url)
+    ///             .excludedSafariActivityTypes(excludedTypes + newValues)
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameter activityTypes: The activity types to exclude. You may use an array literal of `UIActivity.ActivityType` values.
+    /// - Returns: The modified content
+    func excludedSafariActivityTypes(_ activityTypes: SafariView.ExcludedActivityTypes) -> some View {
+        let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
-    func excludedSafariActivityTypes(_ excludedActivityTypes: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]) -> some View {
-        let activityTypes = SafariView.ExcludedActivityTypes(excludedActivityTypes)
-        let modifier = SafariViewExcludedActivityTypesModifier(excludedActivityTypes: activityTypes)
+    /// Conditionally exclude activity types from the share sheet of safari views within this view.
+    ///
+    /// Use this modifier to conditionally exclude activity types from the share sheet of a ``SafariView``, based on the URL and page title.
+    ///
+    /// This modifier replaces the the supplied activity types to the existing values in the environment.
+    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewExcludedActivityTypes)
+    ///     var excludedTypes
+    ///
+    ///     var body: some View {
+    ///         SafariView(url: some_url) { url, pageTitle in
+    ///             // custom logic
+    ///             return excludedTypes + newValues
+    ///         }
+    ///     }
+    ///
+    /// }
+    /// ```
+    ///
+    /// - Parameter activityTypes: Closure used to conditionally exclude activities
+    /// - Returns: The modified content
+    func excludedSafariActivityTypes(_ activityTypes: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]) -> some View {
+        let activityTypes = SafariView.ExcludedActivityTypes(activityTypes)
+        let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
@@ -195,8 +292,8 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
     // MARK: - Initializers
 
-    init(includedActivities: SafariView.IncludedActivities) {
-        self.includedActivities = includedActivities
+    init(activities: SafariView.IncludedActivities) {
+        self.activities = activities
     }
 
     // MARK: - ViewModifier
@@ -204,12 +301,15 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewIncludedActivities, includedActivities)
+            .environment(\.safariViewIncludedActivities, safariViewIncludedActivities + activities)
     }
 
     // MARK: - Private
 
-    private let includedActivities: SafariView.IncludedActivities
+    @Environment(\.safariViewIncludedActivities)
+    private var safariViewIncludedActivities: SafariView.IncludedActivities
+
+    private let activities: SafariView.IncludedActivities
 
 }
 
@@ -217,8 +317,8 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     // MARK: - Initializers
 
-    init(excludedActivityTypes: SafariView.ExcludedActivityTypes) {
-        self.excludedActivityTypes = excludedActivityTypes
+    init(activityTypes: SafariView.ExcludedActivityTypes) {
+        self.activityTypes = activityTypes
     }
 
     // MARK: - ViewBuilder
@@ -226,11 +326,14 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewExcludedActivityTypes, excludedActivityTypes)
+            .environment(\.safariViewExcludedActivityTypes, safariExcludedActivityTypes + activityTypes)
     }
 
     // MARK: - Private
 
-    private let excludedActivityTypes: SafariView.ExcludedActivityTypes
+    @Environment(\.safariViewExcludedActivityTypes)
+    private var safariExcludedActivityTypes: SafariView.ExcludedActivityTypes
+
+    private let activityTypes: SafariView.ExcludedActivityTypes
 
 }

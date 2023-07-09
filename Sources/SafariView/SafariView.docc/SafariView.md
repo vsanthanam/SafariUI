@@ -12,9 +12,6 @@ UI features include the following:
 - A read-only address field with a security indicator and a Reader button
 - An Action button that invokes an activity view controller offering custom services from your app, and activities, such as messaging, from the system and other extensions
 - A Done button, back and forward navigation buttons, and a button to open the page directly in Safari
-- On devices that support 3D Touch, automatic Peek and Pop for links and detected data
-
-To learn about 3D Touch, see [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) and [Adopting 3D Touch on iPhone](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/Adopting3DTouchOniPhone/index.html#//apple_ref/doc/uid/TP40016543).
 
 The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance, behavior and presentation of a ``SafariView/SafariView``
 

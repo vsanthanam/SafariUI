@@ -1,5 +1,5 @@
 // SafariView
-// EnvironmentValues.swift
+// Environment.swift
 //
 // MIT License
 //
@@ -27,88 +27,62 @@ import SwiftUI
 
 public extension EnvironmentValues {
 
-    /// The configuration used  for ``SafariView``
+    /// The additional activies to include the share sheet displayed inside a ``SafariView``
     ///
-    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewConfiguration)
-    ///     var safariViewConriguration
-    ///
-    /// }
-    /// ```
-    ///
-    /// This property is equivelent to `SFSafariViewController`'s `.preferredControlTintColor` property
-    var safariViewConfiguration: SafariView.Configuration {
-        get { self[SafariViewConfigurationEnvironmentKey.self] }
-        set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
-    }
-
-    /// The control tint color used for ``SafariView``
-    ///
-    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
+    /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
     ///
     /// ```swift
     /// struct MyView: View {
     ///
-    ///     @Environment(\.safariViewControlTintColor)
-    ///     var safariControlTintColor
+    ///     @Environment(\.safariViewIncludedActivities)
+    ///     var safariViewIncludedActivities
     ///
     /// }
-    /// ```
-    ///
-    /// This property is equivelent to `SFSafariViewController`'s `.preferredControlTintColor` property
-    var safariViewControlTintColor: Color {
-        get { self[SafariViewControlTintColorEnvironmentKey.self] }
-        set { self[SafariViewControlTintColorEnvironmentKey.self] = newValue }
-    }
-
-    /// The bar tint color used for ``SafariView``
-    ///
-    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///     @Environment(\.safariViewControlBarColor)
-    ///     var safariBarTintColor
-    /// }
-    /// ```
-    ///
-    /// This property is equivelent to `SFSafariViewController`'s `.preferredBarTintColor` property
-    var safariViewBarTintColor: Color? {
-        get { self[SafariViewBarTintColorEnvironmentKey.self] }
-        set { self[SafariViewBarTintColorEnvironmentKey.self] = newValue }
-    }
-
-    /// Set the safari view's dismiss button style
-    ///
-    /// You can retrieve this value for the currnet scope using the @Environment property wrapper
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewDismissButtonStyle)
-    ///     var safariViewDismissButtonStyle
-    ///
-    /// }
-    /// ```
-    ///
-    /// This property is equivelent to `SFSafariViewController`'s `.dismissButtonStyle` property
-    var safariViewDismissButtonStyle: SafariView.DismissButtonStyle {
-        get { self[SafariViewDismissButtonStyleEnvironmentKey.self] }
-        set { self[SafariViewDismissButtonStyleEnvironmentKey.self] = newValue }
-    }
-
+    /// `
     var safariViewIncludedActivities: SafariView.IncludedActivities {
         get { self[SafariViewIncludedActivitiesEnvironmentKey.self] }
         set { self[SafariViewIncludedActivitiesEnvironmentKey.self] = newValue }
     }
 
+    /// The activity types to exclude from the share sheet displayed inside a ``SafariView``
+    ///
+    /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewExcludedActivityTypes)
+    ///     var safariViewExcludedActivityTypes
+    ///
+    /// }
+    /// ```
     var safariViewExcludedActivityTypes: SafariView.ExcludedActivityTypes {
         get { self[SafariViewExcludedActivityTypesEnvironmentKey.self] }
         set { self[SafariViewExcludedActivityTypesEnvironmentKey.self] = newValue }
+    }
+
+}
+
+extension EnvironmentValues {
+
+    var safariViewConfiguration: SafariView.Configuration {
+        get { self[SafariViewConfigurationEnvironmentKey.self] }
+        set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
+    }
+
+    var safariViewControlTintColor: Color {
+        get { self[SafariViewControlTintColorEnvironmentKey.self] }
+        set { self[SafariViewControlTintColorEnvironmentKey.self] = newValue }
+    }
+
+    var safariViewBarTintColor: Color? {
+        get { self[SafariViewBarTintColorEnvironmentKey.self] }
+        set { self[SafariViewBarTintColorEnvironmentKey.self] = newValue }
+    }
+
+    var safariViewDismissButtonStyle: SafariView.DismissButtonStyle {
+        get { self[SafariViewDismissButtonStyleEnvironmentKey.self] }
+        set { self[SafariViewDismissButtonStyleEnvironmentKey.self] = newValue }
     }
 
 }

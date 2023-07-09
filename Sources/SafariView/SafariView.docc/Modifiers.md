@@ -9,6 +9,9 @@ Some Content About View Modifiers
 ### Configuration
 
 - ``safariConfiguration(_:)``
+
+### Appearance
+
 - ``safariBarTintColor(_:)``
 - ``safariControlTintColor(_:)``
 - ``safariDismissButtonStyle(_:)``
@@ -22,7 +25,7 @@ Some Content About View Modifiers
 
 ### Activities
 
-- ``includedSafariActivities(_:)-362lz``
 - ``includedSafariActivities(_:)-2u8l9``
-- ``excludedSafariActivityTypes(_:)-1v8zq``
+- ``includedSafariActivities(_:)-362lz``
 - ``excludedSafariActivityTypes(_:)-tvrg``
+- ``excludedSafariActivityTypes(_:)-1v8zq``

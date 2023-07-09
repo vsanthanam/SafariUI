@@ -28,14 +28,19 @@ import UIKit
 
 public extension SafariView {
 
+    /// A struct used to include custom activities in the share sheet of a ``SafariView``
     struct IncludedActivities: ExpressibleByArrayLiteral {
 
         // MARK: - Initializers
 
+        /// Include activities conditionally, based on the URL and/or page title.
+        /// - Parameter includedActivities: Closure used to provide activitues
         public init(_ includedActivities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
             self.includedActivities = includedActivities
         }
 
+        /// Include activities using a predefined list
+        /// - Parameter includedActivities: A list of activities to include in the share sheet
         public init(_ includedActivities: [UIActivity]) {
             self.includedActivities = { _, _ in includedActivities }
         }
@@ -50,8 +55,19 @@ public extension SafariView {
 
         // MARK: - ExpressiblyByArrayLiteral
 
+        /// The type of the elements of an array literal.
         public typealias ArrayLiteralElement = UIActivity
 
+        /// Creates an `IncludedActivities` containing the elements of the given array literal
+        ///
+        /// Do not call this initializer directly. It is used by the compiler when you use an array literal. Instead, create a new `IncludedActivities` using an array literal as its value by enclosing a comma-separated list of values in square brackets. You can use an array literal anywhere an `IncludedActivities` is expected by the type context. For example:
+        ///
+        /// ```swift
+        /// let included: SafariView.IncludedActivities = [someActivity, someOtherActivity]
+        /// ```
+        ///
+        /// In this example, the assignment to the `included` constant calls this array literal initializer behind the scenes.
+        /// - Parameter elements: A variadic list of activities.
         public init(arrayLiteral elements: ArrayLiteralElement...) {
             self.init { _, _ in elements }
         }

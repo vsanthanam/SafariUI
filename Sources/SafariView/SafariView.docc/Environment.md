@@ -8,9 +8,5 @@ Some Documentation About Environment Values
 
 ### Values
 
-- ``safariViewConfiguration``
-- ``safariViewBarTintColor``
-- ``safariViewControlTintColor``
-- ``safariViewDismissButtonStyle``
 - ``safariViewIncludedActivities``
 - ``safariViewExcludedActivityTypes``
