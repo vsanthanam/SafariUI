@@ -28,6 +28,7 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
+@available(iOS 15.2, *)
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -621,6 +622,7 @@ public struct SafariView: View {
 
 }
 
+@available(iOS 15.2, *)
 private extension UIView {
 
     var controller: UIViewController? {
@@ -635,6 +637,7 @@ private extension UIView {
 
 }
 
+@available(iOS 15.2, *)
 private extension SafariView.Configuration {
 
     func buildConfiguration() -> SFSafariViewController.Configuration {

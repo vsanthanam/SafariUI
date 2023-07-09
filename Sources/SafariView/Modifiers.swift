@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 15.2, *)
 public extension View {
 
     /// Set the configuration of safari views within this view.
@@ -200,6 +201,7 @@ public extension View {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewConfigurationModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -222,6 +224,7 @@ private struct SafariViewConfigurationModifier: ViewModifier {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewControlTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -244,6 +247,7 @@ private struct SafariViewControlTintColorModifier: ViewModifier {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewBarTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -266,6 +270,7 @@ private struct SafariViewBarTintColorModifier: ViewModifier {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -288,6 +293,7 @@ private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -310,6 +316,7 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     // MARK: - Initializers

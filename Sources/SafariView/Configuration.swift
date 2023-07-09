@@ -25,6 +25,7 @@
 
 import UIKit
 
+@available(iOS 15.2, *)
 public extension SafariView {
 
     /// The configuration for a ``SafariView/SafariView``

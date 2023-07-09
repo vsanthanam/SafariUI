@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 15.2, *)
 public extension EnvironmentValues {
 
     /// The additional activies to include the share sheet displayed inside a ``SafariView``
@@ -63,6 +64,7 @@ public extension EnvironmentValues {
 
 }
 
+@available(iOS 15.2, *)
 extension EnvironmentValues {
 
     var safariViewConfiguration: SafariView.Configuration {
@@ -87,6 +89,7 @@ extension EnvironmentValues {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewConfigurationEnvironmentKey: EnvironmentKey {
 
     typealias Value = SafariView.Configuration
@@ -95,6 +98,7 @@ private struct SafariViewConfigurationEnvironmentKey: EnvironmentKey {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewControlTintColorEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -105,6 +109,7 @@ private struct SafariViewControlTintColorEnvironmentKey: EnvironmentKey {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewBarTintColorEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -115,6 +120,7 @@ private struct SafariViewBarTintColorEnvironmentKey: EnvironmentKey {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewDismissButtonStyleEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -125,6 +131,7 @@ private struct SafariViewDismissButtonStyleEnvironmentKey: EnvironmentKey {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewIncludedActivitiesEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -135,6 +142,7 @@ private struct SafariViewIncludedActivitiesEnvironmentKey: EnvironmentKey {
 
 }
 
+@available(iOS 15.2, *)
 private struct SafariViewExcludedActivityTypesEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey

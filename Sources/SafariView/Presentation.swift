@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 15.2, *)
 public extension View {
 
     /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
