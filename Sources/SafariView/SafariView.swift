@@ -141,6 +141,9 @@ public struct SafariView: View {
     @Environment(\.safariViewBarTintColor)
     private var barTintColor: Color?
 
+    @Environment(\.safariViewControlTintColor)
+    private var controlTintColor: Color
+
     @Environment(\.safariViewDismissButtonStyle)
     private var dismissButtonStyle: DismissButtonStyle
 
@@ -157,7 +160,7 @@ public struct SafariView: View {
 
     private func apply(to controller: SFSafariViewController) {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
-        controller.preferredControlTintColor = UIColor(Color.accentColor)
+        controller.preferredControlTintColor = UIColor(controlTintColor)
         controller.dismissButtonStyle = dismissButtonStyle
     }
 
@@ -661,6 +664,7 @@ public struct SafariView: View {
 }
 
 private extension UIView {
+
     var controller: UIViewController? {
         if let nextResponder = next as? UIViewController {
             return nextResponder
@@ -670,6 +674,7 @@ private extension UIView {
             return nil
         }
     }
+
 }
 
 private extension SafariView.Configuration {

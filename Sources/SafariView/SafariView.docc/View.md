@@ -4,6 +4,8 @@
     @DocumentationExtension(mergeBehavior: append)
 }
 
+For configuration, appearance, and presentation options, see the documentation for the included view modifiers here: ``SwiftUI/View``.
+
 ## Topics
 
 ### Creating a Safari View
