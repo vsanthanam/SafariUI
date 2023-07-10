@@ -15,6 +15,8 @@ UI features include the following:
 
 The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance, behavior and presentation of a ``SafariView/SafariView``
 
+- Note: In Mac apps built with Mac Catalyst, SafariView launches the default web browser instead of displaying a modal window. SafariView is not compatible with macOS, tvOS, or watchOS.
+
 ## Topics
 
 ### Views

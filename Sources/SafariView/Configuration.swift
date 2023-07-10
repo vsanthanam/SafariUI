@@ -25,7 +25,7 @@
 
 import UIKit
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macCatalyst 15.0, *)
 public extension SafariView {
 
     /// The configuration for a ``SafariView/SafariView``
@@ -83,7 +83,7 @@ public extension SafariView {
         /// An object you use to send tap event attribution data to the browser for Private Click Measurement.
         ///
         /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution).
-        @available(iOS 15.2, *)
+        @available(iOS 15.2, macCatalyst 15.2, *)
         public var eventAttribution: UIEventAttribution? {
             get {
                 _eventAttribution as? UIEventAttribution? ?? nil

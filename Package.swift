@@ -7,6 +7,7 @@ let package = Package(
     name: "SafariView",
     platforms: [
         .iOS(.v15),
+        .macCatalyst(.v15)
     ],
     products: [
         .library(
