@@ -2,8 +2,6 @@
 
 View modifiers used to configure and present Safari Views.
 
-Some Content About View Modifiers
-
 ## Topics
 
 ### Appearance

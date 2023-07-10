@@ -1,8 +1,6 @@
 # ``SafariView/SwiftUI/EnvironmentValues``
 
-Enviornment Values
-
-Some Documentation About Environment Values
+Environment Values used by Safari View
 
 ## Topics
 
