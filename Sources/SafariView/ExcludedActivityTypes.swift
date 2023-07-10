@@ -26,6 +26,7 @@
 import Foundation
 import UIKit
 
+@available(iOS 15.0, *)
 public extension SafariView {
 
     /// A struct used to exclude activity types from the share sheet of a ``SafariView``.

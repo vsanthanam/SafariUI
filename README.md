@@ -4,7 +4,7 @@
 [![Package Releases](https://img.shields.io/github/v/release/vsanthanam/SafariView)](https://github.com/vsanthanam/SafariView/releases)
 [![Build Statis](https://img.shields.io/github/actions/workflow/status/vsanthanam/SafariView/xcodebuild-build-test.yml)](https://github.com/vsanthanam/SafariView/actions)
 [![Swift Version](https://img.shields.io/badge/swift-5.8-critical)](https://swift.org)
-[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2016-lightgrey)](https://developer.apple.com)
+[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2015.2-lightgrey)](https://developer.apple.com)
 
 A SwiftUI wrapper around `SFSafariViewController`
 
