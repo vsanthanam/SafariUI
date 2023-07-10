@@ -1,14 +1,10 @@
 #  ``SafariView/SwiftUI/View``
 
-View modifiers used configure and present Safari Views.
+View modifiers used to configure and present Safari Views.
 
 Some Content About View Modifiers
 
 ## Topics
-
-### Configuration
-
-- ``safariConfiguration(_:)``
 
 ### Appearance
 

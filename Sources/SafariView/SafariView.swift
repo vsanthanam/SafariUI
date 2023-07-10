@@ -36,16 +36,19 @@ public struct SafariView: View {
     /// Create a SafariView
     /// - Parameters:
     ///   - url: URL to load
+    ///   - configuration: The configuration for the new view.
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
     ///   - onOpenInBrowser: Closure to execute if a user moves from a SafariView to Safari.app
     public init(
         url: URL,
+        configuration: Configuration = .init(),
         onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
         onInitialRedirect: ((_ url: URL) -> Void)? = nil,
         onOpenInBrowser: (() -> Void)? = nil
     ) {
         self.url = url
+        self.configuration = configuration
         self.onInitialLoad = onInitialLoad
         self.onInitialRedirect = onInitialRedirect
         self.onOpenInBrowser = onOpenInBrowser
@@ -54,13 +57,9 @@ public struct SafariView: View {
     // MARK: - API
 
     /// A convenience typealias for [`SFSafariViewController.DismissButtonStyle`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/dismissbuttonstyle)
-    ///
-    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
-    ///
-    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
@@ -85,6 +84,19 @@ public struct SafariView: View {
         SFSafariViewController.prewarmConnections(to: URLs)
     }
 
+    /// Clears the safari view's cache
+    @available(iOS 16.0, *)
+    public static func clearWebsiteData() async {
+        await SFSafariViewController.DataStore.default.clearWebsiteData()
+    }
+
+    /// Clears the safari view's cache
+    /// - Parameter completionHandler: Closure to execute after the operation completes
+    @available(iOS 16.0, *)
+    public static func clearWebsiteData(completionHandler: (() -> Void)?) {
+        SFSafariViewController.DataStore.default.clearWebsiteData(completionHandler: completionHandler)
+    }
+
     // MARK: - View
 
     public var body: some View {
@@ -93,9 +105,6 @@ public struct SafariView: View {
     }
 
     // MARK: - Private
-
-    @Environment(\.safariViewConfiguration)
-    private var configuration: SafariView.Configuration
 
     @Environment(\.safariViewBarTintColor)
     private var barTintColor: Color?
@@ -113,6 +122,7 @@ public struct SafariView: View {
     private var excludedActivityTypes: ExcludedActivityTypes
 
     private let url: URL
+    private let configuration: Configuration
     private let onInitialLoad: ((Bool) -> Void)?
     private let onInitialRedirect: ((URL) -> Void)?
     private let onOpenInBrowser: (() -> Void)?

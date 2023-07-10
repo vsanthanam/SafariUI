@@ -10,7 +10,7 @@ For configuration, appearance, and presentation options, see the documentation f
 
 ### Creating a Safari View
 
-- ``init(url:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
+- ``init(url:configuration:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 
 ### Configuring the View
 
@@ -27,3 +27,8 @@ For configuration, appearance, and presentation options, see the documentation f
 
 - ``prewarmConnections(to:)``
 - ``PrewarmingToken``
+
+### Data Management
+
+- ``clearWebsiteData()``
+- ``clearWebsiteData(completionHandler:)``

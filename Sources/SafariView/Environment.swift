@@ -66,11 +66,6 @@ public extension EnvironmentValues {
 
 extension EnvironmentValues {
 
-    var safariViewConfiguration: SafariView.Configuration {
-        get { self[SafariViewConfigurationEnvironmentKey.self] }
-        set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
-    }
-
     var safariViewControlTintColor: Color {
         get { self[SafariViewControlTintColorEnvironmentKey.self] }
         set { self[SafariViewControlTintColorEnvironmentKey.self] = newValue }
@@ -89,6 +84,8 @@ extension EnvironmentValues {
 }
 
 private struct SafariViewConfigurationEnvironmentKey: EnvironmentKey {
+
+    // MARK: - EnvironmentKey
 
     typealias Value = SafariView.Configuration
 
