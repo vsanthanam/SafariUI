@@ -28,7 +28,7 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
-@available(iOS 15.0, *)
+@available(iOS 15.0, macCatalyst 15.0, *)
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -85,14 +85,14 @@ public struct SafariView: View {
     }
 
     /// Clears the safari view's cache using [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/).
-    @available(iOS 16.0, *)
+    @available(iOS 16.0, macCatalyst 16.0, *)
     public static func clearWebsiteData() async {
         await SFSafariViewController.DataStore.default.clearWebsiteData()
     }
 
     /// Clears the safari view's cache using a completion handler.
     /// - Parameter completionHandler: Closure to execute after the operation completes
-    @available(iOS 16.0, *)
+    @available(iOS 16.0, macCatalyst 16.0, *)
     public static func clearWebsiteData(completionHandler: (() -> Void)?) {
         SFSafariViewController.DataStore.default.clearWebsiteData(completionHandler: completionHandler)
     }
@@ -652,7 +652,7 @@ private extension SafariView.Configuration {
         let configuration = SFSafariViewController.Configuration()
         configuration.entersReaderIfAvailable = entersReaderIfAvailable
         configuration.barCollapsingEnabled = barCollapsingEnabled
-        if #available(iOS 15.2, *) {
+        if #available(iOS 15.2, macCatalyst 15.2, *) {
             configuration.eventAttribution = eventAttribution
         }
         configuration.activityButton = activityButton

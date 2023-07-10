@@ -26,7 +26,7 @@
 import Foundation
 import UIKit
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macCatalyst 15.0, *)
 public extension SafariView {
 
     /// A struct used to include custom activities in the share sheet of a ``SafariView``

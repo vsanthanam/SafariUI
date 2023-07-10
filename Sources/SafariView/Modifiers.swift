@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macCatalyst 15.0, *)
 public extension View {
 
     /// Set the bar tint color of safari views within this view
