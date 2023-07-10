@@ -76,7 +76,7 @@ public extension View {
     ///
     /// Use this modifier to include a list of activities to display in the share sheet of a ``SafariView``
     ///
-    /// This modifier replaces the the supplied activities to the existing values in the environment.
+    /// This modifier replaces the previous values in the environment with the supplied values.
     /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
     ///
     /// ```swift
@@ -104,7 +104,7 @@ public extension View {
     ///
     /// Use this modifier to conditionally include additional activities to display in the share sheet of a ``SafariView``, based in the URL and page title.
     ///
-    /// This modifier replaces the the supplied activities to the existing values in the environment.
+    /// This modifier replaces the previous values in the environment with the supplied values.
     /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
     ///
     /// ```swift
