@@ -29,8 +29,6 @@ import UIKit
 public extension SafariView {
 
     /// The configuration for a ``SafariView/SafariView``
-    ///
-    /// To change the configuration for the current scope, see the ``SwiftUI/View/safariConfiguration(_:)`` view modifier.
     struct Configuration {
 
         /// Create a new safari view configuration

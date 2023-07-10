@@ -28,14 +28,6 @@ import SwiftUI
 @available(iOS 15.0, *)
 public extension View {
 
-    /// Set the configuration of safari views within this view.
-    /// - Parameter configuration: The safari configuration to use
-    /// - Returns: The modified view
-    func safariConfiguration(_ configuration: SafariView.Configuration) -> some View {
-        let modifier = SafariViewConfigurationModifier(configuration: configuration)
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
     /// Set the bar tint color of safari views within this view
     ///
     /// Use this modifier to set the bar tint color of safari views within this view:
@@ -198,28 +190,6 @@ public extension View {
         let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
         return ModifiedContent(content: self, modifier: modifier)
     }
-
-}
-
-private struct SafariViewConfigurationModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(configuration: SafariView.Configuration) {
-        self.configuration = configuration
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(\.safariViewConfiguration, configuration)
-    }
-
-    // MARK: - Private
-
-    private let configuration: SafariView.Configuration
 
 }
 
