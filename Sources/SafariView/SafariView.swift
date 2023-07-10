@@ -84,13 +84,13 @@ public struct SafariView: View {
         SFSafariViewController.prewarmConnections(to: URLs)
     }
 
-    /// Clears the safari view's cache
+    /// Clears the safari view's cache using [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/).
     @available(iOS 16.0, *)
     public static func clearWebsiteData() async {
         await SFSafariViewController.DataStore.default.clearWebsiteData()
     }
 
-    /// Clears the safari view's cache
+    /// Clears the safari view's cache using a completion handler.
     /// - Parameter completionHandler: Closure to execute after the operation completes
     @available(iOS 16.0, *)
     public static func clearWebsiteData(completionHandler: (() -> Void)?) {

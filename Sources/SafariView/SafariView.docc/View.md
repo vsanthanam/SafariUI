@@ -4,7 +4,7 @@
     @DocumentationExtension(mergeBehavior: append)
 }
 
-For configuration, appearance, and presentation options, see the documentation for the included view modifiers here: ``SwiftUI/View``.
+A SafariView is best presented by using one the `safari` view modifiers, or via sheet presentation, though it does work in other scenarios as well. For configuration, appearance, and presentation options, see the documentation for the included view modifiers here: ``SwiftUI/View``.
 
 ## Topics
 
