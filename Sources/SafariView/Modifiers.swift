@@ -28,22 +28,19 @@ import SwiftUI
 @available(iOS 15.0, macCatalyst 15.0, *)
 public extension View {
 
+    /// Set the configuration of safari views within this view
+    ///
+    /// - Parameter configuration: The configuration to use
+    /// - Returns: The modified view
+    func safariConfiguration(_ configuration: SafariView.Configuration) -> some View {
+        let modifier = SafariViewConfigurationModifier(configuration: configuration)
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
     /// Set the bar tint color of safari views within this view
     ///
-    /// Use this modifier to set the bar tint color of safari views within this view:
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///     var body: some View {
-    ///         HStack {
-    ///             SafariView(url: URL("https://www.apple.com")!)
-    ///         }
-    ///         .safariBarTintColor(Color.purple)
-    ///     }
-    /// }
-    /// ```
-    ///
     /// This modifier is the equivelent of the [`.preferredBarTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274394-preferredbartintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
+    ///
     /// - Parameter color: The color to use, or `nil` for the system default
     /// - Returns: The modified view
     func safariBarTintColor(_ color: Color?) -> some View {
@@ -54,6 +51,7 @@ public extension View {
     /// Set the control tint color of safari views within this view
     ///
     /// This modifier is the equivelent of the [`.preferredControlTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274393-preferredcontroltintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
+    ///
     /// - Parameter color: The color to use
     /// - Returns: The modified view
     func safariControlTintColor(_ color: Color) -> some View {
@@ -190,6 +188,26 @@ public extension View {
         let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
         return ModifiedContent(content: self, modifier: modifier)
     }
+
+}
+
+private struct SafariViewConfigurationModifier: ViewModifier {
+
+    // MARK: - Initializers
+
+    init(configuration: SafariView.Configuration) {
+        self.configuration = configuration
+    }
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        content
+            .environment(\.safariViewConfiguration, configuration)
+    }
+
+    // MARK: - Private
+
+    private let configuration: SafariView.Configuration
 
 }
 

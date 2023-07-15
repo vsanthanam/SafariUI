@@ -36,19 +36,16 @@ public struct SafariView: View {
     /// Create a SafariView
     /// - Parameters:
     ///   - url: URL to load
-    ///   - configuration: The configuration for the new view.
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
     ///   - onOpenInBrowser: Closure to execute if a user moves from a SafariView to Safari.app
     public init(
         url: URL,
-        configuration: Configuration = .init(),
         onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
         onInitialRedirect: ((_ url: URL) -> Void)? = nil,
         onOpenInBrowser: (() -> Void)? = nil
     ) {
         self.url = url
-        self.configuration = configuration
         self.onInitialLoad = onInitialLoad
         self.onInitialRedirect = onInitialRedirect
         self.onOpenInBrowser = onOpenInBrowser
@@ -106,6 +103,9 @@ public struct SafariView: View {
 
     // MARK: - Private
 
+    @Environment(\.safariViewConfiguration)
+    private var configuration: Configuration
+
     @Environment(\.safariViewBarTintColor)
     private var barTintColor: Color?
 
@@ -122,7 +122,6 @@ public struct SafariView: View {
     private var excludedActivityTypes: ExcludedActivityTypes
 
     private let url: URL
-    private let configuration: Configuration
     private let onInitialLoad: ((Bool) -> Void)?
     private let onInitialRedirect: ((URL) -> Void)?
     private let onOpenInBrowser: (() -> Void)?

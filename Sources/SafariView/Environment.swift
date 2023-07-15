@@ -28,6 +28,23 @@ import SwiftUI
 @available(iOS 15.0, macCatalyst 15.0, *)
 public extension EnvironmentValues {
 
+    /// The configuration value used by a ``SafariView``
+    ///
+    /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///
+    ///     @Environment(\.safariViewConfiguration)
+    ///     var safariViewConfiguration
+    ///
+    /// }
+    /// ```
+    var safariViewConfiguration: SafariView.Configuration {
+        get { self[SafariViewConfigurationEnvironmentKey.self] }
+        set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
+    }
+
     /// The additional activies to include the share sheet displayed inside a ``SafariView``
     ///
     /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
@@ -39,7 +56,7 @@ public extension EnvironmentValues {
     ///     var safariViewIncludedActivities
     ///
     /// }
-    /// `
+    /// ```
     var safariViewIncludedActivities: SafariView.IncludedActivities {
         get { self[SafariViewIncludedActivitiesEnvironmentKey.self] }
         set { self[SafariViewIncludedActivitiesEnvironmentKey.self] = newValue }

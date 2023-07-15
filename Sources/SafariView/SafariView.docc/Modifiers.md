@@ -4,6 +4,10 @@ View modifiers used to configure and present Safari Views.
 
 ## Topics
 
+### Configuration
+
+- ``safariConfiguration(_:)``
+
 ### Appearance
 
 - ``safariBarTintColor(_:)``
@@ -16,6 +20,7 @@ View modifiers used to configure and present Safari Views.
 - ``safari(url:onDismiss:safariView:)``
 - ``safari(item:onDismiss:safariView:)``
 - ``safari(item:id:onDismiss:safariView:)``
+- ``safari(url:)``
 
 ### Activities
 
