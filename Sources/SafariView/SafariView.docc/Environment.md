@@ -6,5 +6,6 @@ Environment Values used by Safari View
 
 ### Values
 
+- ``safariViewConfiguration``
 - ``safariViewIncludedActivities``
 - ``safariViewExcludedActivityTypes``

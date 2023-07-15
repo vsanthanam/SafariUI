@@ -10,7 +10,7 @@ A SafariView is best presented by using one the `safari` view modifiers, or via 
 
 ### Creating a Safari View
 
-- ``init(url:configuration:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
+- ``init(url:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 
 ### Configuring the View
 
