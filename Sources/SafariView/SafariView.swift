@@ -28,7 +28,7 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
-@available(iOS 15.0, macCatalyst 15.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -36,13 +36,34 @@ public struct SafariView: View {
     /// Create a SafariView
     /// - Parameters:
     ///   - url: URL to load
-    ///   - activityButton: Custom activity button to include in the safari view
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
     ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
     public init(
         url: URL,
-        activityButton: ActivityButton? = nil,
+        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (() -> Void)? = nil
+    ) {
+        self.url = url
+        activityButton = nil
+        eventAttribution = nil
+        self.onInitialLoad = onInitialLoad
+        self.onInitialRedirect = onInitialRedirect
+        self.onOpenInBrowser = onOpenInBrowser
+    }
+
+    /// Create a SafariView with a custom activity button
+    /// - Parameters:
+    ///   - url: URL to load
+    ///   - activityButton: Custom activity button to include in the safari view
+    ///   - onInitialLoad: Closure to execute on initial load
+    ///   - onInitialRedirect: Closure to execute on intial redirect
+    ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
+    @available(iOS 15.0, macCatalyst 15.0, *)
+    public init(
+        url: URL,
+        activityButton: ActivityButton?,
         onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
         onInitialRedirect: ((_ url: URL) -> Void)? = nil,
         onOpenInBrowser: (() -> Void)? = nil
@@ -88,11 +109,13 @@ public struct SafariView: View {
     public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
+    @available(iOS 15.0, macCatalyst 15.0, *)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
     ///
     /// You can generate prewarming tokens for invalidation using the ``prewarmConnections(to:)`` static method.
+    @available(iOS 15.0, macCatalyst 15.0, *)
     public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
     /// Prewarm the connection to a list of provided URLs
@@ -107,6 +130,7 @@ public struct SafariView: View {
     ///
     /// - Parameter URLs: The URLs to prewarm
     /// - Returns: A prewarming token for the provided URLs.
+    @available(iOS 15.0, macCatalyst 15.0, *)
     @discardableResult
     public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
         SFSafariViewController.prewarmConnections(to: URLs)
@@ -127,6 +151,7 @@ public struct SafariView: View {
 
     // MARK: - View
 
+    @_documentation(visibility: internal)
     public var body: some View {
         Safari(parent: self)
             .ignoresSafeArea(.container, edges: .all)
@@ -155,7 +180,7 @@ public struct SafariView: View {
     @Environment(\.safariViewExcludedActivityTypes)
     private var excludedActivityTypes: ExcludedActivityTypes
 
-    private let activityButton: ActivityButton?
+    private let activityButton: AnyObject?
     private let eventAttribution: AnyObject?
     private let url: URL
     private let onInitialLoad: ((Bool) -> Void)?
@@ -172,7 +197,10 @@ public struct SafariView: View {
         let configuration = SFSafariViewController.Configuration()
         configuration.entersReaderIfAvailable = entersReaderIfAvailable
         configuration.barCollapsingEnabled = barCollapsingEnabled
-        configuration.activityButton = activityButton
+        if #available(iOS 15.0, macCatalyst 15.0, *),
+           let activityButton {
+            configuration.activityButton = unsafeDowncast(activityButton, to: ActivityButton.self)
+        }
         if #available(iOS 15.2, *),
            let eventAttribution {
             configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
