@@ -28,12 +28,25 @@ import SwiftUI
 @available(iOS 15.0, macCatalyst 15.0, *)
 public extension View {
 
-    /// Set the configuration of safari views within this view
+    /// Set the automatic reader behavior of safari views within this view
     ///
-    /// - Parameter configuration: The configuration to use
+    /// This modifier is the equivelent of the of the [`entersReaderIfAvailable`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration/1648471-entersreaderifavailable) property of a [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
+    ///
+    /// - Parameter entersReaderIfAvailable: Whether or not the safari view should automatically enter reader mode if available.
     /// - Returns: The modified view
-    func safariConfiguration(_ configuration: SafariView.Configuration) -> some View {
-        let modifier = SafariViewConfigurationModifier(configuration: configuration)
+    func safariEntersReaderIfAvailable(_ entersReaderIfAvailable: Bool = true) -> some View {
+        let modifier = SafariViewEntersReaderIfAvailableModifier(entersReaderIfAvailable: entersReaderIfAvailable)
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
+    /// Set the bar collapsing behavior of safari views within this view
+    ///
+    /// This modifier is the equivelent of the of the [`barCollapsingEnabled`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration/2887469-barcollapsingenabled) property of a [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
+    ///
+    /// - Parameter barCollapsingEnabled: Whether or not bar collpasing should be enabled.
+    /// - Returns: The modified view
+    func safariBarCollapsingEnabled(_ barCollapsingEnabled: Bool = true) -> some View {
+        let modifier = SafariViewBarCollapsingEnabledModifier(barCollapsingEnabled: barCollapsingEnabled)
         return ModifiedContent(content: self, modifier: modifier)
     }
 
@@ -191,24 +204,47 @@ public extension View {
 
 }
 
-private struct SafariViewConfigurationModifier: ViewModifier {
+private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
     // MARK: - Initializers
 
-    init(configuration: SafariView.Configuration) {
-        self.configuration = configuration
+    init(entersReaderIfAvailable: Bool) {
+        self.entersReaderIfAvailable = entersReaderIfAvailable
     }
+
+    // MARK: - ViewModifier
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewConfiguration, configuration)
+            .environment(\.safariViewEntersReaderIfAvailable, entersReaderIfAvailable)
     }
 
     // MARK: - Private
 
-    private let configuration: SafariView.Configuration
+    private let entersReaderIfAvailable: Bool
 
+}
+
+private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
+
+    // MARK: - Initializers
+
+    init(barCollapsingEnabled: Bool) {
+        self.barCollapsingEnabled = barCollapsingEnabled
+    }
+
+    // MARK: - ViewModifier
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        content
+            .environment(\.safariViewBarCollapsingEnabled, barCollapsingEnabled)
+    }
+
+    // MARK: - Private
+
+    private let barCollapsingEnabled: Bool
 }
 
 private struct SafariViewControlTintColorModifier: ViewModifier {
