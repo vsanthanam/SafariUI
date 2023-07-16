@@ -6,7 +6,8 @@ View modifiers used to configure and present Safari Views.
 
 ### Configuration
 
-- ``safariConfiguration(_:)``
+- ``safariEntersReaderIfAvailable(_:)``
+- ``safariBarCollapsingEnabled(_:)``
 
 ### Appearance
 
@@ -20,7 +21,6 @@ View modifiers used to configure and present Safari Views.
 - ``safari(url:onDismiss:safariView:)``
 - ``safari(item:onDismiss:safariView:)``
 - ``safari(item:id:onDismiss:safariView:)``
-- ``safari(url:)``
 
 ### Activities
 

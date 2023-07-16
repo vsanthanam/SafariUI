@@ -312,11 +312,11 @@ public extension View {
     /// }
     /// ```
     ///
-    /// - Parameter url: A binding to an optional source of truth for the ``SafariView``. When the URL is non-nil, the system passes the URL to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If the URL changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
+    /// - Parameters:
+    ///   - url: A binding to an optional source of truth for the ``SafariView``. When the URL is non-nil, the system passes the URL to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If the URL changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
+    ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     /// - Returns: The modified view
-    func safari(url: Binding<URL?>) -> some View {
-        safari(item: url, id: \.hashValue) { url in
-            SafariView(url: url)
-        }
+    func safari(url: Binding<URL?>, onDismiss: (() -> Void)? = nil) -> some View {
+        safari(url: url, onDismiss: onDismiss) { url in SafariView(url: url) }
     }
 }

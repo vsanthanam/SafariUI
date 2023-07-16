@@ -36,16 +36,47 @@ public struct SafariView: View {
     /// Create a SafariView
     /// - Parameters:
     ///   - url: URL to load
+    ///   - activityButton: Custom activity button to include in the safari view
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
-    ///   - onOpenInBrowser: Closure to execute if a user moves from a SafariView to Safari.app
+    ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
     public init(
         url: URL,
+        activityButton: ActivityButton? = nil,
         onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
         onInitialRedirect: ((_ url: URL) -> Void)? = nil,
         onOpenInBrowser: (() -> Void)? = nil
     ) {
         self.url = url
+        self.activityButton = activityButton
+        eventAttribution = nil
+        self.onInitialLoad = onInitialLoad
+        self.onInitialRedirect = onInitialRedirect
+        self.onOpenInBrowser = onOpenInBrowser
+    }
+
+    /// Create a SafariView with tap attribution for Private Click Measurement
+    ///
+    /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution)
+    /// - Parameters:
+    ///   - url: URL to load
+    ///   - activityButton: Custom activity button to include in the safari view
+    ///   - eventAttribution: An object you use to send tap event attribution data to the browser for Private Click Measurement.
+    ///   - onInitialLoad: Closure to execute on initial load
+    ///   - onInitialRedirect: Closure to execute on intial redirect
+    ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
+    @available(iOS 15.2, macCatalyst 15.2, *)
+    public init(
+        url: URL,
+        activityButton: ActivityButton? = nil,
+        eventAttribution: UIEventAttribution?,
+        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (() -> Void)? = nil
+    ) {
+        self.url = url
+        self.activityButton = activityButton
+        self.eventAttribution = eventAttribution
         self.onInitialLoad = onInitialLoad
         self.onInitialRedirect = onInitialRedirect
         self.onOpenInBrowser = onOpenInBrowser
@@ -103,8 +134,11 @@ public struct SafariView: View {
 
     // MARK: - Private
 
-    @Environment(\.safariViewConfiguration)
-    private var configuration: Configuration
+    @Environment(\.safariViewEntersReaderIfAvailable)
+    private var entersReaderIfAvailable: Bool
+
+    @Environment(\.safariViewBarCollapsingEnabled)
+    private var barCollapsingEnabled: Bool
 
     @Environment(\.safariViewBarTintColor)
     private var barTintColor: Color?
@@ -121,6 +155,8 @@ public struct SafariView: View {
     @Environment(\.safariViewExcludedActivityTypes)
     private var excludedActivityTypes: ExcludedActivityTypes
 
+    private let activityButton: ActivityButton?
+    private let eventAttribution: AnyObject?
     private let url: URL
     private let onInitialLoad: ((Bool) -> Void)?
     private let onInitialRedirect: ((URL) -> Void)?
@@ -130,6 +166,18 @@ public struct SafariView: View {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
         controller.preferredControlTintColor = UIColor(controlTintColor)
         controller.dismissButtonStyle = dismissButtonStyle
+    }
+
+    private func buildConfiguration() -> SFSafariViewController.Configuration {
+        let configuration = SFSafariViewController.Configuration()
+        configuration.entersReaderIfAvailable = entersReaderIfAvailable
+        configuration.barCollapsingEnabled = barCollapsingEnabled
+        configuration.activityButton = activityButton
+        if #available(iOS 15.2, *),
+           let eventAttribution {
+            configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
+        }
+        return configuration
     }
 
     private struct Safari: UIViewControllerRepresentable {
@@ -151,7 +199,7 @@ public struct SafariView: View {
 
         func makeUIViewController(context: Context) -> SFSafariViewController {
             let safari = SFSafariViewController(url: parent.url,
-                                                configuration: parent.configuration.buildConfiguration())
+                                                configuration: parent.buildConfiguration())
             safari.modalPresentationStyle = .none
             safari.delegate = delegate
             parent.apply(to: safari)
@@ -342,7 +390,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildConfiguration())
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.buildConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
 
@@ -514,7 +562,7 @@ public struct SafariView: View {
                     onOpenInBrowser = rep.onOpenInBrowser
                     includedActivities = rep.includedActivities
                     excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.configuration.buildConfiguration())
+                    let vc = SFSafariViewController(url: rep.url, configuration: rep.buildConfiguration())
                     vc.delegate = self
                     rep.apply(to: vc)
                     guard let presenting = view.controller else {
@@ -641,21 +689,6 @@ private extension UIView {
         } else {
             return nil
         }
-    }
-
-}
-
-private extension SafariView.Configuration {
-
-    func buildConfiguration() -> SFSafariViewController.Configuration {
-        let configuration = SFSafariViewController.Configuration()
-        configuration.entersReaderIfAvailable = entersReaderIfAvailable
-        configuration.barCollapsingEnabled = barCollapsingEnabled
-        if #available(iOS 15.2, macCatalyst 15.2, *) {
-            configuration.eventAttribution = eventAttribution
-        }
-        configuration.activityButton = activityButton
-        return configuration
     }
 
 }

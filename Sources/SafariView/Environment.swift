@@ -28,23 +28,6 @@ import SwiftUI
 @available(iOS 15.0, macCatalyst 15.0, *)
 public extension EnvironmentValues {
 
-    /// The configuration value used by a ``SafariView``
-    ///
-    /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewConfiguration)
-    ///     var safariViewConfiguration
-    ///
-    /// }
-    /// ```
-    var safariViewConfiguration: SafariView.Configuration {
-        get { self[SafariViewConfigurationEnvironmentKey.self] }
-        set { self[SafariViewConfigurationEnvironmentKey.self] = newValue }
-    }
-
     /// The additional activies to include the share sheet displayed inside a ``SafariView``
     ///
     /// You can retrieve this value for the currnet scope using the `@Environment` property wrapper
@@ -83,6 +66,16 @@ public extension EnvironmentValues {
 
 extension EnvironmentValues {
 
+    var safariViewEntersReaderIfAvailable: Bool {
+        get { self[SafariViewEntersReaderIfAvailableEnvironmentKey.self] }
+        set { self[SafariViewEntersReaderIfAvailableEnvironmentKey.self] = newValue }
+    }
+
+    var safariViewBarCollapsingEnabled: Bool {
+        get { self[SafariViewBarCollapsingEnabledEnvironmentKey.self] }
+        set { self[SafariViewBarCollapsingEnabledEnvironmentKey.self] = newValue }
+    }
+
     var safariViewControlTintColor: Color {
         get { self[SafariViewControlTintColorEnvironmentKey.self] }
         set { self[SafariViewControlTintColorEnvironmentKey.self] = newValue }
@@ -100,13 +93,23 @@ extension EnvironmentValues {
 
 }
 
-private struct SafariViewConfigurationEnvironmentKey: EnvironmentKey {
+private struct SafariViewEntersReaderIfAvailableEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
 
-    typealias Value = SafariView.Configuration
+    typealias Value = Bool
 
-    static var defaultValue: SafariView.Configuration { .init() }
+    static let defaultValue: Value = false
+
+}
+
+private struct SafariViewBarCollapsingEnabledEnvironmentKey: EnvironmentKey {
+
+    // MARK: - EnvironmentKey
+
+    typealias Value = Bool
+
+    static let defaultValue: Value = false
 
 }
 
