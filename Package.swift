@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "SafariView",
     platforms: [
-        .iOS(.v15),
-        .macCatalyst(.v15)
+        .iOS(.v14),
+        .macCatalyst(.v14)
     ],
     products: [
         .library(

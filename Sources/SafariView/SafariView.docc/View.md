@@ -10,13 +10,9 @@ A SafariView is best presented by using one the `safari` view modifiers, or via 
 
 ### Creating a Safari View
 
+- ``init(url:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 - ``init(url:activityButton:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 - ``init(url:activityButton:eventAttribution:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
-
-### Configuring the View
-
-- ``ActivityButton``
-- ``DismissButtonStyle``
 
 ### Custom Activities
 
