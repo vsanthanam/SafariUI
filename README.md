@@ -4,7 +4,7 @@
 [![Package Releases](https://img.shields.io/github/v/release/vsanthanam/SafariView)](https://github.com/vsanthanam/SafariView/releases)
 [![Build Statis](https://img.shields.io/github/actions/workflow/status/vsanthanam/SafariView/xcodebuild-build-test.yml)](https://github.com/vsanthanam/SafariView/actions)
 [![Swift Version](https://img.shields.io/badge/swift-5.8-critical)](https://swift.org)
-[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2015.0-lightgrey)](https://developer.apple.com)
+[![Supported Platforms](https://img.shields.io/badge/platform-iOS%2014.0%20%7C%20Catalyst%2014.0-lightgrey)](https://developer.apple.com)
 
 A SwiftUI wrapper around `SFSafariViewController`
 
@@ -16,7 +16,7 @@ To add SafariView as a dependency to an existing Swift package, add the followin
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/vsanthanam/SafariView.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/vsanthanam/SafariView.git", .upToNextMajor(from: "2.0.0"))
 ]
 ```
 
