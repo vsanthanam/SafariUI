@@ -139,7 +139,7 @@ private struct SafariViewDismissButtonStyleEnvironmentKey: EnvironmentKey {
 
     typealias Value = SafariView.DismissButtonStyle
 
-    static var defaultValue: Value { .close }
+    static var defaultValue: Value { .default }
 
 }
 
