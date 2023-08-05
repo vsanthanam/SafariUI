@@ -16,4 +16,4 @@ jobs:
     - name: Lint
       run: swift package plugin --allow-writing-to-package-directory swiftformat --lint
     - name: Build & Test
-      run: xcodebuild -scheme 'SafariView' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' test
+      run: xcodebuild -scheme 'Safari' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' test

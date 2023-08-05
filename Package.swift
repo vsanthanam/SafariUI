@@ -4,15 +4,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "SafariView",
+    name: "Safari",
     platforms: [
         .iOS(.v14),
         .macCatalyst(.v14)
     ],
     products: [
         .library(
-            name: "SafariView",
-            targets: ["SafariView"]
+            name: "Safari",
+            targets: ["Safari"]
         ),
     ],
     dependencies: [
@@ -21,12 +21,12 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SafariView",
+            name: "Safari",
             dependencies: []
         ),
         .testTarget(
-            name: "SafariViewTests",
-            dependencies: ["SafariView"]
+            name: "SafariTests",
+            dependencies: ["Safari"]
         ),
     ]
 )

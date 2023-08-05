@@ -1,5 +1,5 @@
-// SafariView
-// DismissButtonStyle.swift
+// Safari
+// SafariViewTests.swift
 //
 // MIT License
 //
@@ -23,33 +23,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SafariServices
+@testable import Safari
+import XCTest
 
-public extension SafariView {
-
-    /// An enumeration describing the various dismiss buttons styles available in a ``SafariView``
-    enum DismissButtonStyle: Equatable, Hashable, Sendable {
-
-        /// The done dismiss button style.
-        case done
-
-        /// The close dismiss button style.
-        case close
-
-        /// The cancel dismiss button style.
-        case cancel
-
-        /// The default dismiss button style.
-        public static var `default`: DismissButtonStyle = .close
-
-        var uikit: SFSafariViewController.DismissButtonStyle {
-            switch self {
-            case .done: return .done
-            case .close: return .close
-            case .cancel: return .cancel
-            }
-        }
-
+final class SafariViewTests: XCTestCase {
+    func testExample() throws {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct
+        // results.
+//        XCTAssertEqual(SafariView().text, "Hello, World!")
     }
-
 }

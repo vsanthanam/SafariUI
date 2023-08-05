@@ -1,4 +1,4 @@
-// SafariView
+// Safari
 // IncludedActivities.swift
 //
 // MIT License

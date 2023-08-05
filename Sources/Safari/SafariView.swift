@@ -1,4 +1,4 @@
-// SafariView
+// Safari
 // SafariView.swift
 //
 // MIT License
@@ -711,4 +711,10 @@ private extension UIView {
         }
     }
 
+}
+
+struct SafariView_Previews: PreviewProvider {
+    static var previews: some View {
+        SafariView(url: URL(string: "https://www.apple.com")!)
+    }
 }

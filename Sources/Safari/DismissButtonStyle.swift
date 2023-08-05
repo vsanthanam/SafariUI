@@ -1,5 +1,5 @@
-// SafariView
-// PrewarmingToken.swift
+// Safari
+// DismissButtonStyle.swift
 //
 // MIT License
 //
@@ -25,26 +25,30 @@
 
 import SafariServices
 
-@available(iOS 15.0, macCatalyst 15.0, *)
 public extension SafariView {
 
-    /// A type created when SafariServices begins prewarming a connection.
-    final class PrewarmingToken {
+    /// An enumeration describing the various dismiss buttons styles available in a ``SafariView``
+    enum DismissButtonStyle: Equatable, Hashable, Sendable {
 
-        /// The URLs who's connections are being prewarmed.
-        public let urls: [URL]
+        /// The done dismiss button style.
+        case done
 
-        /// Invalidate the prewarmed connections.
-        public func invalidate() {
-            token.invalidate()
+        /// The close dismiss button style.
+        case close
+
+        /// The cancel dismiss button style.
+        case cancel
+
+        /// The default dismiss button style.
+        public static var `default`: DismissButtonStyle = .close
+
+        var uikit: SFSafariViewController.DismissButtonStyle {
+            switch self {
+            case .done: return .done
+            case .close: return .close
+            case .cancel: return .cancel
+            }
         }
-
-        init(_ token: SFSafariViewController.PrewarmingToken, urls: [URL]) {
-            self.token = token
-            self.urls = urls
-        }
-
-        private let token: SFSafariViewController.PrewarmingToken
 
     }
 
