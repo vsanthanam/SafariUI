@@ -4,6 +4,8 @@
     @DocumentationExtension(mergeBehavior: append)
 }
 
+## Overview
+
 You can initialize instances of this type using an array literal of `UIActivity` values. For example:
 
 ```swift

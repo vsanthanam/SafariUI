@@ -264,7 +264,7 @@ public extension View {
     func safari(
         url: Binding<URL?>,
         onDismiss: (() -> Void)? = nil,
-        @ViewBuilder safariView: @escaping (URL) -> SafariView
+        @ViewBuilder safariView: @escaping (URL) -> SafariView = { url in SafariView(url: url) }
     ) -> some View {
         safari(
             item: url,
@@ -272,51 +272,5 @@ public extension View {
             onDismiss: onDismiss,
             safariView: safariView
         )
-    }
-
-    /// Presents a ``SafariView`` using the given URL as a data source for the ``SafariView``'s content
-    ///
-    /// Use this method when you need to present a ``SafariView`` with content from a custom data source. The example below shows a custom data source `InventoryItem` that the closure uses to populate the ``SafariView`` before it is shown to the user:
-    ///
-    /// ```swift
-    /// import Foundation
-    /// import SafariView
-    /// import SwiftUI
-    ///
-    /// struct InventoryItem {
-    ///     let title: String
-    ///     let url: URL
-    /// }
-    ///
-    /// struct InventoryList: View {
-    ///
-    ///     init(inventory: [InventoryItem]) {
-    ///         self.inventory = inventory
-    ///     }
-    ///
-    ///     var inventory: [InventoryItem]
-    ///
-    ///     @State private var selectedURL: URL?
-    ///
-    ///     var body: some View {
-    ///         List(inventory.indices, id: \.self) { index in
-    ///             Button(action: {
-    ///                 self.selectedURL = inventory[index].url
-    ///             }) {
-    ///                 Text(inventory[index].title)
-    ///             }
-    ///         }
-    ///         .safari(item: $selectedURL)
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - url: A binding to an optional source of truth for the ``SafariView``. When the URL is non-nil, the system passes the URL to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If the URL changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
-    ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
-    /// - Returns: The modified view
-    func safari(url: Binding<URL?>, onDismiss: (() -> Void)? = nil) -> some View {
-        safari(url: url, onDismiss: onDismiss) { url in SafariView(url: url) }
     }
 }

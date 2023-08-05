@@ -105,18 +105,9 @@ public struct SafariView: View {
 
     // MARK: - API
 
-    /// A convenience typealias for [`SFSafariViewController.DismissButtonStyle`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/dismissbuttonstyle)
-    public typealias DismissButtonStyle = SFSafariViewController.DismissButtonStyle
-
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
     @available(iOS 15.0, macCatalyst 15.0, *)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
-
-    /// A convenience typealias for [`SFSafariViewController.PrewarmingToken`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/prewarmingtoken)
-    ///
-    /// You can generate prewarming tokens for invalidation using the ``prewarmConnections(to:)`` static method.
-    @available(iOS 15.0, macCatalyst 15.0, *)
-    public typealias PrewarmingToken = SFSafariViewController.PrewarmingToken
 
     /// Prewarm the connection to a list of provided URLs
     ///
@@ -133,7 +124,8 @@ public struct SafariView: View {
     @available(iOS 15.0, macCatalyst 15.0, *)
     @discardableResult
     public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
-        SFSafariViewController.prewarmConnections(to: URLs)
+        let token = SFSafariViewController.prewarmConnections(to: URLs)
+        return .init(token, urls: URLs)
     }
 
     /// Clears the safari view's cache using [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/).
@@ -189,7 +181,7 @@ public struct SafariView: View {
     private func apply(to controller: SFSafariViewController) {
         controller.preferredBarTintColor = barTintColor.map(UIColor.init)
         controller.preferredControlTintColor = UIColor(controlTintColor)
-        controller.dismissButtonStyle = dismissButtonStyle
+        controller.dismissButtonStyle = dismissButtonStyle.uikit
     }
 
     private func buildConfiguration() -> SFSafariViewController.Configuration {
