@@ -143,6 +143,7 @@ public struct SafariView: View {
 
     // MARK: - View
 
+    @_documentation(visibility: internal)
     public var body: some View {
         Safari(parent: self)
             .ignoresSafeArea(.container, edges: .all)
