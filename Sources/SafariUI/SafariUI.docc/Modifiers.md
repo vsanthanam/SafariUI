@@ -1,6 +1,6 @@
 # ``SwiftUI/View``
 
-SwiftUI view modifiers used to configure a ``SafariView/SafariView``
+SwiftUI view modifiers used to configure a ``SafariView``
 
 ## Topics
 
@@ -24,7 +24,7 @@ SwiftUI view modifiers used to configure a ``SafariView/SafariView``
 
 ### Custom Activities
 
-- ``SwiftUI/View/includedSafariActivities(_:)-2u8l9``
-- ``SwiftUI/View/includedSafariActivities(_:)-362lz``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-tvrg``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-1v8zq``
+- ``SwiftUI/View/includedSafariActivities(_:)-1yaml``
+- ``SwiftUI/View/includedSafariActivities(_:)-7buso``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-5sf78``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-4omxw``

@@ -2,5 +2,5 @@ version: 1
 builder:
   configs:
   - platform: ios
-    scheme: SafariView
-  - documentation_targets: [SafariView]
+    scheme: SafariUI
+  - documentation_targets: [SafariUI]

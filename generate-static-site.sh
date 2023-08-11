@@ -2,7 +2,7 @@
 branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 run_docc () {
-    xcodebuild docbuild -scheme SafariView -destination generic/platform=iOS OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path SafariView/docs --output-path docs" | xcbeautify
+    xcodebuild docbuild -scheme SafariUI -destination generic/platform=iOS OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path SafariUI/docs --output-path docs" | xcbeautify
 }
 
 create_branches () {

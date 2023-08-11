@@ -1,4 +1,4 @@
-// SafariView
+// SafariUI
 // Presentation.swift
 //
 // MIT License
