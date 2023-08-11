@@ -1,4 +1,4 @@
-#  ``SafariView/SafariView``
+#  ``SafariView``
 
 @Metadata {
     @DocumentationExtension(mergeBehavior: append)
@@ -14,8 +14,6 @@ UI features include the following:
 - A read-only address field with a security indicator and a Reader button
 - An Action button that invokes an activity view controller offering custom services from your app, and activities, such as messaging, from the system and other extensions
 - A Done button, back and forward navigation buttons, and a button to open the page directly in Safari
-
-The library contains a single `View`-conforming struct, also named `SafariView`, as well as several view modifiers used to control the appearance, behavior and presentation of a ``SafariView/SafariView``
 
 - Note: In Mac apps built with Mac Catalyst, SafariView launches the default web browser instead of displaying a modal window. SafariView is not compatible with macOS, tvOS, or watchOS.
 
@@ -42,7 +40,7 @@ You can also use sheet presentation, or any other presentation mechanism of your
 
 ### Appearance
 
-- ``SafariView/SafariView/DismissButtonStyle``
+- ``DismissButtonStyle``
 
 ### Connection Prewarming
 
@@ -56,9 +54,9 @@ You can also use sheet presentation, or any other presentation mechanism of your
 
 ### Custom Activities
 
-- ``SafariView/SafariView/IncludedActivities``
-- ``SafariView/SafariView/ExcludedActivityTypes``
-- ``SafariView/SafariView/ActivityButton``
+- ``IncludedActivities``
+- ``ExcludedActivityTypes``
+- ``ActivityButton``
 
 ### Environment Values
 

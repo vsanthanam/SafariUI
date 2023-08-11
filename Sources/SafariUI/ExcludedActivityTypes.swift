@@ -1,4 +1,4 @@
-// SafariView
+// SafariUI
 // ExcludedActivityTypes.swift
 //
 // MIT License

@@ -1,4 +1,4 @@
-// SafariView
+// SafariUI
 // DismissButtonStyle.swift
 //
 // MIT License

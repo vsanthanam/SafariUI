@@ -4,29 +4,29 @@
 import PackageDescription
 
 let package = Package(
-    name: "SafariView",
+    name: "SafariUI",
     platforms: [
         .iOS(.v14),
         .macCatalyst(.v14)
     ],
     products: [
         .library(
-            name: "SafariView",
-            targets: ["SafariView"]
+            name: "SafariUI",
+            targets: ["SafariUI"]
         ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.51.7")
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.51.15")
     ],
     targets: [
         .target(
-            name: "SafariView",
+            name: "SafariUI",
             dependencies: []
         ),
         .testTarget(
-            name: "SafariViewTests",
-            dependencies: ["SafariView"]
+            name: "SafariUITests",
+            dependencies: ["SafariUI"]
         ),
     ]
 )

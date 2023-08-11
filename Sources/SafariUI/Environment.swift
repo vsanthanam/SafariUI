@@ -1,4 +1,4 @@
-// SafariView
+// SafariUI
 // Environment.swift
 //
 // MIT License

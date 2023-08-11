@@ -1,5 +1,5 @@
-// SafariView
-// SafariViewTests.swift
+// SafariUI
+// PrewarmingToken.swift
 //
 // MIT License
 //
@@ -23,14 +23,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@testable import SafariView
-import XCTest
+import SafariServices
 
-final class SafariViewTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-//        XCTAssertEqual(SafariView().text, "Hello, World!")
+@available(iOS 15.0, macCatalyst 15.0, *)
+public extension SafariView {
+
+    /// A type created when SafariServices begins prewarming a connection.
+    final class PrewarmingToken {
+
+        /// The URLs who's connections are being prewarmed.
+        public let urls: [URL]
+
+        /// Invalidate the prewarmed connections.
+        public func invalidate() {
+            token.invalidate()
+        }
+
+        init(_ token: SFSafariViewController.PrewarmingToken, urls: [URL]) {
+            self.token = token
+            self.urls = urls
+        }
+
+        private let token: SFSafariViewController.PrewarmingToken
+
     }
+
 }

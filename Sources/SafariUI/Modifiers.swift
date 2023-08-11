@@ -1,4 +1,4 @@
-// SafariView
+// SafariUI
 // Modifiers.swift
 //
 // MIT License
