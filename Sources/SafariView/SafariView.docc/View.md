@@ -36,24 +36,13 @@ You can also use sheet presentation, or any other presentation mechanism of your
 - ``init(url:activityButton:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 - ``init(url:activityButton:eventAttribution:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 
-### Configuration
+### View Modifiers
 
-- ``SwiftUI/View/safariEntersReaderIfAvailable(_:)``
-- ``SwiftUI/View/safariBarCollapsingEnabled(_:)``
+- ``SwiftUI/View``
 
 ### Appearance
 
-- ``SwiftUI/View/safariBarTintColor(_:)``
-- ``SwiftUI/View/safariControlTintColor(_:)``
-- ``SwiftUI/View/safariDismissButtonStyle(_:)``
 - ``SafariView/SafariView/DismissButtonStyle``
-
-### Presentation
-
-- ``SwiftUI/View/safari(isPresented:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(url:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:id:onDismiss:safariView:)``
 
 ### Connection Prewarming
 
@@ -67,12 +56,9 @@ You can also use sheet presentation, or any other presentation mechanism of your
 
 ### Custom Activities
 
-- ``SwiftUI/View/includedSafariActivities(_:)-2u8l9``
-- ``SwiftUI/View/includedSafariActivities(_:)-362lz``
 - ``SafariView/SafariView/IncludedActivities``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-tvrg``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-1v8zq``
 - ``SafariView/SafariView/ExcludedActivityTypes``
+- ``SafariView/SafariView/ActivityButton``
 
 ### Environment Values
 
