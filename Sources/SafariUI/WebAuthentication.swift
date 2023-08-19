@@ -142,6 +142,8 @@ public struct WebAuthentication {
                     session.presentationContextProvider = contextProvider
                     session.prefersEphemeralWebBrowserSession = parent.prefersEphemeralWebBrowserSession
 
+                    session.start()
+
                     self.session = session
                 }
 
@@ -272,6 +274,8 @@ public struct WebAuthentication {
 
                     session.presentationContextProvider = contextProvider
                     session.prefersEphemeralWebBrowserSession = parent.prefersEphemeralWebBrowserSession
+
+                    session.start()
 
                     self.session = session
                 }
