@@ -274,32 +274,3 @@ public extension View {
         )
     }
 }
-
-public extension View {
-
-    func webAuthentication(
-        _ isPresented: Binding<Bool>,
-        webAuthentication: @escaping () -> WebAuthentication
-    ) -> some View {
-        let modifier = WebAuthentication.BoolModifier(isPresented: isPresented, build: webAuthentication)
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
-    func webAuthentication<Item>(
-        _ item: Binding<Item?>,
-        webAuthentication: @escaping (Item) -> WebAuthentication
-    ) -> some View where Item: Identifiable {
-        let modifier = WebAuthentication.IdentifiableItemModitifer(item: item, build: webAuthentication)
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
-    func webAuthentication<Item, Identifier>(
-        _ item: Binding<Item?>,
-        id: KeyPath<Item, Identifier>,
-        webAuthentication: @escaping (Item) -> WebAuthentication
-    ) -> some View where Identifier: Hashable {
-        let modifier = WebAuthentication.ItemModifier(item: item, id: id, build: webAuthentication)
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
-}
