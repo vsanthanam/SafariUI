@@ -34,10 +34,6 @@ You can also use sheet presentation, or any other presentation mechanism of your
 - ``init(url:activityButton:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 - ``init(url:activityButton:eventAttribution:onInitialLoad:onInitialRedirect:onOpenInBrowser:)``
 
-### View Modifiers
-
-- ``SwiftUI/View``
-
 ### Appearance
 
 - ``DismissButtonStyle``

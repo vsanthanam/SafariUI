@@ -637,69 +637,48 @@ public struct SafariView: View {
 
     struct ItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
 
-        // MARK: - Initializers
+        @Binding
+        var item: Item?
 
-        init(
-            item: Binding<Item?>,
-            id: KeyPath<Item, Identifier>,
-            onDismiss: (() -> Void)? = nil,
-            @ViewBuilder safariView: @escaping (Item) -> SafariView
-        ) {
-            self.item = item
-            self.id = id
-            self.onDismiss = onDismiss
-            self.safariView = safariView
-        }
+        let id: KeyPath<Item, Identifier>
+        let onDismiss: (() -> Void)?
+        let build: (Item) -> SafariView
 
         // MARK: - ViewModifier
 
         @ViewBuilder
         func body(content: Content) -> some View {
             content
-                .safari(item: binding, onDismiss: onDismiss) { wrappedItem in
-                    safariView(wrappedItem.item)
+                .safari(item: wrapped, onDismiss: onDismiss) { item in
+                    build(item.wrapped)
                 }
         }
 
         // MARK: - Private
 
-        private let item: Binding<Item?>
-        private let id: KeyPath<Item, Identifier>
-        private let onDismiss: (() -> Void)?
-        private let safariView: (Item) -> SafariView
-
-        private var binding: Binding<WrappedItem?> {
-            Binding<WrappedItem?> {
-                guard let item = item.wrappedValue else {
-                    return nil
-                }
-                return WrappedItem(item, id)
-            } set: { newValue in
-                item.wrappedValue = newValue?.item
-            }
-        }
-
         private struct WrappedItem: Identifiable {
-            init(_ item: Item,
-                 _ keyPath: KeyPath<Item, Identifier>) {
-                self.item = item
-                self.keyPath = keyPath
-            }
+            let wrapped: Item
+            let path: KeyPath<Item, Identifier>
+            var id: Identifier { wrapped[keyPath: path] }
+        }
 
-            let item: Item
-            private let keyPath: KeyPath<Item, Identifier>
-
-            typealias ID = Identifier
-
-            var id: ID {
-                item[keyPath: keyPath]
+        private var wrapped: Binding<WrappedItem?> {
+            Binding<WrappedItem?> {
+                item.map(wrap)
+            } set: { newValue in
+                item = newValue?.wrapped
             }
         }
+
+        private func wrap(_ item: Item) -> WrappedItem {
+            .init(wrapped: item, path: id)
+        }
+
     }
 
 }
 
-private extension UIView {
+extension UIView {
 
     var controller: UIViewController? {
         if let nextResponder = next as? UIViewController {

@@ -11,3 +11,11 @@ SafariServices in SwiftUI
 ### Views
 
 - ``SafariView``
+
+### Structures
+
+- ``WebAuthentication``
+
+### View Modifiers
+
+- ``SwiftUI/View``

@@ -196,17 +196,17 @@ public extension View {
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
-    func safari<Item>(
+    func safari<Item, Identifier>(
         item: Binding<Item?>,
-        id: KeyPath<Item, some Hashable>,
+        id: KeyPath<Item, Identifier>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder safariView: @escaping (Item) -> SafariView
-    ) -> some View {
+    ) -> some View where Identifier: Hashable {
         let modifier = SafariView.ItemModifier(
             item: item,
             id: id,
             onDismiss: onDismiss,
-            safariView: safariView
+            build: safariView
         )
         return ModifiedContent(content: self, modifier: modifier)
     }
@@ -273,4 +273,33 @@ public extension View {
             safariView: safariView
         )
     }
+}
+
+public extension View {
+
+    func webAuthentication(
+        _ isPresented: Binding<Bool>,
+        webAuthentication: @escaping () -> WebAuthentication
+    ) -> some View {
+        let modifier = WebAuthentication.BoolModifier(isPresented: isPresented, build: webAuthentication)
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
+    func webAuthentication<Item>(
+        _ item: Binding<Item?>,
+        webAuthentication: @escaping (Item) -> WebAuthentication
+    ) -> some View where Item: Identifiable {
+        let modifier = WebAuthentication.IdentifiableItemModitifer(item: item, build: webAuthentication)
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
+    func webAuthentication<Item, Identifier>(
+        _ item: Binding<Item?>,
+        id: KeyPath<Item, Identifier>,
+        webAuthentication: @escaping (Item) -> WebAuthentication
+    ) -> some View where Identifier: Hashable {
+        let modifier = WebAuthentication.ItemModifier(item: item, id: id, build: webAuthentication)
+        return ModifiedContent(content: self, modifier: modifier)
+    }
+
 }

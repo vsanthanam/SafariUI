@@ -91,6 +91,11 @@ extension EnvironmentValues {
         set { self[SafariViewDismissButtonStyleEnvironmentKey.self] = newValue }
     }
 
+    var webAuthenticationPrefersEphemeralWebBrowserSession: Bool {
+        get { self[WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey.self] }
+        set { self[WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey.self] = newValue }
+    }
+
 }
 
 private struct SafariViewEntersReaderIfAvailableEnvironmentKey: EnvironmentKey {
@@ -160,5 +165,13 @@ private struct SafariViewExcludedActivityTypesEnvironmentKey: EnvironmentKey {
     typealias Value = SafariView.ExcludedActivityTypes
 
     static let defaultValue: Value = .default
+
+}
+
+private struct WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey: EnvironmentKey {
+
+    typealias Value = Bool
+
+    static let defaultValue: Bool = false
 
 }
