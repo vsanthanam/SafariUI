@@ -24,10 +24,10 @@ SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthenticati
 
 ### SafarView Custom Activities
 
-- ``SwiftUI/View/includedSafariActivities(_:)-1yaml``
-- ``SwiftUI/View/includedSafariActivities(_:)-7buso``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-5sf78``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-4omxw``
+- ``SwiftUI/View/includedSafariActivities(_:)-362lz``
+- ``SwiftUI/View/includedSafariActivities(_:)-2u8l9``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-1v8zq``
+- ``SwiftUI/View/excludedSafariActivityTypes(_:)-tvrg``
 
 ### WebAuthentication Configuration
 
@@ -35,6 +35,6 @@ SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthenticati
 
 ### WebAuthentication Presentation
 
-- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5m8qc``
-- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-9e7q7``
+- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-74m38``
+- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5x82p``
 - ``SwiftUI/View/webAuthentication(_:id:webAuthentication:)``
