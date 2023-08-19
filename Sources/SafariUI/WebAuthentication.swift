@@ -101,7 +101,7 @@ public struct WebAuthentication {
                 context.coordinator.isPresented = isPresented
             }
 
-            final class Coordinator: NSObject {
+            final class Coordinator: NSObject, WebAuthenticationCoordinator {
                 init(parent: Presenter) {
                     self.parent = parent
                 }
@@ -119,7 +119,7 @@ public struct WebAuthentication {
                     }
                 }
 
-                private lazy var contextProvider = ContextProvider(coordinator: self)
+                private lazy var contextProvider = ContextProvider<Coordinator>(coordinator: self)
 
                 private weak var session: ASWebAuthenticationSession?
 
@@ -145,25 +145,6 @@ public struct WebAuthentication {
                     session.start()
 
                     self.session = session
-                }
-
-                private final class ContextProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-
-                    // MARK: - Initializers
-
-                    init(coordinator: Coordinator) {
-                        self.coordinator = coordinator
-                    }
-
-                    // MARK: - API
-
-                    unowned var coordinator: Coordinator
-
-                    // MARK: - ASWebAuthenticationPresentationContextProviding
-
-                    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-                        coordinator.view.window ?? ASPresentationAnchor()
-                    }
                 }
             }
         }
@@ -222,7 +203,7 @@ public struct WebAuthentication {
                 context.coordinator.item = item
             }
 
-            final class Coordinator: NSObject {
+            final class Coordinator: NSObject, WebAuthenticationCoordinator {
 
                 // MARK: - Initializers
 
@@ -252,7 +233,7 @@ public struct WebAuthentication {
 
                 // MARK: - Private
 
-                private lazy var contextProvider = ContextProvider(coordinator: self)
+                private lazy var contextProvider = ContextProvider<Coordinator>(coordinator: self)
 
                 private weak var session: ASWebAuthenticationSession?
 
@@ -278,25 +259,6 @@ public struct WebAuthentication {
                     session.start()
 
                     self.session = session
-                }
-
-                private final class ContextProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-
-                    // MARK: - Initializers
-
-                    init(coordinator: Coordinator) {
-                        self.coordinator = coordinator
-                    }
-
-                    // MARK: - API
-
-                    unowned var coordinator: Coordinator
-
-                    // MARK: - ASWebAuthenticationPresentationContextProviding
-
-                    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-                        coordinator.view.window ?? ASPresentationAnchor()
-                    }
                 }
             }
         }
@@ -342,6 +304,29 @@ public struct WebAuthentication {
             .init(wrapped: item, path: id)
         }
     }
+}
+
+private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, ASWebAuthenticationPresentationContextProviding {
+
+    // MARK: - Initializers
+
+    init(coordinator: T) {
+        self.coordinator = coordinator
+    }
+
+    // MARK: - API
+
+    unowned var coordinator: T
+
+    // MARK: - ASWebAuthenticationPresentationContextProviding
+
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        coordinator.view.window ?? ASPresentationAnchor()
+    }
+}
+
+private protocol WebAuthenticationCoordinator: NSObject {
+    var view: UIView { get }
 }
 
 private struct UnknownError: Error {}
