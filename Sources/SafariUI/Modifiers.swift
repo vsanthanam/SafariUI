@@ -202,6 +202,11 @@ public extension View {
         return ModifiedContent(content: self, modifier: modifier)
     }
 
+    func webAuthenticationPrefersEphemeralWebBrowserSession(_ prefersEphemeralWebBrowserSession: Bool = true) -> some View {
+        let modifer = WebAuthenticationPrefersEphemeralWebBrowserSessionModifier(prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession)
+        return ModifiedContent(content: self, modifier: modifer)
+    }
+
 }
 
 private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
@@ -343,7 +348,7 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
         self.activityTypes = activityTypes
     }
 
-    // MARK: - ViewBuilder
+    // MARK: - ViewModifier
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -355,4 +360,25 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     private let activityTypes: SafariView.ExcludedActivityTypes
 
+}
+
+private struct WebAuthenticationPrefersEphemeralWebBrowserSessionModifier: ViewModifier {
+
+    // MARK: - Initializers
+
+    init(prefersEphemeralWebBrowserSession: Bool) {
+        self.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
+    }
+
+    // MARK: - ViewModifier
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        content
+            .environment(\.webAuthenticationPrefersEphemeralWebBrowserSession, prefersEphemeralWebBrowserSession)
+    }
+
+    // MARK: - Private
+
+    private let prefersEphemeralWebBrowserSession: Bool
 }

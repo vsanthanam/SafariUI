@@ -49,7 +49,5 @@ public extension SafariView {
             case .cancel: return .cancel
             }
         }
-
     }
-
 }
