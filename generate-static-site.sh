@@ -14,10 +14,6 @@ fix_readme () {
     tail -n +2 README.md > README-2.md && mv README-2.md README.md
 }
 
-assign_theme () {
-    echo "theme: jekyll-theme-cayman" > _config.yml
-}
-
 commit_and_publish () {
     git add .
     git commit -m 'Synchronize Hompage & Publish Documentation'
@@ -34,7 +30,6 @@ generate_documentation () {
     create_branches
     run_docc
     fix_readme
-    assign_theme
     commit_and_publish
     clean_up
 }

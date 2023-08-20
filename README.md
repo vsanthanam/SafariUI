@@ -6,7 +6,7 @@
 [![Swift Version](https://img.shields.io/badge/swift-5.8-critical)](https://swift.org)
 [![Supported Platforms](https://img.shields.io/badge/platform-iOS%2014.0%20%7C%20Catalyst%2014.0-lightgrey)](https://developer.apple.com)
 
-A SwiftUI wrapper around `SFSafariViewController`
+A SwiftUI wrappers for `SFSafariViewController` and `ASWebAuthenticationSession`
 
 ## Installation
 
