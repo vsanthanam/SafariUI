@@ -27,6 +27,14 @@ import SwiftUI
 
 public extension View {
 
+    /// Presents a ``WebAuthentication`` when a binding to a Boolean value that you provide is `true`.
+    ///
+    /// Use this method when you want to present a ``WebAuthentication`` to the user when a Boolean value you provide is true.
+    ///
+    /// - Parameters:
+    ///   - isPresented: A binding to a Boolean value that determines whether to present the ``WebAuthentication`` that you create in the modifier’s content closure.
+    ///   - webAuthentication: A closure that returns the ``WebAuthentication`` to present
+    /// - Returns: The modified view
     func webAuthentication(
         _ isPresented: Binding<Bool>,
         webAuthentication: @escaping () -> WebAuthentication
@@ -35,6 +43,14 @@ public extension View {
         return ModifiedContent(content: self, modifier: modifier)
     }
 
+    /// Presents a ``WebAuthentication`` using the given item as a data source for the ``WebAuthentication``'s content
+    ///
+    /// Use this method when you need to present a ``WebAuthentication`` with content from a custom data source.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the ``WebAuthentication``. When item is non-nil, the system passes the item’s content to the modifier’s closure. You display this content in a ``WebAuthentication`` that you create that the system displays to the user. If item changes, the system dismisses the ``WebAuthentication`` and replaces it with a new one using the same process.
+    ///   - webAuthentication: A closure that returns the ``WebAuthentication`` to present
+    /// - Returns: The modified view
     func webAuthentication<Item>(
         _ item: Binding<Item?>,
         webAuthentication: @escaping (Item) -> WebAuthentication
@@ -43,6 +59,14 @@ public extension View {
         return ModifiedContent(content: self, modifier: modifier)
     }
 
+    /// Presents a ``WebAuthentication`` using the given item as a data source for the ``WebAuthentication``'s content
+    ///
+    /// Use this method when you need to present a ``WebAuthentication`` with content from a custom data source.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the ``WebAuthentication``. When item is non-nil, the system passes the item’s content to the modifier’s closure. You display this content in a ``WebAuthentication`` that you create that the system displays to the user. If item changes, the system dismisses the ``WebAuthentication`` and replaces it with a new one using the same process.
+    ///   - id: A keypath used to generate stable identifier for instances of `Item`.
+    ///   - webAuthentication: A closure that returns the ``WebAuthentication`` to present.
     func webAuthentication<Item, Identifier>(
         _ item: Binding<Item?>,
         id: KeyPath<Item, Identifier>,

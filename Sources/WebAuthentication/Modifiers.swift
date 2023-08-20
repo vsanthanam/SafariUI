@@ -27,6 +27,12 @@ import SwiftUI
 
 public extension View {
 
+    /// Set the private authentication requirements for authentication sessions within this view.
+    ///
+    /// This modifier is the equivelent of the of the [`prefersEphemeralWebBrowserSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession/3237231-prefersephemeralwebbrowsersessio) property of a [`ASWebAuthnticationSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession)
+    ///
+    /// - Parameter prefersEphemeralWebBrowserSession: Whether or not the web authentication session should ask for a private authentication session.
+    /// - Returns: The modified view
     func webAuthenticationPrefersEphemeralWebBrowserSession(_ prefersEphemeralWebBrowserSession: Bool = true) -> some View {
         let modifer = WebAuthenticationPrefersEphemeralWebBrowserSessionModifier(prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession)
         return ModifiedContent(content: self, modifier: modifer)
