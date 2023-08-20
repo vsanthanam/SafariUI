@@ -22,7 +22,6 @@ let package = Package(
             name: "WebAuthentication",
             targets: ["WebAuthentication"]
         ),
-
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
@@ -40,10 +39,6 @@ let package = Package(
         .target(
             name: "WebAuthentication",
             dependencies: []
-        ),
-        .testTarget(
-            name: "SafariUITests",
-            dependencies: ["SafariUI"]
         ),
     ]
 )
