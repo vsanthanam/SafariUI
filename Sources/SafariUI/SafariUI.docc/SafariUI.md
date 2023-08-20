@@ -8,6 +8,8 @@ SafariServices in SwiftUI
 
 Both `WebAuthentication` and `SafariView` are separate modules that can be imported individualy, or together using the `SafariUI` module. 
 
+- Note: The package contains multiple modules. You can depend on the whole library by importing the `SwiftUI` module, or you can depend on individual modules like `SafariView` or `WebAuthentication` as needed.
+
 ## Topics
 
 ### Views

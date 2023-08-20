@@ -27,7 +27,7 @@ To add SafariUI as a dependency to an Xcode Project:
 
 Other distribution mechanisms like CocoaPods or Carthage may be added in the future.
 
-*Note: The package contains multiple modules. You can import all of the provided tools using the `SwiftUI` modules, or individual modules like `SafariView` and `WebAuthentication` as needed.*
+*Note: The package contains multiple modules. You can depend on the whole library by importing the `SwiftUI` module, or you can depend on individual modules like `SafariView` or `WebAuthentication` as needed.*
 
 ## Usage & Documentation
 
