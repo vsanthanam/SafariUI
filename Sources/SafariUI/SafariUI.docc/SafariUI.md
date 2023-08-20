@@ -4,7 +4,7 @@ SafariServices in SwiftUI
 
 ## Overview
 
-`SafariUI` is a package that wraps [`SafariServices`](https://developer.apple.com/documentation/safariservices/) for use with SwiftUI applications. Currently, it contains a single SwiftUI view, called `SafariView`, which wraps [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller).
+`SafariUI` is a package that allows you to display instances of Safari inside your SwiftUI applications. Use ``WebAuthentication`` when using Safari to authenticate users, and ``SafariView`` for a standard Safari experience.
 
 ## Topics
 

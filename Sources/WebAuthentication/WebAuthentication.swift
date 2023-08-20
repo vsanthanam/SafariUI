@@ -32,6 +32,47 @@ public struct WebAuthentication {
     // MARK: - Initializers
 
     /// Create a web authentication session
+    ///
+    /// You must present a `WebAuthentication` challenge to your users using one of our provided presentation view modifiers:
+    ///
+    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-74m38``
+    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5x82p``
+    /// - ``SwiftUI/View/webAuthentication(_:id:webAuthentication:)``
+    ///
+    /// For example:
+    ///
+    /// ```swift
+    /// struct AuthenticateButton: View {
+    ///     var body: some View {
+    ///
+    ///         @State
+    ///         var isPresented = false
+    ///
+    ///         static let authURL = URL(string: "https://www.myserver.com/auth?argument=foo")!
+    ///         static let scheme = "myserver"
+    ///
+    ///         Button("Connect Github") {
+    ///             isPresented.toggle()
+    ///         }
+    ///         .webAuthentication($isPresented) {
+    ///             WebAuthentication(
+    ///                 url: authURL,
+    ///                 callbackURLScheme: scheme
+    ///             ) { result in
+    ///                 do {
+    ///                     let callback = try result.get()
+    ///                     // Authentication complete. Perform callback.
+    ///                 } catch {
+    ///                     // Authentication failed. Display error message to user.
+    ///                 }
+    ///             }
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// You cannot display a `WebAuthentication` cannot be displayed any other way.
+    ///
     /// - Parameters:
     ///   - url: The URL pointing to the authentication page
     ///   - callbackURLScheme: The URL scheme that the app should expect when receiving the authentication callback
@@ -48,6 +89,7 @@ public struct WebAuthentication {
 
     // MARK: - API
 
+    /// A completion handler for the web authentication session.
     public typealias CompletionHandler = (Result<URL, any Error>) -> Void
 
     // MARK: - Private
