@@ -27,6 +27,8 @@ To add SafariUI as a dependency to an Xcode Project:
 
 Other distribution mechanisms like CocoaPods or Carthage may be added in the future.
 
+*Note: The package contains multiple modules. You can import all of the provided tools using the `SwiftUI` modules, or individual modules like `SafariView` and `WebAuthentication` as needed.*
+
 ## Usage & Documentation
 
 SafariUI's documentation is built with [DocC](https://developer.apple.com/documentation/docc) and included in the repository as a DocC archive. The latest version is hosted on [GitHub Pages](https://pages.github.com) and is available [here](https://vsanthanam.github.io/SafariUI/docs/documentation/safariui).
