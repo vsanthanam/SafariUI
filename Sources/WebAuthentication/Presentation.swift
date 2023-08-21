@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Presents a ``WebAuthentication`` when a binding to a Boolean value that you provide is `true`.
