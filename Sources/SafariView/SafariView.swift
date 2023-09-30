@@ -3,7 +3,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2021 Varun Santhanam
+// Copyright (c) 2023 Varun Santhanam
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the  Software), to deal
 //
@@ -682,11 +682,11 @@ extension UIView {
 
     var controller: UIViewController? {
         if let nextResponder = next as? UIViewController {
-            return nextResponder
+            nextResponder
         } else if let nextResponder = next as? UIView {
-            return nextResponder.controller
+            nextResponder.controller
         } else {
-            return nil
+            nil
         }
     }
 

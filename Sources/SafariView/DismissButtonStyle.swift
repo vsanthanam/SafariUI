@@ -3,7 +3,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2021 Varun Santhanam
+// Copyright (c) 2023 Varun Santhanam
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the  Software), to deal
 //
@@ -45,9 +45,9 @@ public extension SafariView {
 
         var uikit: SFSafariViewController.DismissButtonStyle {
             switch self {
-            case .done: return .done
-            case .close: return .close
-            case .cancel: return .cancel
+            case .done: .done
+            case .close: .close
+            case .cancel: .cancel
             }
         }
     }
