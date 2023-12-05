@@ -154,6 +154,7 @@ public struct WebAuthentication {
 
                 var isPresented: Bool = false {
                     didSet {
+                        guard isPresented != oldValue else { return }
                         if isPresented {
                             start()
                         } else {
@@ -261,6 +262,9 @@ public struct WebAuthentication {
 
                 var item: Item? {
                     didSet {
+                        guard item?.id != oldValue?.id else {
+                            return
+                        }
                         switch (oldValue, item) {
                         case (.none, .none):
                             break
