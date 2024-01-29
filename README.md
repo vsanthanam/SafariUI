@@ -16,7 +16,7 @@ To add SafariUI as a dependency to an existing Swift package, add the following 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "2.0.0"))
+    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "3.0.0"))
 ]
 ```
 
