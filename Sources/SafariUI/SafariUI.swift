@@ -26,4 +26,5 @@
 @_exported import SafariView
 @_exported import WebAuthentication
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 struct SafariUIHolder {}

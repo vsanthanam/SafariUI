@@ -25,6 +25,7 @@
 
 import SwiftUI
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 extension EnvironmentValues {
 
     var webAuthenticationPrefersEphemeralWebBrowserSession: Bool {
@@ -34,6 +35,7 @@ extension EnvironmentValues {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 private struct WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey: EnvironmentKey {
 
     typealias Value = Bool

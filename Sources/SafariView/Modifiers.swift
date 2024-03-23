@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 public extension View {
 
     /// Set the automatic reader behavior of safari views within this view
@@ -224,7 +224,7 @@ public extension View {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -250,7 +250,7 @@ private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -275,7 +275,7 @@ private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
     private let barCollapsingEnabled: Bool
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewControlTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -301,7 +301,7 @@ private struct SafariViewControlTintColorModifier: ViewModifier {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewBarTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -327,7 +327,7 @@ private struct SafariViewBarTintColorModifier: ViewModifier {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -353,7 +353,7 @@ private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -379,7 +379,7 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     // MARK: - Initializers

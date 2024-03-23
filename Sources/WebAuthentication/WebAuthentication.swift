@@ -25,9 +25,10 @@
 
 import AuthenticationServices
 import SwiftUI
+import UIKit
 
 /// A wrapper for `ASWebAuthenticationSession` in SwiftUI
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 public struct WebAuthentication {
 
     // MARK: - Initializers
@@ -353,6 +354,7 @@ public struct WebAuthentication {
     }
 }
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, ASWebAuthenticationPresentationContextProviding {
 
     // MARK: - Initializers
@@ -372,8 +374,10 @@ private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, 
     }
 }
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 private protocol WebAuthenticationCoordinator: NSObject {
     var view: UIView { get }
 }
 
+@available(iOS 14.0, macCatalyst 14.0, tvOS 14.0, visionOS 1.0, *)
 private struct UnknownError: Error {}

@@ -7,7 +7,9 @@ let package = Package(
     name: "SafariUI",
     platforms: [
         .iOS(.v14),
-        .macCatalyst(.v14)
+        .macCatalyst(.v14),
+        .tvOS(.v14),
+        .visionOS(.v1)
     ],
     products: [
         .library(

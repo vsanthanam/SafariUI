@@ -17,6 +17,8 @@ UI features include the following:
 
 - Note: In Mac apps built with Mac Catalyst, SafariView launches the default web browser instead of displaying a modal window. SafariView is not compatible with macOS, tvOS, or watchOS.
 
+### Presenting the view in your interface
+
 You can present a `SafariView` using the built-in presentation view modifiers:
 
 - ``SwiftUI/View/safari(isPresented:onDismiss:safariView:)``
@@ -26,6 +28,8 @@ You can present a `SafariView` using the built-in presentation view modifiers:
 - ``SwiftUI/View/safari(url:onDismiss:)``
 
 You can also use sheet presentation, or any other presentation mechanism of your choice.
+
+- Important: Don’t embed an `SafariView` as a child of a complex view inside your app. Always present it modally using `.sheet`, or using one of the provided modifiers. Do not wrap it in a view.
 
 ## Topics
 
