@@ -12,25 +12,40 @@ let package = Package(
     products: [
         .library(
             name: "SafariUI",
-            targets: ["SafariUI"]
+            targets: [
+                "SafariUI"
+            ]
         ),
         .library(
             name: "SafariView",
-            targets: ["SafariView"]
+            targets: [
+                "SafariView"
+            ]
         ),
         .library(
             name: "WebAuthentication",
-            targets: ["WebAuthentication"]
+            targets: [
+                "WebAuthentication"
+            ]
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.51.15")
+        .package(
+            url: "https://github.com/apple/swift-docc-plugin",
+            from: "1.0.0"
+        ),
+        .package(
+            url: "https://github.com/nicklockwood/SwiftFormat",
+            exact: "0.51.15"
+        )
     ],
     targets: [
         .target(
             name: "SafariUI",
-            dependencies: ["SafariView", "WebAuthentication"]
+            dependencies: [
+                "SafariView",
+                "WebAuthentication"
+            ]
         ),
         .target(
             name: "SafariView",

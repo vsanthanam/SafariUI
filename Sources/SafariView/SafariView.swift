@@ -23,6 +23,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Foundation
 import SafariServices
 import SwiftUI
 import UIKit
@@ -76,7 +77,7 @@ public struct SafariView: View {
         self.onOpenInBrowser = onOpenInBrowser
     }
 
-    /// Create a SafariView with tap attribution for Private Click Measurement
+    /// Create a `SafariView` with tap attribution for Private Click Measurement
     ///
     /// For more information about preparing event attribution data, see [`UIEventAttribution`](https://developer.apple.com/documentation/uikit/uieventattribution)
     /// - Parameters:
@@ -102,8 +103,6 @@ public struct SafariView: View {
         self.onInitialRedirect = onInitialRedirect
         self.onOpenInBrowser = onOpenInBrowser
     }
-
-    // MARK: - API
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
     @available(iOS 15.0, macCatalyst 15.0, *)
@@ -141,553 +140,149 @@ public struct SafariView: View {
         SFSafariViewController.DataStore.default.clearWebsiteData(completionHandler: completionHandler)
     }
 
-    // MARK: - View
-
     @_documentation(visibility: internal)
+    @MainActor
+    @ViewBuilder
     public var body: some View {
-        Safari(parent: self)
-            .ignoresSafeArea(.container, edges: .all)
+        Safari(
+            url: url,
+            onInitialLoad: onInitialLoad,
+            onInitialRedirect: onInitialRedirect,
+            onOpenInBrowser: onOpenInBrowser,
+            activityButton: activityButton,
+            eventAttribution: eventAttribution
+        )
+        .ignoresSafeArea(
+            .container,
+            edges: .all
+        )
     }
 
     // MARK: - Private
-
-    @Environment(\.safariViewEntersReaderIfAvailable)
-    private var entersReaderIfAvailable: Bool
-
-    @Environment(\.safariViewBarCollapsingEnabled)
-    private var barCollapsingEnabled: Bool
-
-    @Environment(\.safariViewBarTintColor)
-    private var barTintColor: Color?
-
-    @Environment(\.safariViewControlTintColor)
-    private var controlTintColor: Color
-
-    @Environment(\.safariViewDismissButtonStyle)
-    private var dismissButtonStyle: DismissButtonStyle
-
-    @Environment(\.safariViewIncludedActivities)
-    private var includedActivities: IncludedActivities
-
-    @Environment(\.safariViewExcludedActivityTypes)
-    private var excludedActivityTypes: ExcludedActivityTypes
-
-    private let activityButton: AnyObject?
-    private let eventAttribution: AnyObject?
-    private let url: URL
-    private let onInitialLoad: ((Bool) -> Void)?
-    private let onInitialRedirect: ((URL) -> Void)?
-    private let onOpenInBrowser: (() -> Void)?
-
-    private func apply(to controller: SFSafariViewController) {
-        controller.preferredBarTintColor = barTintColor.map(UIColor.init)
-        controller.preferredControlTintColor = UIColor(controlTintColor)
-        controller.dismissButtonStyle = dismissButtonStyle.uikit
-    }
-
-    private func buildConfiguration() -> SFSafariViewController.Configuration {
-        let configuration = SFSafariViewController.Configuration()
-        configuration.entersReaderIfAvailable = entersReaderIfAvailable
-        configuration.barCollapsingEnabled = barCollapsingEnabled
-        if #available(iOS 15.0, macCatalyst 15.0, *),
-           let activityButton {
-            configuration.activityButton = unsafeDowncast(activityButton, to: ActivityButton.self)
-        }
-        if #available(iOS 15.2, *),
-           let eventAttribution {
-            configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
-        }
-        return configuration
-    }
 
     private struct Safari: UIViewControllerRepresentable {
 
         // MARK: - Initializers
 
-        init(parent: SafariView) {
-            self.parent = parent
-            delegate = Delegate(
-                onInitialLoad: parent.onInitialLoad,
-                onInitialRedirect: parent.onInitialRedirect,
-                onOpenInBrowser: parent.onOpenInBrowser,
-                includedActivities: parent.includedActivities,
-                excludedActivityTypes: parent.excludedActivityTypes
+        init(
+            url: URL,
+            onInitialLoad: ((Bool) -> Void)?,
+            onInitialRedirect: ((URL) -> Void)?,
+            onOpenInBrowser: (() -> Void)?,
+            activityButton: AnyObject?,
+            eventAttribution: AnyObject?
+        ) {
+            self.url = url
+            delegate = .init(
+                onInitialLoad: onInitialLoad,
+                onInitialRedirect: onInitialRedirect,
+                onOpenInBrowser: onOpenInBrowser
             )
+            self.activityButton = activityButton
+            self.eventAttribution = eventAttribution
         }
 
         // MARK: - UIViewControllerRepresentable
 
-        func makeUIViewController(context: Context) -> SFSafariViewController {
-            let safari = SFSafariViewController(url: parent.url,
-                                                configuration: parent.buildConfiguration())
-            safari.modalPresentationStyle = .none
-            safari.delegate = delegate
-            parent.apply(to: safari)
-            return safari
+        typealias UIViewControllerType = SFSafariViewController
+
+        func makeUIViewController(context: Context) -> UIViewControllerType {
+            let controller = SFSafariViewController(url: url, configuration: buildConfiguration())
+            controller.delegate = delegate
+            delegate.includedActivities = includedActivities
+            delegate.excludedActivityTypes = excludedActivityTypes
+            controller.modalPresentationStyle = .none
+            controller.preferredBarTintColor = barTintColor.map(UIColor.init)
+            controller.preferredControlTintColor = UIColor(controlTintColor)
+            controller.dismissButtonStyle = dismissButtonStyle.uikit
+            return controller
         }
 
-        func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
-            parent.apply(to: uiViewController)
-            uiViewController.delegate = delegate
+        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+            delegate.includedActivities = includedActivities
+            delegate.excludedActivityTypes = excludedActivityTypes
+            uiViewController.preferredBarTintColor = barTintColor.map(UIColor.init)
+            uiViewController.preferredControlTintColor = UIColor(controlTintColor)
+            uiViewController.dismissButtonStyle = dismissButtonStyle.uikit
         }
 
         // MARK: - Private
 
-        private var parent: SafariView
-        private let delegate: Delegate
-
         private final class Delegate: NSObject, SFSafariViewControllerDelegate {
+
+            // MARK: - Initializers
 
             init(
                 onInitialLoad: ((Bool) -> Void)?,
                 onInitialRedirect: ((URL) -> Void)?,
-                onOpenInBrowser: (() -> Void)?,
-                includedActivities: IncludedActivities,
-                excludedActivityTypes: ExcludedActivityTypes
+                onOpenInBrowser: (() -> Void)?
             ) {
                 self.onInitialLoad = onInitialLoad
                 self.onInitialRedirect = onInitialRedirect
                 self.onOpenInBrowser = onOpenInBrowser
-                self.includedActivities = includedActivities
-                self.excludedActivityTypes = excludedActivityTypes
             }
 
-            // MARK: - SFSafariViewControllerDelegate
+            // MARK: - API
 
-            func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                onInitialLoad?(didLoadSuccessfully)
-            }
-
-            func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                onInitialRedirect?(URL)
-            }
-
-            func safariViewController(
-                _ controller: SFSafariViewController,
-                activityItemsFor URL: URL,
-                title: String?
-            ) -> [UIActivity] {
-                includedActivities(url: URL, pageTitle: title)
-            }
-
-            func safariViewController(
-                _ controller: SFSafariViewController,
-                excludedActivityTypesFor URL: URL,
-                title: String?
-            ) -> [UIActivity.ActivityType] {
-                excludedActivityTypes(url: URL, pageTitle: title)
-            }
-
-            func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                onOpenInBrowser?()
-            }
+            var includedActivities: SafariView.IncludedActivities = []
+            var excludedActivityTypes: SafariView.ExcludedActivityTypes = []
 
             // MARK: - Private
 
             private let onInitialLoad: ((Bool) -> Void)?
             private let onInitialRedirect: ((URL) -> Void)?
             private let onOpenInBrowser: (() -> Void)?
-            private var includedActivities: IncludedActivities
-            private let excludedActivityTypes: ExcludedActivityTypes
 
+        }
+
+        private let url: URL
+        private let delegate: Delegate
+        private let activityButton: AnyObject?
+        private let eventAttribution: AnyObject?
+
+        @Environment(\.safariViewEntersReaderIfAvailable)
+        private var entersReaderIfAvailable: Bool
+
+        @Environment(\.safariViewBarCollapsingEnabled)
+        private var barCollapsingEnabled: Bool
+
+        @Environment(\.safariViewBarTintColor)
+        private var barTintColor: Color?
+
+        @Environment(\.safariViewControlTintColor)
+        private var controlTintColor: Color
+
+        @Environment(\.safariViewDismissButtonStyle)
+        private var dismissButtonStyle: SafariView.DismissButtonStyle
+
+        @Environment(\.safariViewIncludedActivities)
+        private var includedActivities: SafariView.IncludedActivities
+
+        @Environment(\.safariViewExcludedActivityTypes)
+        private var excludedActivityTypes: SafariView.ExcludedActivityTypes
+
+        private func buildConfiguration() -> SFSafariViewController.Configuration {
+            let configuration = SFSafariViewController.Configuration()
+            configuration.entersReaderIfAvailable = entersReaderIfAvailable
+            configuration.barCollapsingEnabled = barCollapsingEnabled
+            if #available(iOS 15.0, macCatalyst 15.0, *),
+               let activityButton {
+                configuration.activityButton = unsafeDowncast(activityButton, to: SafariView.ActivityButton.self)
+            }
+            if #available(iOS 15.2, *),
+               let eventAttribution {
+                configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
+            }
+            return configuration
         }
 
     }
 
-    struct BoolModifier: ViewModifier {
-
-        // MARK: - API
-
-        @Binding
-        var isPresented: Bool
-
-        var build: () -> SafariView
-        var onDismiss: () -> Void
-
-        // MARK: - ViewModifier
-
-        func body(content: Content) -> some View {
-            content
-                .background(
-                    Presenter(isPresented: $isPresented,
-                              build: build,
-                              onDismiss: onDismiss)
-                )
-        }
-
-        // MARK: - Private
-
-        private struct Presenter: UIViewRepresentable {
-
-            // MARK: - API
-
-            @Binding
-            var isPresented: Bool
-
-            var build: () -> SafariView
-            var onDismiss: () -> Void
-
-            // MARK: - UIViewRepresentable
-
-            final class Coordinator: NSObject, SFSafariViewControllerDelegate {
-
-                // MARK: - Initialziers
-
-                init(parent: Presenter) {
-                    self.parent = parent
-                }
-
-                // MARK: - API
-
-                let view = UIView()
-
-                var parent: Presenter
-
-                var isPresented: Bool = false {
-                    didSet {
-                        switch (oldValue, isPresented) {
-                        case (false, false):
-                            break
-                        case (false, true):
-                            presentSafari()
-                        case (true, false):
-                            dismissSafari()
-                        case (true, true):
-                            updateSafari()
-                        }
-                    }
-                }
-
-                // MARK: - SFSafariViewControllerDelegate
-
-                func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onInitialLoad?(didLoadSuccessfully)
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                    onInitialRedirect?(URL)
-                }
-
-                func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-                    parent.isPresented = false
-                    parent.onDismiss()
-                }
-
-                func safariViewController(
-                    _ controller: SFSafariViewController,
-                    activityItemsFor URL: URL,
-                    title: String?
-                ) -> [UIActivity] {
-                    includedActivities?(url: URL, pageTitle: title) ?? []
-                }
-
-                func safariViewController(
-                    _ controller: SFSafariViewController,
-                    excludedActivityTypesFor URL: URL,
-                    title: String?
-                ) -> [UIActivity.ActivityType] {
-                    excludedActivityTypes?(url: URL, pageTitle: title) ?? []
-                }
-
-                func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                    onOpenInBrowser?()
-                }
-
-                // MARK: - Private
-
-                private weak var safari: SFSafariViewController?
-
-                private var onInitialLoad: ((Bool) -> Void)?
-                private var onInitialRedirect: ((URL) -> Void)?
-                private var onOpenInBrowser: (() -> Void)?
-                private var includedActivities: IncludedActivities?
-                private var excludedActivityTypes: ExcludedActivityTypes?
-
-                private func presentSafari() {
-                    let rep = parent.build()
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    onOpenInBrowser = rep.onOpenInBrowser
-                    includedActivities = rep.includedActivities
-                    excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.buildConfiguration())
-                    vc.delegate = self
-                    rep.apply(to: vc)
-
-                    guard let presenting = view.controller else {
-                        parent.isPresented = false
-                        return
-                    }
-                    presenting.present(vc, animated: true)
-                    safari = vc
-                }
-
-                private func updateSafari() {
-                    guard let safari else {
-                        return
-                    }
-                    let rep = parent.build()
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    onOpenInBrowser = rep.onOpenInBrowser
-                    includedActivities = rep.includedActivities
-                    excludedActivityTypes = rep.excludedActivityTypes
-                    rep.apply(to: safari)
-                }
-
-                private func dismissSafari() {
-                    guard let safari else {
-                        return
-                    }
-                    safari.dismiss(animated: true) {
-                        self.parent.onDismiss()
-                    }
-                }
-
-            }
-
-            func makeCoordinator() -> Coordinator {
-                Coordinator(parent: self)
-            }
-
-            func makeUIView(context: Context) -> UIView {
-                context.coordinator.view
-            }
-
-            func updateUIView(_ uiView: UIView, context: Context) {
-                context.coordinator.parent = self
-                context.coordinator.isPresented = isPresented
-            }
-
-        }
-
-    }
-
-    struct IdentifiableItemModitifer<Item>: ViewModifier where Item: Identifiable {
-
-        // MARK: - API
-
-        @Binding
-        var item: Item?
-
-        var build: (Item) -> SafariView
-        var onDismiss: () -> Void
-
-        // MARK: - ViewModifier
-
-        func body(content: Content) -> some View {
-            content.background(
-                Presenter(item: $item,
-                          build: build,
-                          onDismiss: onDismiss)
-            )
-        }
-
-        // MARK: - Private
-
-        private struct Presenter: UIViewRepresentable {
-
-            // MARK: - API
-
-            @Binding
-            var item: Item?
-
-            var build: (Item) -> SafariView
-            var onDismiss: () -> Void
-
-            // MARK: - UIViewRepresentable
-
-            final class Coordinator: NSObject, SFSafariViewControllerDelegate {
-
-                // MARK: - Initializers
-
-                init(parent: Presenter) {
-                    self.parent = parent
-                }
-
-                // MARK: - API
-
-                let view = UIView()
-
-                var parent: Presenter
-
-                var item: Item? {
-                    didSet {
-                        switch (oldValue, item) {
-                        case (.none, .none):
-                            break
-                        case let (.none, .some(newItem)):
-                            presentSafari(with: newItem)
-                        case let (.some(oldItem), .some(newItem)) where oldItem.id != newItem.id:
-                            dismissSafari() {
-                                self.presentSafari(with: newItem)
-                            }
-                        case let (.some, .some(newItem)):
-                            updateSafari(with: newItem)
-                        case (.some, .none):
-                            dismissSafari()
-                        }
-                    }
-                }
-
-                // MARK: - SFSafariViewControllerDelegate
-
-                func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-                    parent.item = nil
-                    parent.onDismiss()
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                    onInitialRedirect?(URL)
-                }
-
-                func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                    onInitialLoad?(didLoadSuccessfully)
-                }
-
-                func safariViewController(
-                    _ controller: SFSafariViewController,
-                    activityItemsFor URL: URL,
-                    title: String?
-                ) -> [UIActivity] {
-                    includedActivities?(url: URL, pageTitle: title) ?? []
-                }
-
-                func safariViewController(
-                    _ controller: SFSafariViewController,
-                    excludedActivityTypesFor URL: URL,
-                    title: String?
-                ) -> [UIActivity.ActivityType] {
-                    excludedActivityTypes?(url: URL, pageTitle: title) ?? []
-                }
-
-                func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                    onOpenInBrowser?()
-                }
-
-                // MARK: - Private
-
-                private weak var safari: SFSafariViewController?
-
-                private var onInitialLoad: ((Bool) -> Void)?
-                private var onInitialRedirect: ((URL) -> Void)?
-                private var onOpenInBrowser: (() -> Void)?
-                private var includedActivities: IncludedActivities?
-                private var excludedActivityTypes: ExcludedActivityTypes?
-
-                private func presentSafari(with item: Item) {
-                    let rep = parent.build(item)
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    onOpenInBrowser = rep.onOpenInBrowser
-                    includedActivities = rep.includedActivities
-                    excludedActivityTypes = rep.excludedActivityTypes
-                    let vc = SFSafariViewController(url: rep.url, configuration: rep.buildConfiguration())
-                    vc.delegate = self
-                    rep.apply(to: vc)
-                    guard let presenting = view.controller else {
-                        parent.item = nil
-                        return
-                    }
-
-                    presenting.present(vc, animated: true)
-
-                    safari = vc
-                }
-
-                private func updateSafari(with item: Item) {
-                    guard let safari else {
-                        return
-                    }
-                    let rep = parent.build(item)
-                    onInitialLoad = rep.onInitialLoad
-                    onInitialRedirect = rep.onInitialRedirect
-                    onOpenInBrowser = rep.onOpenInBrowser
-                    includedActivities = rep.includedActivities
-                    excludedActivityTypes = rep.excludedActivityTypes
-                    rep.apply(to: safari)
-                }
-
-                private func dismissSafari(completion: (() -> Void)? = nil) {
-                    guard let safari else {
-                        return
-                    }
-
-                    safari.dismiss(animated: true) {
-                        self.parent.onDismiss()
-                        completion?()
-                    }
-                }
-            }
-
-            func makeCoordinator() -> Coordinator {
-                Coordinator(parent: self)
-            }
-
-            func makeUIView(context: Context) -> UIView {
-                context.coordinator.view
-            }
-
-            func updateUIView(_ uiView: UIView, context: Context) {
-                context.coordinator.parent = self
-                context.coordinator.item = item
-            }
-        }
-    }
-
-    struct ItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
-
-        @Binding
-        var item: Item?
-
-        let id: KeyPath<Item, Identifier>
-        let onDismiss: (() -> Void)?
-        let build: (Item) -> SafariView
-
-        // MARK: - ViewModifier
-
-        @ViewBuilder
-        func body(content: Content) -> some View {
-            content
-                .safari(item: wrapped, onDismiss: onDismiss) { item in
-                    build(item.wrapped)
-                }
-        }
-
-        // MARK: - Private
-
-        private struct WrappedItem: Identifiable {
-            let wrapped: Item
-            let path: KeyPath<Item, Identifier>
-            var id: Identifier { wrapped[keyPath: path] }
-        }
-
-        private var wrapped: Binding<WrappedItem?> {
-            Binding<WrappedItem?> {
-                item.map(wrap)
-            } set: { newValue in
-                item = newValue?.wrapped
-            }
-        }
-
-        private func wrap(_ item: Item) -> WrappedItem {
-            .init(wrapped: item, path: id)
-        }
-
-    }
-
-}
-
-extension UIView {
-
-    var controller: UIViewController? {
-        if let nextResponder = next as? UIViewController {
-            nextResponder
-        } else if let nextResponder = next as? UIView {
-            nextResponder.controller
-        } else {
-            nil
-        }
-    }
+    package let url: URL
+    package let onInitialLoad: ((Bool) -> Void)?
+    package let onInitialRedirect: ((URL) -> Void)?
+    package let onOpenInBrowser: (() -> Void)?
+    package let activityButton: AnyObject?
+    package let eventAttribution: AnyObject?
 
 }
