@@ -192,6 +192,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
             var dismissButtonStyle: SafariView.DismissButtonStyle = .default
             var includedActivities: SafariView.IncludedActivities = []
             var excludedActivityTypes: SafariView.ExcludedActivityTypes = []
+            var presentationStyle: SafariView.PresentationStyle = .default
 
             // MARK: - SFSafariViewDelegate
 
@@ -256,6 +257,14 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
                 activityButton = safari.activityButton
                 eventAttribution = safari.eventAttribution
                 let vc = SFSafariViewController(url: safari.url, configuration: buildConfiguration())
+                switch presentationStyle {
+                case .standard:
+                    break
+                case .formSheet:
+                    vc.modalPresentationStyle = .formSheet
+                case .pageSheet:
+                    vc.modalPresentationStyle = .pageSheet
+                }
                 vc.delegate = self
                 vc.preferredBarTintColor = barTintColor.map(UIColor.init)
                 vc.preferredControlTintColor = UIColor(controlTintColor)
@@ -304,10 +313,29 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         }
 
         func makeUIView(context: Context) -> UIViewType {
-            context.coordinator.view
+            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
+            context.coordinator.barTintColor = barTintColor
+            context.coordinator.controlTintColor = controlTintColor
+            context.coordinator.dismissButtonStyle = dismissButtonStyle
+            context.coordinator.includedActivities = includedActivities
+            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.presentationStyle = presentationStyle
+            context.coordinator.item = item
+            return context.coordinator.view
         }
 
-        func updateUIView(_ uiView: UIViewType, context: Context) {}
+        func updateUIView(_ uiView: UIViewType, context: Context) {
+            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
+            context.coordinator.barTintColor = barTintColor
+            context.coordinator.controlTintColor = controlTintColor
+            context.coordinator.dismissButtonStyle = dismissButtonStyle
+            context.coordinator.includedActivities = includedActivities
+            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.presentationStyle = presentationStyle
+            context.coordinator.item = item
+        }
 
         // MARK: - Private
 
@@ -334,6 +362,9 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
         @Environment(\.safariViewExcludedActivityTypes)
         private var excludedActivityTypes: SafariView.ExcludedActivityTypes
+
+        @Environment(\.safariViewPresentationStyle)
+        private var presentationStyle: SafariView.PresentationStyle
 
         private let safariView: (Item) -> SafariView
         private let onDismiss: (() -> Void)?

@@ -171,6 +171,7 @@ private struct IsPresentedModifier: ViewModifier {
             context.coordinator.dismissButtonStyle = dismissButtonStyle
             context.coordinator.includedActivities = includedActivities
             context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.presentationStyle = presentationStyle
             context.coordinator.isPresented = isPresented
             return context.coordinator.view
         }
@@ -183,6 +184,7 @@ private struct IsPresentedModifier: ViewModifier {
             context.coordinator.dismissButtonStyle = dismissButtonStyle
             context.coordinator.includedActivities = includedActivities
             context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.presentationStyle = presentationStyle
             context.coordinator.isPresented = isPresented
         }
 
@@ -234,6 +236,7 @@ private struct IsPresentedModifier: ViewModifier {
             var dismissButtonStyle: SafariView.DismissButtonStyle = .default
             var includedActivities: SafariView.IncludedActivities = []
             var excludedActivityTypes: SafariView.ExcludedActivityTypes = []
+            var presentationStyle: SafariView.PresentationStyle = .default
 
             func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
                 onInitialLoad?(didLoadSuccessfully)
@@ -282,6 +285,15 @@ private struct IsPresentedModifier: ViewModifier {
 
             private func presentSafari() {
                 let vc = SFSafariViewController(url: url, configuration: buildConfiguration())
+                print(vc.modalPresentationStyle)
+                switch presentationStyle {
+                case .standard:
+                    break
+                case .formSheet:
+                    vc.modalPresentationStyle = .formSheet
+                case .pageSheet:
+                    vc.modalPresentationStyle = .pageSheet
+                }
                 vc.delegate = self
                 vc.preferredBarTintColor = barTintColor.map(UIColor.init)
                 vc.preferredControlTintColor = UIColor(controlTintColor)
@@ -345,6 +357,9 @@ private struct IsPresentedModifier: ViewModifier {
 
         @Environment(\.safariViewExcludedActivityTypes)
         private var excludedActivityTypes: SafariView.ExcludedActivityTypes
+
+        @Environment(\.safariViewPresentationStyle)
+        private var presentationStyle: SafariView.PresentationStyle
 
         private let url: URL
         private let onInitialLoad: ((Bool) -> Void)?

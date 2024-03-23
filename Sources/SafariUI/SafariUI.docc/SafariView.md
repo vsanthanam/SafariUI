@@ -38,6 +38,7 @@ You can also use sheet presentation, or any other presentation mechanism of your
 ### Appearance
 
 - ``DismissButtonStyle``
+- ``PresentationStyle``
 
 ### Connection Prewarming
 

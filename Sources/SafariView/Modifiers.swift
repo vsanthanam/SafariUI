@@ -222,6 +222,12 @@ public extension View {
         )
     }
 
+    func safariPresentationStyle(_ presentationStyle: SafariView.PresentationStyle) -> some View {
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewPresentationStyleModifier(presentationStyle: presentationStyle)
+        )
+    }
 }
 
 @available(iOS 14.0, macCatalyst 14.0, *)
@@ -235,6 +241,7 @@ private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -261,6 +268,7 @@ private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -286,6 +294,7 @@ private struct SafariViewControlTintColorModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -312,6 +321,7 @@ private struct SafariViewBarTintColorModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -338,6 +348,7 @@ private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -364,6 +375,7 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -390,6 +402,7 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     // MARK: - ViewModifier
 
+    @MainActor
     @ViewBuilder
     func body(content: Content) -> some View {
         content
@@ -402,5 +415,30 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
     // MARK: - Private
 
     private let activityTypes: SafariView.ExcludedActivityTypes
+
+}
+
+@available(iOS 14.0, macCatalyst 14.0, *)
+private struct SafariViewPresentationStyleModifier: ViewModifier {
+
+    // MARK: - Initializers
+
+    init(presentationStyle: SafariView.PresentationStyle) {
+        self.presentationStyle = presentationStyle
+    }
+
+    @MainActor
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        content
+            .environment(
+                \.safariViewPresentationStyle,
+                presentationStyle
+            )
+    }
+
+    // MARK: - Private
+
+    private let presentationStyle: SafariView.PresentationStyle
 
 }
