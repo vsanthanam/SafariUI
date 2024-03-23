@@ -23,6 +23,7 @@ You can present a `SafariView` using the built-in presentation view modifiers:
 - ``SwiftUI/View/safari(isPresented:url:onDismiss:)``
 - ``SwiftUI/View/safari(item:onDismiss:safariView:)``
 - ``SwiftUI/View/safari(item:id:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(url:onDismiss:)``
 
 You can also use sheet presentation, or any other presentation mechanism of your choice.
 

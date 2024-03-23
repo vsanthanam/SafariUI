@@ -35,8 +35,10 @@ public extension View {
     /// - Parameter entersReaderIfAvailable: Whether or not the safari view should automatically enter reader mode if available.
     /// - Returns: The modified view
     func safariEntersReaderIfAvailable(_ entersReaderIfAvailable: Bool = true) -> some View {
-        let modifier = SafariViewEntersReaderIfAvailableModifier(entersReaderIfAvailable: entersReaderIfAvailable)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewEntersReaderIfAvailableModifier(entersReaderIfAvailable: entersReaderIfAvailable)
+        )
     }
 
     /// Set the bar collapsing behavior of safari views within this view
@@ -46,8 +48,10 @@ public extension View {
     /// - Parameter barCollapsingEnabled: Whether or not bar collpasing should be enabled.
     /// - Returns: The modified view
     func safariBarCollapsingEnabled(_ barCollapsingEnabled: Bool = true) -> some View {
-        let modifier = SafariViewBarCollapsingEnabledModifier(barCollapsingEnabled: barCollapsingEnabled)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewBarCollapsingEnabledModifier(barCollapsingEnabled: barCollapsingEnabled)
+        )
     }
 
     /// Set the bar tint color of safari views within this view
@@ -57,8 +61,10 @@ public extension View {
     /// - Parameter color: The color to use, or `nil` for the system default
     /// - Returns: The modified view
     func safariBarTintColor(_ color: Color?) -> some View {
-        let modifier = SafariViewBarTintColorModifier(safariViewBarTintColor: color)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewBarTintColorModifier(safariViewBarTintColor: color)
+        )
     }
 
     /// Set the control tint color of safari views within this view
@@ -68,8 +74,10 @@ public extension View {
     /// - Parameter color: The color to use
     /// - Returns: The modified view
     func safariControlTintColor(_ color: Color) -> some View {
-        let modifier = SafariViewControlTintColorModifier(safariViewControlTintColor: color)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewControlTintColorModifier(safariViewControlTintColor: color)
+        )
     }
 
     /// Set the safari view's dismiss button style
@@ -107,8 +115,10 @@ public extension View {
     /// - Parameter activities: The activities to include. You may use an array literal of `UIActivity` types.
     /// - Returns: The modified content
     func includedSafariActivities(_ activities: SafariView.IncludedActivities) -> some View {
-        let modifier = SafariViewIncludedActivitiesModifier(activities: activities)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewIncludedActivitiesModifier(activities: activities)
+        )
     }
 
     /// Conditionally include activities in the share sheet of safari views within this view.
@@ -138,9 +148,12 @@ public extension View {
     /// - Parameter activities: Closure used to conditionally include activities
     /// - Returns: The modified content
     func includedSafariActivities(_ activities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
-        let activities = SafariView.IncludedActivities(activities)
-        let modifier = SafariViewIncludedActivitiesModifier(activities: activities)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewIncludedActivitiesModifier(
+                activities: .init(activities)
+            )
+        )
     }
 
     /// Exclude activity types from the share sheet of safari views within this view.
@@ -167,8 +180,10 @@ public extension View {
     /// - Parameter activityTypes: The activity types to exclude. You may use an array literal of `UIActivity.ActivityType` values.
     /// - Returns: The modified content
     func excludedSafariActivityTypes(_ activityTypes: SafariView.ExcludedActivityTypes) -> some View {
-        let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
-        return ModifiedContent(content: self, modifier: modifier)
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
+        )
     }
 
     /// Conditionally exclude activity types from the share sheet of safari views within this view.
@@ -196,10 +211,15 @@ public extension View {
     ///
     /// - Parameter activityTypes: Closure used to conditionally exclude activities
     /// - Returns: The modified content
-    func excludedSafariActivityTypes(_ activityTypes: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]) -> some View {
-        let activityTypes = SafariView.ExcludedActivityTypes(activityTypes)
-        let modifier = SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
-        return ModifiedContent(content: self, modifier: modifier)
+    func excludedSafariActivityTypes(
+        _ activityTypes: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]
+    ) -> some View {
+        ModifiedContent(
+            content: self,
+            modifier: SafariViewExcludedActivityTypesModifier(
+                activityTypes: .init(activityTypes)
+            )
+        )
     }
 
 }

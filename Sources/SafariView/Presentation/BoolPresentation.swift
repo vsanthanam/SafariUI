@@ -86,62 +86,6 @@ public extension View {
         )
     }
 
-    /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
-    ///
-    /// Use this method when you want to present a ``SafariView`` to the user when a Boolean value you provide is true.
-    /// The example below displays a modal view of the mockup for a software license agreement when the user toggles the `isShowingSafari` variable by clicking or tapping on the “Show License Agreement” button:
-    ///
-    /// ```swift
-    /// import Foundation
-    /// import SafariView
-    /// import SwiftUI
-    ///
-    /// struct ShowLicenseAgreement: View {
-    ///
-    ///     let licenseAgreementURL: URL
-    ///
-    ///     @State private var isShowingSafari = false
-    ///
-    ///     var body: some View {
-    ///         Button {
-    ///             isShowingSafari.toggle()
-    ///         } label: {
-    ///             Text("Show License Agreement")
-    ///         }
-    ///         .safari(isPresented: $isShowingSafari,
-    ///                 url: licenseAgreementURL
-    ///                 onDismiss: didDismiss)
-    ///     }
-    ///
-    ///     func didDismiss() {
-    ///         // Handle the dismissing action.
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - isPresented: A binding to a Boolean value that determines whether to present the ``SafariView`` that you create in the modifier’s content closure.
-    ///   - url: The URL to load in the presented ``SafariView``
-    ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
-    /// - Returns: The modified view
-    func safari(
-        isPresented: Binding<Bool>,
-        url: URL,
-        onDismiss: (() -> Void)? = nil
-    ) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: IsPresentedModifier(
-                isPresented: isPresented,
-                safariView: SafariView(
-                    url: url
-                ),
-                onDismiss: onDismiss
-            )
-        )
-    }
-
 }
 
 @available(iOS 14.0, macCatalyst 14.0, *)
