@@ -204,6 +204,7 @@ public extension View {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -217,7 +218,10 @@ private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewEntersReaderIfAvailable, entersReaderIfAvailable)
+            .environment(
+                \.safariViewEntersReaderIfAvailable,
+                entersReaderIfAvailable
+            )
     }
 
     // MARK: - Private
@@ -226,6 +230,7 @@ private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -239,7 +244,10 @@ private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewBarCollapsingEnabled, barCollapsingEnabled)
+            .environment(
+                \.safariViewBarCollapsingEnabled,
+                barCollapsingEnabled
+            )
     }
 
     // MARK: - Private
@@ -247,6 +255,7 @@ private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
     private let barCollapsingEnabled: Bool
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewControlTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -260,7 +269,10 @@ private struct SafariViewControlTintColorModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewControlTintColor, safariViewControlTintColor)
+            .environment(
+                \.safariViewControlTintColor,
+                safariViewControlTintColor
+            )
     }
 
     // MARK: - Private
@@ -269,6 +281,7 @@ private struct SafariViewControlTintColorModifier: ViewModifier {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewBarTintColorModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -282,7 +295,10 @@ private struct SafariViewBarTintColorModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewBarTintColor, safariViewBarTintColor)
+            .environment(
+                \.safariViewBarTintColor,
+                safariViewBarTintColor
+            )
     }
 
     // MARK: - Private
@@ -291,6 +307,7 @@ private struct SafariViewBarTintColorModifier: ViewModifier {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -304,7 +321,10 @@ private struct SafariViewDismissButtonStyleModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewDismissButtonStyle, safariViewDismissButtonStyle)
+            .environment(
+                \.safariViewDismissButtonStyle,
+                safariViewDismissButtonStyle
+            )
     }
 
     // MARK: - Private
@@ -313,6 +333,7 @@ private struct SafariViewDismissButtonStyleModifier: ViewModifier {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -326,7 +347,10 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewIncludedActivities, activities)
+            .environment(
+                \.safariViewIncludedActivities,
+                activities
+            )
     }
 
     // MARK: - Private
@@ -335,6 +359,7 @@ private struct SafariViewIncludedActivitiesModifier: ViewModifier {
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
 
     // MARK: - Initializers
@@ -348,7 +373,10 @@ private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.safariViewExcludedActivityTypes, activityTypes)
+            .environment(
+                \.safariViewExcludedActivityTypes,
+                activityTypes
+            )
     }
 
     // MARK: - Private
