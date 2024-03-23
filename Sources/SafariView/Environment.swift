@@ -62,6 +62,22 @@ public extension EnvironmentValues {
         set { self[SafariViewExcludedActivityTypesEnvironmentKey.self] = newValue }
     }
 
+    /// The presentation style used by the ``SafariView`` presentation view modifiers.
+    ///
+    /// You can retrieve this value for the current scope using the `@Environment` property wrapper
+    ///
+    /// ```swift
+    /// struct MyView {
+    ///
+    ///     @Environment(\.safariViewPresentationStyle)
+    ///     var safariViewPresentationStyle
+    ///
+    /// }
+    /// ```
+    var safariViewPresentationStyle: SafariView.PresentationStyle {
+        get { self[SafariViewPresentationStyleEnvironmentKey.self] }
+        set { self[SafariViewPresentationStyleEnvironmentKey.self] = newValue }
+    }
 }
 
 @available(iOS 14.0, macCatalyst 14.0, *)
@@ -166,6 +182,17 @@ private struct SafariViewExcludedActivityTypesEnvironmentKey: EnvironmentKey {
     // MARK: - EnvironmentKey
 
     typealias Value = SafariView.ExcludedActivityTypes
+
+    static let defaultValue: Value = .default
+
+}
+
+@available(iOS 14.0, macCatalyst 14.0, *)
+private struct SafariViewPresentationStyleEnvironmentKey: EnvironmentKey {
+
+    // MARK: - EnvironmentKey
+
+    typealias Value = SafariView.PresentationStyle
 
     static let defaultValue: Value = .default
 

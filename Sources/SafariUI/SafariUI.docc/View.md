@@ -14,6 +14,7 @@ SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthenticati
 - ``SwiftUI/View/safariBarTintColor(_:)``
 - ``SwiftUI/View/safariControlTintColor(_:)``
 - ``SwiftUI/View/safariDismissButtonStyle(_:)``
+- ``SwiftUI/View/safariPresentationStyle(_:)``
 
 ### SafariView Presentation
 
