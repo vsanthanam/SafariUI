@@ -38,8 +38,7 @@ public extension View {
     /// import SafariView
     /// import SwiftUI
     ///
-    /// struct InventoryItem: Identifiable {
-    ///     let id: Int
+    /// struct InventoryItem {
     ///     let title: String
     ///     let url: URL
     /// }
@@ -56,7 +55,7 @@ public extension View {
     ///     @State private var selectedItem: InventoryItem?
     ///
     ///     var body: some View {
-    ///         List(inventory) { inventoryItem in
+    ///         List(inventory, id: \.title) { inventoryItem in
     ///             Button(action: {
     ///                 self.selectedItem = inventoryItem
     ///             }) {
@@ -64,6 +63,7 @@ public extension View {
     ///             }
     ///         }
     ///         .safari(item: $selectedItem,
+    ///                 id: \.title
     ///                 onDismiss: dismissAction) { item in
     ///             SafariView(url: item.url)
     ///         }
@@ -138,7 +138,7 @@ private struct WrappedItemPresentation<Item, ID>: ViewModifier where ID: Hashabl
     private let onDismiss: (() -> Void)?
     private let safariView: (Item) -> SafariView
 
-    private var wrappedItem: Binding<WrappedIdentifiable<Item, ID>?> {
+    private var wrappedItem: Binding<WrappedIdentifiable?> {
         .init {
             if let item {
                 .init(value: item, path: id)
@@ -150,18 +150,18 @@ private struct WrappedItemPresentation<Item, ID>: ViewModifier where ID: Hashabl
         }
     }
 
-    struct WrappedIdentifiable<Wrapped, ID>: Identifiable where ID: Hashable {
+    struct WrappedIdentifiable: Identifiable {
 
         init(
-            value: Wrapped,
-            path: KeyPath<Wrapped, ID>
+            value: Item,
+            path: KeyPath<Item, ID>
         ) {
             self.value = value
             self.path = path
         }
 
-        let value: Wrapped
-        let path: KeyPath<Wrapped, ID>
+        let value: Item
+        let path: KeyPath<Item, ID>
 
         var id: ID {
             value[keyPath: path]
