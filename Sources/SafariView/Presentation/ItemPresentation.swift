@@ -28,7 +28,7 @@ import SafariServices
 import SwiftUI
 import UIKit
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 public extension View {
 
     /// Presents a ``SafariView`` using the given item as a data source for the view’s content.
@@ -101,7 +101,7 @@ public extension View {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
     // MARK: - Initializers
@@ -283,11 +283,11 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
                 let configuration = SFSafariViewController.Configuration()
                 configuration.entersReaderIfAvailable = entersReaderIfAvailable
                 configuration.barCollapsingEnabled = barCollapsingEnabled
-                if #available(iOS 15.0, macCatalyst 15.0, *),
+                if #available(iOS 15.0, macCatalyst 15.0, visionOS 1.0, *),
                    let activityButton {
                     configuration.activityButton = unsafeDowncast(activityButton, to: SafariView.ActivityButton.self)
                 }
-                if #available(iOS 15.2, *),
+                if #available(iOS 15.2, visionOS 1.0, *),
                    let eventAttribution {
                     configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
                 }

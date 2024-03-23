@@ -29,7 +29,7 @@ import SwiftUI
 import UIKit
 
 /// A wrapper for `SFSafariViewController` in SwiftUI
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, visionOS 1.0, *)
 public struct SafariView: View {
 
     // MARK: - Initializers
@@ -61,7 +61,7 @@ public struct SafariView: View {
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
     ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
-    @available(iOS 15.0, macCatalyst 15.0, *)
+    @available(iOS 15.0, macCatalyst 15.0, visionOS 1.0, *)
     public init(
         url: URL,
         activityButton: ActivityButton?,
@@ -87,7 +87,7 @@ public struct SafariView: View {
     ///   - onInitialLoad: Closure to execute on initial load
     ///   - onInitialRedirect: Closure to execute on intial redirect
     ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
-    @available(iOS 15.2, macCatalyst 15.2, *)
+    @available(iOS 15.2, macCatalyst 15.2, visionOS 1.0, *)
     public init(
         url: URL,
         activityButton: ActivityButton? = nil,
@@ -105,7 +105,7 @@ public struct SafariView: View {
     }
 
     /// A convenience typealias for [`SFSafariViewController.ActivityButton`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/activitybutton)
-    @available(iOS 15.0, macCatalyst 15.0, *)
+    @available(iOS 15.0, macCatalyst 15.0, visionOS 1.0, *)
     public typealias ActivityButton = SFSafariViewController.ActivityButton
 
     /// Prewarm the connection to a list of provided URLs
@@ -120,7 +120,7 @@ public struct SafariView: View {
     ///
     /// - Parameter URLs: The URLs to prewarm
     /// - Returns: A prewarming token for the provided URLs.
-    @available(iOS 15.0, macCatalyst 15.0, *)
+    @available(iOS 15.0, macCatalyst 15.0, visionOS 1.0, *)
     @discardableResult
     public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
         let token = SFSafariViewController.prewarmConnections(to: URLs)
@@ -128,14 +128,18 @@ public struct SafariView: View {
     }
 
     /// Clears the safari view's cache using [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/).
-    @available(iOS 16.0, macCatalyst 16.0, *)
+    @available(iOS 16.0, macCatalyst 16.0, visionOS 1.0, *)
     public static func clearWebsiteData() async {
-        await SFSafariViewController.DataStore.default.clearWebsiteData()
+        await withUnsafeContinuation { continuation in
+            SafariView.clearWebsiteData {
+                continuation.resume()
+            }
+        }
     }
 
     /// Clears the safari view's cache using a completion handler.
     /// - Parameter completionHandler: Closure to execute after the operation completes
-    @available(iOS 16.0, macCatalyst 16.0, *)
+    @available(iOS 16.0, macCatalyst 16.0, visionOS 1.0, *)
     public static func clearWebsiteData(completionHandler: (() -> Void)?) {
         SFSafariViewController.DataStore.default.clearWebsiteData(completionHandler: completionHandler)
     }
@@ -265,11 +269,11 @@ public struct SafariView: View {
             let configuration = SFSafariViewController.Configuration()
             configuration.entersReaderIfAvailable = entersReaderIfAvailable
             configuration.barCollapsingEnabled = barCollapsingEnabled
-            if #available(iOS 15.0, macCatalyst 15.0, *),
+            if #available(iOS 15.0, macCatalyst 15.0, visionOS 1.0, *),
                let activityButton {
                 configuration.activityButton = unsafeDowncast(activityButton, to: SafariView.ActivityButton.self)
             }
-            if #available(iOS 15.2, *),
+            if #available(iOS 15.2, visionOS 1.0, *),
                let eventAttribution {
                 configuration.eventAttribution = unsafeDowncast(eventAttribution, to: UIEventAttribution.self)
             }
