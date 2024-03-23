@@ -1,4 +1,3 @@
-# SafariUI
 
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/blob/main/LICENSE)
 [![Package Releases](https://img.shields.io/github/v/release/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/releases)
