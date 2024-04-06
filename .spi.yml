@@ -4,3 +4,4 @@ builder:
   - platform: ios
     scheme: SafariUI
   - documentation_targets: [SafariUI]
+    custom_documentation_parameters: [--include-extended-types]
