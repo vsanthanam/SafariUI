@@ -26,7 +26,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
@@ -85,7 +85,6 @@ public extension View {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct BoolURLPresentation: ViewModifier {
 
     init(

@@ -28,7 +28,7 @@ import SafariServices
 import SwiftUI
 import UIKit
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Presents a ``SafariView`` using the given item as a data source for the view’s content.
@@ -101,7 +101,6 @@ public extension View {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
     // MARK: - Initializers

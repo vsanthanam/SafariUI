@@ -25,7 +25,7 @@
 
 import SafariServices
 
-@available(iOS 15.0, macCatalyst 15.0, *)
+@available(iOS 15.0, visionOS 1.0, macCatalyst 15.0, *)
 public extension SafariView {
 
     /// A type created when SafariServices begins prewarming a connection.
