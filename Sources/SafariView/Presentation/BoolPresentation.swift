@@ -68,11 +68,13 @@ public extension View {
     ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the ``SafariView`` that you create in the modifier’s content closure.
+    ///   - presentationStyle: The ``SafariView/PresentationStyle`` used to present the ``SafariView``.
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
     func safari(
         isPresented: Binding<Bool>,
+        presentationStyle: SafariView.PresentationStyle = .default,
         onDismiss: (() -> Void)? = nil,
         safariView: () -> SafariView
     ) -> some View {
@@ -80,6 +82,7 @@ public extension View {
             content: self,
             modifier: IsPresentedModifier(
                 isPresented: isPresented,
+                presentationStyle: presentationStyle,
                 safariView: safariView(),
                 onDismiss: onDismiss
             )
@@ -95,10 +98,12 @@ private struct IsPresentedModifier: ViewModifier {
 
     init(
         isPresented: Binding<Bool>,
+        presentationStyle: SafariView.PresentationStyle,
         safariView: SafariView,
         onDismiss: (() -> Void)?
     ) {
         self.isPresented = isPresented
+        self.presentationStyle = presentationStyle
         self.safariView = safariView
         self.onDismiss = onDismiss
     }
@@ -113,6 +118,7 @@ private struct IsPresentedModifier: ViewModifier {
                 Presenter(
                     isPresented: isPresented,
                     url: safariView.url,
+                    presentationStyle: presentationStyle,
                     onInitialLoad: safariView.onInitialLoad,
                     onInitialRedirect: safariView.onInitialRedirect,
                     onOpenInBrowser: safariView.onOpenInBrowser,
@@ -130,6 +136,7 @@ private struct IsPresentedModifier: ViewModifier {
         init(
             isPresented: Binding<Bool>,
             url: URL,
+            presentationStyle: SafariView.PresentationStyle,
             onInitialLoad: ((Bool) -> Void)?,
             onInitialRedirect: ((URL) -> Void)?,
             onOpenInBrowser: (() -> Void)?,
@@ -139,6 +146,7 @@ private struct IsPresentedModifier: ViewModifier {
         ) {
             _isPresented = isPresented
             self.url = url
+            self.presentationStyle = presentationStyle
             self.onInitialLoad = onInitialLoad
             self.onInitialRedirect = onInitialRedirect
             self.onOpenInBrowser = onOpenInBrowser
@@ -153,6 +161,7 @@ private struct IsPresentedModifier: ViewModifier {
             .init(
                 isPresented: isPresented,
                 url: url,
+                presentationStyle: presentationStyle,
                 bindingSetter: { newValue in isPresented = newValue },
                 onInitialLoad: onInitialLoad,
                 onInitialRedirect: onInitialRedirect,
@@ -191,6 +200,7 @@ private struct IsPresentedModifier: ViewModifier {
             init(
                 isPresented: Bool,
                 url: URL,
+                presentationStyle: SafariView.PresentationStyle,
                 bindingSetter: @escaping (Bool) -> Void,
                 onInitialLoad: ((Bool) -> Void)?,
                 onInitialRedirect: ((URL) -> Void)?,
@@ -201,6 +211,7 @@ private struct IsPresentedModifier: ViewModifier {
             ) {
                 self.isPresented = isPresented
                 self.url = url
+                self.presentationStyle = presentationStyle
                 self.bindingSetter = bindingSetter
                 self.onInitialLoad = onInitialLoad
                 self.onInitialRedirect = onInitialRedirect
@@ -272,6 +283,7 @@ private struct IsPresentedModifier: ViewModifier {
 
             private weak var safariViewController: SFSafariViewController?
             private let url: URL
+            private let presentationStyle: SafariView.PresentationStyle
             private let bindingSetter: (Bool) -> Void
             private let onInitialLoad: ((Bool) -> Void)?
             private let onInitialRedirect: ((URL) -> Void)?
@@ -286,6 +298,14 @@ private struct IsPresentedModifier: ViewModifier {
                 vc.preferredBarTintColor = barTintColor.map(UIColor.init)
                 vc.preferredControlTintColor = UIColor(controlTintColor)
                 vc.dismissButtonStyle = dismissButtonStyle.uikit
+                switch presentationStyle {
+                case .standard:
+                    break
+                case .formSheet:
+                    vc.modalPresentationStyle = .formSheet
+                case .pageSheet:
+                    vc.modalPresentationStyle = .pageSheet
+                }
                 guard let presenting = view.controller else {
                     bindingSetter(false)
                     return
@@ -347,6 +367,7 @@ private struct IsPresentedModifier: ViewModifier {
         private var excludedActivityTypes: SafariView.ExcludedActivityTypes
 
         private let url: URL
+        private let presentationStyle: SafariView.PresentationStyle
         private let onInitialLoad: ((Bool) -> Void)?
         private let onInitialRedirect: ((URL) -> Void)?
         private let onOpenInBrowser: (() -> Void)?
@@ -357,6 +378,7 @@ private struct IsPresentedModifier: ViewModifier {
     }
 
     private let isPresented: Binding<Bool>
+    private let presentationStyle: SafariView.PresentationStyle
     private let safariView: SafariView
     private let onDismiss: (() -> Void)?
 

@@ -19,8 +19,8 @@ UI features include the following:
 
 You can present a `SafariView` using the built-in presentation view modifiers:
 
-- ``SwiftUI/View/safari(isPresented:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(isPresented:url:onDismiss:)``
+- ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(isPresented:url:presentationStyle:onDismiss:)``
 - ``SwiftUI/View/safari(item:onDismiss:safariView:)``
 - ``SwiftUI/View/safari(item:id:onDismiss:safariView:)``
 - ``SwiftUI/View/safari(url:onDismiss:)``
