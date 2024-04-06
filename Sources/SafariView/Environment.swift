@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 public extension EnvironmentValues {
 
     /// The additional activies to include the share sheet displayed inside a ``SafariView``
@@ -64,7 +64,6 @@ public extension EnvironmentValues {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 extension EnvironmentValues {
 
     var safariViewEntersReaderIfAvailable: Bool {
@@ -94,7 +93,6 @@ extension EnvironmentValues {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewEntersReaderIfAvailableEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -105,7 +103,6 @@ private struct SafariViewEntersReaderIfAvailableEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewBarCollapsingEnabledEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -116,7 +113,6 @@ private struct SafariViewBarCollapsingEnabledEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewControlTintColorEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -127,7 +123,6 @@ private struct SafariViewControlTintColorEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewBarTintColorEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -138,7 +133,6 @@ private struct SafariViewBarTintColorEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewDismissButtonStyleEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -149,7 +143,6 @@ private struct SafariViewDismissButtonStyleEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewIncludedActivitiesEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey
@@ -160,7 +153,6 @@ private struct SafariViewIncludedActivitiesEnvironmentKey: EnvironmentKey {
 
 }
 
-@available(iOS 14.0, macCatalyst 14.0, *)
 private struct SafariViewExcludedActivityTypesEnvironmentKey: EnvironmentKey {
 
     // MARK: - EnvironmentKey

@@ -1,7 +1,8 @@
 # SafariUI
 
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/blob/main/LICENSE)
-[![Package Releases](https://img.shields.io/github/v/release/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/releases)
+[![Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/releases)
+[![Pre Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI?include_prereleases)](https://github.com/vsanthanam/SafariUI/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/vsanthanam/SafariUI/xcodebuild-build-test.yml)](https://github.com/vsanthanam/SafariUI/actions)
 [![Swift Version](https://img.shields.io/badge/swift-5.10-critical)](https://swift.org)
 [![Supported Platforms](https://img.shields.io/badge/platform-iOS%2014.0%20%7C%20Catalyst%2014.0-lightgrey)](https://developer.apple.com)

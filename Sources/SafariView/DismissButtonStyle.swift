@@ -25,7 +25,7 @@
 
 import SafariServices
 
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 public extension SafariView {
 
     /// An enumeration describing the various dismiss buttons styles available in a ``SafariView``
