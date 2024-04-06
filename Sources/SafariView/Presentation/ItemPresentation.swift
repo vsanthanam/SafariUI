@@ -82,11 +82,13 @@ public extension View {
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the ``SafariView``. When item is non-nil, the system passes the item’s content to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If item changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
+    ///   - presentationStyle: The ``SafariView/PresentationStyle`` used to present the ``SafariView``.
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
     func safari<Item>(
         item: Binding<Item?>,
+        presentationStyle: SafariView.PresentationStyle = .default,
         onDismiss: (() -> Void)? = nil,
         safariView: @escaping (Item) -> SafariView
     ) -> some View where Item: Identifiable {
@@ -94,6 +96,7 @@ public extension View {
             content: self,
             modifier: ItemModifier(
                 item: item,
+                presentationStyle: presentationStyle,
                 safariView: safariView
             )
         )
@@ -107,10 +110,12 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
     init(
         item: Binding<Item?>,
+        presentationStyle: SafariView.PresentationStyle,
         safariView: @escaping (Item) -> SafariView,
         onDismiss: (() -> Void)? = nil
     ) {
         _item = item
+        self.presentationStyle = presentationStyle
         self.safariView = safariView
         self.onDismiss = onDismiss
     }
@@ -124,6 +129,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
             .background(
                 Presenter(
                     item: $item,
+                    presentationStyle: presentationStyle,
                     safariView: safariView,
                     onDismiss: onDismiss
                 )
@@ -138,10 +144,12 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
         init(
             item: Binding<Item?>,
+            presentationStyle: SafariView.PresentationStyle,
             safariView: @escaping (Item) -> SafariView,
             onDismiss: (() -> Void)?
         ) {
             _item = item
+            self.presentationStyle = presentationStyle
             self.safariView = safariView
             self.onDismiss = onDismiss
         }
@@ -156,11 +164,13 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
             init(
                 item: Item? = nil,
+                presentationStyle: SafariView.PresentationStyle,
                 safariView: @escaping (Item) -> SafariView,
                 bindingSetter: @escaping (Item?) -> Void,
                 onDismiss: (() -> Void)?
             ) {
                 self.item = item
+                self.presentationStyle = presentationStyle
                 self.safariView = safariView
                 self.bindingSetter = bindingSetter
                 self.onDismiss = onDismiss
@@ -238,6 +248,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
             // MARK: - Private
 
             private weak var safariViewController: SFSafariViewController?
+            private let presentationStyle: SafariView.PresentationStyle
             private let safariView: (Item) -> SafariView
             private var bindingSetter: (Item?) -> Void
             private var onInitialLoad: ((Bool) -> Void)?
@@ -259,6 +270,14 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
                 vc.preferredBarTintColor = barTintColor.map(UIColor.init)
                 vc.preferredControlTintColor = UIColor(controlTintColor)
                 vc.dismissButtonStyle = dismissButtonStyle.uikit
+                switch presentationStyle {
+                case .standard:
+                    break
+                case .formSheet:
+                    vc.modalPresentationStyle = .formSheet
+                case .pageSheet:
+                    vc.modalPresentationStyle = .pageSheet
+                }
                 guard let presenting = view.controller else {
                     bindingSetter(nil)
                     return
@@ -296,6 +315,8 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
         func makeCoordinator() -> Coordinator {
             .init(
+                item: item,
+                presentationStyle: presentationStyle,
                 safariView: safariView,
                 bindingSetter: { newValue in item = newValue },
                 onDismiss: onDismiss
@@ -303,10 +324,27 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         }
 
         func makeUIView(context: Context) -> UIViewType {
-            context.coordinator.view
+            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
+            context.coordinator.barTintColor = barTintColor
+            context.coordinator.controlTintColor = controlTintColor
+            context.coordinator.dismissButtonStyle = dismissButtonStyle
+            context.coordinator.includedActivities = includedActivities
+            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.item = item
+            return context.coordinator.view
         }
 
-        func updateUIView(_ uiView: UIViewType, context: Context) {}
+        func updateUIView(_ uiView: UIViewType, context: Context) {
+            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
+            context.coordinator.barTintColor = barTintColor
+            context.coordinator.controlTintColor = controlTintColor
+            context.coordinator.dismissButtonStyle = dismissButtonStyle
+            context.coordinator.includedActivities = includedActivities
+            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.item = item
+        }
 
         // MARK: - Private
 
@@ -334,6 +372,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         @Environment(\.safariViewExcludedActivityTypes)
         private var excludedActivityTypes: SafariView.ExcludedActivityTypes
 
+        private let presentationStyle: SafariView.PresentationStyle
         private let safariView: (Item) -> SafariView
         private let onDismiss: (() -> Void)?
 
@@ -342,6 +381,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
     @Binding
     private var item: Item?
 
+    private let presentationStyle: SafariView.PresentationStyle
     private let safariView: (Item) -> SafariView
     private let onDismiss: (() -> Void)?
 

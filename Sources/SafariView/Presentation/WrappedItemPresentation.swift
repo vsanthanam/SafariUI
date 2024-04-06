@@ -80,12 +80,14 @@ public extension View {
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the ``SafariView``. When item is non-nil, the system passes the item’s content to the modifier’s closure. You display this content in a ``SafariView`` that you create that the system displays to the user. If item changes, the system dismisses the ``SafariView`` and replaces it with a new one using the same process.
     ///   - id: A keypath used to generate stable identifier for instances of Item.
+    ///   - presentationStyle: The ``SafariView/PresentationStyle`` used to present the ``SafariView``.
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     ///   - safariView: A closure that returns the ``SafariView`` to present
     /// - Returns: The modified view
     func safari<Item, ID>(
         item: Binding<Item?>,
         id: KeyPath<Item, ID>,
+        presentationStyle: SafariView.PresentationStyle = .default,
         onDismiss: (() -> Void)? = nil,
         safariView: @escaping (Item) -> SafariView
     ) -> some View where ID: Hashable {
@@ -94,6 +96,7 @@ public extension View {
             modifier: WrappedItemPresentation(
                 item: item,
                 id: id,
+                presentationStyle: presentationStyle,
                 onDismiss: onDismiss,
                 safariView: safariView
             )
@@ -109,11 +112,13 @@ private struct WrappedItemPresentation<Item, ID>: ViewModifier where ID: Hashabl
     init(
         item: Binding<Item?>,
         id: KeyPath<Item, ID>,
+        presentationStyle: SafariView.PresentationStyle,
         onDismiss: (() -> Void)? = nil,
         safariView: @escaping (Item) -> SafariView
     ) {
         _item = item
         self.id = id
+        self.presentationStyle = presentationStyle
         self.onDismiss = onDismiss
         self.safariView = safariView
     }
@@ -124,7 +129,10 @@ private struct WrappedItemPresentation<Item, ID>: ViewModifier where ID: Hashabl
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .safari(item: wrappedItem) { item in
+            .safari(
+                item: wrappedItem,
+                presentationStyle: presentationStyle
+            ) { item in
                 safariView(item.value)
             }
     }
@@ -134,6 +142,7 @@ private struct WrappedItemPresentation<Item, ID>: ViewModifier where ID: Hashabl
     @Binding
     private var item: Item?
     private let id: KeyPath<Item, ID>
+    private let presentationStyle: SafariView.PresentationStyle
     private let onDismiss: (() -> Void)?
     private let safariView: (Item) -> SafariView
 
