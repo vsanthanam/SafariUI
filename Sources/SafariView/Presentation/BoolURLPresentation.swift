@@ -66,19 +66,22 @@ public extension View {
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the ``SafariView`` that you create in the modifier’s content closure.
     ///   - url: The URL to load in the presented ``SafariView``
+    ///   - presentationStyle: The ``SafariView/PresentationStyle`` used to present the ``SafariView``.
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     /// - Returns: The modified view
     func safari(
         isPresented: Binding<Bool>,
         url: URL,
+        presentationStyle: SafariView.PresentationStyle = .default,
         onDismiss: (() -> Void)? = nil
     ) -> some View {
         ModifiedContent(
             content: self,
             modifier: BoolURLPresentation(
                 isPresented: isPresented,
-                onDismiss: onDismiss,
-                url: url
+                url: url,
+                presentationStyle: presentationStyle,
+                onDismiss: onDismiss
             )
         )
     }
@@ -89,12 +92,14 @@ private struct BoolURLPresentation: ViewModifier {
 
     init(
         isPresented: Binding<Bool>,
-        onDismiss: (() -> Void)?,
-        url: URL
+        url: URL,
+        presentationStyle: SafariView.PresentationStyle,
+        onDismiss: (() -> Void)?
     ) {
         _isPresented = isPresented
-        self.onDismiss = onDismiss
         self.url = url
+        self.presentationStyle = presentationStyle
+        self.onDismiss = onDismiss
     }
 
     @MainActor
@@ -103,6 +108,7 @@ private struct BoolURLPresentation: ViewModifier {
         content
             .safari(
                 isPresented: $isPresented,
+                presentationStyle: presentationStyle,
                 onDismiss: onDismiss
             ) {
                 SafariView(url: url)
@@ -111,7 +117,8 @@ private struct BoolURLPresentation: ViewModifier {
 
     @Binding
     private var isPresented: Bool
-    private let onDismiss: (() -> Void)?
     private let url: URL
+    private let presentationStyle: SafariView.PresentationStyle
+    private let onDismiss: (() -> Void)?
 
 }
