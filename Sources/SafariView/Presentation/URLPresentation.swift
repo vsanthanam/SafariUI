@@ -61,16 +61,19 @@ public extension View {
     /// ```
     /// - Parameters:
     ///   - url: The URL used to load the view
+    ///   - presentationStyle: The ``SafariView/PresentationStyle`` used to present the ``SafariView``.
     ///   - onDismiss: The closure to execute when dismissing the ``SafariView``
     /// - Returns: The modified view
     func safari(
         url: Binding<URL?>,
+        presentationStyle: SafariView.PresentationStyle = .default,
         onDismiss: (() -> Void)? = nil
     ) -> some View {
         ModifiedContent(
             content: self,
             modifier: URLPresentation(
                 url: url,
+                presentationStyle: presentationStyle,
                 onDismiss: onDismiss
             )
         )
@@ -82,9 +85,11 @@ private struct URLPresentation: ViewModifier {
 
     init(
         url: Binding<URL?>,
+        presentationStyle: SafariView.PresentationStyle,
         onDismiss: (() -> Void)?
     ) {
         _url = url
+        self.presentationStyle = presentationStyle
         self.onDismiss = onDismiss
     }
 
@@ -95,6 +100,7 @@ private struct URLPresentation: ViewModifier {
             .safari(
                 item: $url,
                 id: \.hashValue,
+                presentationStyle: presentationStyle,
                 onDismiss: onDismiss
             ) { url in
                 SafariView(url: url)
@@ -103,6 +109,7 @@ private struct URLPresentation: ViewModifier {
 
     @Binding
     private var url: URL?
+    private let presentationStyle: SafariView.PresentationStyle
     private let onDismiss: (() -> Void)?
 
 }
