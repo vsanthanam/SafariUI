@@ -2,12 +2,11 @@
 
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/blob/main/LICENSE)
 [![Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/releases)
-[![Pre Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI?include_prereleases)](https://github.com/vsanthanam/SafariUI/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/vsanthanam/SafariUI/xcodebuild-build-test.yml)](https://github.com/vsanthanam/SafariUI/actions)
 [![Swift Version](https://img.shields.io/badge/swift-5.10-critical)](https://swift.org)
 [![Supported Platfoms](https://img.shields.io/badge/platforms-iOS_14.0_%7C_visionOS_1.0_%7C_Catalyst_14.0-lightgrey)](https://developer.apple.com)
 
-A SwiftUI wrappers for `SFSafariViewController` and `ASWebAuthenticationSession`
+SwiftUI wrappers for `SFSafariViewController` and `ASWebAuthenticationSession`
 
 ## Installation
 
@@ -17,7 +16,7 @@ To add SafariUI as a dependency to an existing Swift package, add the following 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "3.0.0"))
+    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "4.0.0"))
 ]
 ```
 
