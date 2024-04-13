@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension EnvironmentValues {
 
     /// The additional activies to include the share sheet displayed inside a ``SafariView``

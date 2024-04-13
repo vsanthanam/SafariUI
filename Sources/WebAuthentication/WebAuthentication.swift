@@ -27,7 +27,7 @@ import AuthenticationServices
 import SwiftUI
 
 /// A wrapper for `ASWebAuthenticationSession` in SwiftUI
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public struct WebAuthentication {
 
     // MARK: - Initializers

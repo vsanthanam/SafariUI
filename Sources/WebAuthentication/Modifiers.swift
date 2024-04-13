@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Set the private authentication requirements for authentication sessions within this view.
