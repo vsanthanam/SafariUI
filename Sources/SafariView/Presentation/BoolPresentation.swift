@@ -91,7 +91,6 @@ public extension View {
 
 }
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 private struct IsPresentedModifier: ViewModifier {
 
     // MARK: - Initializer

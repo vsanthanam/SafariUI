@@ -19,9 +19,9 @@ SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthenticati
 
 - ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
 - ``SwiftUI/View/safari(isPresented:url:presentationStyle:onDismiss:)``
-- ``SwiftUI/View/safari(item:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:id:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(url:onDismiss:)``
+- ``SwiftUI/View/safari(item:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
 
 ### SafarView Custom Activities
 
