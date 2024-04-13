@@ -21,11 +21,13 @@ You can present a `SafariView` using the built-in presentation view modifiers:
 
 - ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
 - ``SwiftUI/View/safari(isPresented:url:presentationStyle:onDismiss:)``
-- ``SwiftUI/View/safari(item:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:id:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(url:onDismiss:)``
+- ``SwiftUI/View/safari(item:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUI/View/safari(url:presentationStyle:onDismiss:)``
 
-You can also use sheet presentation, or any other presentation mechanism of your choice.
+These modifiers use the standard presentation mechanism that you would otherwise use to present an `SFSafariViewController` in a UIKit application. To customize the behavior of the modifier, see the ``SafariView/PresentationStyle`` enumeration.
+
+A `SafariView` is also a regular SwiftUI view, and can be presented through any other mechanism of your choice.
 
 ## Topics
 
@@ -38,6 +40,10 @@ You can also use sheet presentation, or any other presentation mechanism of your
 ### Appearance
 
 - ``DismissButtonStyle``
+
+### Presentation Options
+
+- ``PresentationStyle``
 
 ### Connection Prewarming
 

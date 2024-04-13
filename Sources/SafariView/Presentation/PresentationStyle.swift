@@ -26,11 +26,21 @@
 @available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
 public extension SafariView {
 
-    enum PresentationStyle: Equatable, Hashable, Sendable, Codable {
+    /// The available presentation styles of a ``SafariView``
+    enum PresentationStyle: Equatable, Hashable, Sendable {
+
+        /// Standard Presentation
         case standard
+
+        /// Form Sheet Presentation
         case formSheet
+
+        /// Page Sheet Presentation
         case pageSheet
+
+        /// Default Presentation
         public static let `default`: PresentationStyle = .standard
+
     }
 
 }
