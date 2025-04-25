@@ -15,18 +15,21 @@ jobs:
       - name: Xcode Version
         run: ./.scripts/xcode-select
       - name: Build Documentation
-        run: swift package generate-documentation --target SafariUI
-      - name: Locate DocC Archive
-        run: cd .build/plugins/Swift-DocC/outputs
+        run: |
+          xcodebuild docbuild \
+            -scheme SafariUI
+            -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro"
+            -sdk iphonesimulator
+            -derivedDataPath docs
       - name: Compress DocC Archive
         run: |
-          cd .build/plugins/Swift-DocC/outputs
+          cd docs/Build/Products/Debug-iphonesimulator
           zip -r SafariUI.doccarchive.zip SafariUI.doccarchive
       - name: Upload Documentation
         uses: actions/upload-artifact@v4
         with:
           name: archive
-          path: .build/plugins/Swift-DocC/outputs/SafariUI.doccarchive.zip
+          path: docs/Build/Products/Debug-iphonesimulator/SafariUI.doccarchive.zip
   attach-archive:
     needs: build-docc-archive
     runs-on: ubuntu-latest
