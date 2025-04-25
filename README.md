@@ -1,10 +1,10 @@
 # SafariUI
 
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/blob/main/LICENSE)
-[![Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/vsanthanam/SafariUI/xcodebuild-build-test.yml)](https://github.com/vsanthanam/SafariUI/actions)
-[![Swift Version](https://img.shields.io/badge/swift-5.10-critical)](https://swift.org)
-[![Supported Platfoms](https://img.shields.io/badge/platforms-iOS_14.0_%7C_Catalyst_14.0-lightgrey)](https://developer.apple.com)
+[![GitHub Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI?include_prereleases)](https://github.com/vsanthanam/SafariUI/releases)
+[![Build Status](https://img.shields.io/github/check-runs/vsanthanam/SafariUI/main)](https://github.com/vsanthanam/SafariUI/actions)
+[![Swift Version](https://img.shields.io/badge/swift-6.1-critical)](https://swift.org)
+[![Documentation](https://img.shields.io/badge/Documentation-GitHub-8A2BE2)](https://vsanthanam.github.io/SafariUI/docs/documentation/safariui)
 
 SwiftUI wrappers for `SFSafariViewController` and `ASWebAuthenticationSession`
 
