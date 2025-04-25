@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tail -n +2 README.md > README-2.md && rm README.md && mv README-2.md README.md

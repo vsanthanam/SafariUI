@@ -1,0 +1,28 @@
+name: Build (Xcode Platforms)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-maccatalyst-xcode:
+    runs-on: macos-15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Select Xcode Version
+      run: ./.scripts/xcode-select
+    - name: Build SafariUI
+      run: ./.scripts/build-maccatalyst-xcode
+  build-ios-xcode:
+    runs-on: macos-15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Select Xcode Version
+      run: ./.scripts/xcode-select
+    - name: Build SafariUI
+      run: ./.scripts/build-ios-xcode

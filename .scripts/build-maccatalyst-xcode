@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xcodebuild -scheme SafariUI-Package -destination 'platform=macOS,variant=Mac Catalyst'
