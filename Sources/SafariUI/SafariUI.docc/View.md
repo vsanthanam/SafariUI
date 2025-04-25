@@ -1,4 +1,4 @@
-# ``SwiftUI/View``
+# ``SwiftUICore/View``
 
 SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthentication``
 
@@ -6,36 +6,36 @@ SwiftUI view modifiers used to configure a ``SafariView`` or a ``WebAuthenticati
 
 ### SafariView Configuration
 
-- ``SwiftUI/View/safariEntersReaderIfAvailable(_:)``
-- ``SwiftUI/View/safariBarCollapsingEnabled(_:)``
+- ``SwiftUICore/View/safariEntersReaderIfAvailable(_:)``
+- ``SwiftUICore/View/safariBarCollapsingEnabled(_:)``
 
 ### SafariView Appearance
 
-- ``SwiftUI/View/safariBarTintColor(_:)``
-- ``SwiftUI/View/safariControlTintColor(_:)``
-- ``SwiftUI/View/safariDismissButtonStyle(_:)``
+- ``SwiftUICore/View/safariBarTintColor(_:)``
+- ``SwiftUICore/View/safariControlTintColor(_:)``
+- ``SwiftUICore/View/safariDismissButtonStyle(_:)``
 
 ### SafariView Presentation
 
-- ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(isPresented:url:presentationStyle:onDismiss:)``
-- ``SwiftUI/View/safari(item:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(isPresented:url:presentationStyle:onDismiss:)``
+- ``SwiftUICore/View/safari(item:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
 
 ### SafarView Custom Activities
 
-- ``SwiftUI/View/includedSafariActivities(_:)-362lz``
-- ``SwiftUI/View/includedSafariActivities(_:)-2u8l9``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-1v8zq``
-- ``SwiftUI/View/excludedSafariActivityTypes(_:)-tvrg``
+- ``SwiftUICore/View/includedSafariActivities(_:)-362lz``
+- ``SwiftUICore/View/includedSafariActivities(_:)-2u8l9``
+- ``SwiftUICore/View/excludedSafariActivityTypes(_:)-1v8zq``
+- ``SwiftUICore/View/excludedSafariActivityTypes(_:)-tvrg``
 
 ### WebAuthentication Configuration
 
-- ``SwiftUI/View/webAuthenticationPrefersEphemeralWebBrowserSession(_:)``
+- ``SwiftUICore/View/webAuthenticationPrefersEphemeralWebBrowserSession(_:)``
 
 ### WebAuthentication Presentation
 
-- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-74m38``
-- ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5x82p``
-- ``SwiftUI/View/webAuthentication(_:id:webAuthentication:)``
+- ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-74m38``
+- ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-5x82p``
+- ``SwiftUICore/View/webAuthentication(_:id:webAuthentication:)``

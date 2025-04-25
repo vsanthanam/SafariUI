@@ -28,7 +28,7 @@ import SafariServices
 import SwiftUI
 import UIKit
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Presents a ``SafariView`` using the given item as a data source for the view’s content.
@@ -89,7 +89,7 @@ public extension View {
     func safari<Item>(
         item: Binding<Item?>,
         presentationStyle: SafariView.PresentationStyle = .default,
-        onDismiss: (() -> Void)? = nil,
+        onDismiss: (@MainActor () -> Void)? = nil,
         safariView: @escaping (Item) -> SafariView
     ) -> some View where Item: Identifiable {
         ModifiedContent(
@@ -112,7 +112,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         item: Binding<Item?>,
         presentationStyle: SafariView.PresentationStyle,
         safariView: @escaping (Item) -> SafariView,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: (@MainActor () -> Void)? = nil
     ) {
         _item = item
         self.presentationStyle = presentationStyle
@@ -131,7 +131,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
                     item: $item,
                     presentationStyle: presentationStyle,
                     safariView: safariView,
-                    onDismiss: onDismiss
+                    onDismiss: { onDismiss?() }
                 )
             )
     }
@@ -146,7 +146,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
             item: Binding<Item?>,
             presentationStyle: SafariView.PresentationStyle,
             safariView: @escaping (Item) -> SafariView,
-            onDismiss: (() -> Void)?
+            onDismiss: (@MainActor () -> Void)?
         ) {
             _item = item
             self.presentationStyle = presentationStyle
@@ -158,6 +158,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
         typealias UIViewType = UIView
 
+        @MainActor
         final class Coordinator: NSObject, SFSafariViewControllerDelegate {
 
             // MARK: - Initializer
@@ -167,7 +168,7 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
                 presentationStyle: SafariView.PresentationStyle,
                 safariView: @escaping (Item) -> SafariView,
                 bindingSetter: @escaping (Item?) -> Void,
-                onDismiss: (() -> Void)?
+                onDismiss: (@MainActor () -> Void)?
             ) {
                 self.item = item
                 self.presentationStyle = presentationStyle
@@ -204,45 +205,57 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
 
             // MARK: - SFSafariViewDelegate
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 didCompleteInitialLoad didLoadSuccessfully: Bool
             ) {
-                onInitialLoad?(didLoadSuccessfully)
+                MainActor.assumeIsolated {
+                    onInitialLoad?(didLoadSuccessfully)
+                }
             }
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 initialLoadDidRedirectTo URL: URL
             ) {
-                onInitialRedirect?(URL)
+                MainActor.assumeIsolated {
+                    onInitialRedirect?(URL)
+                }
             }
 
-            func safariViewControllerDidFinish(
+            nonisolated func safariViewControllerDidFinish(
                 _ controller: SFSafariViewController
             ) {
-                onDismiss?()
-                bindingSetter(nil)
+                MainActor.assumeIsolated {
+                    onDismiss?()
+                    bindingSetter(nil)
+                }
             }
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 activityItemsFor URL: URL,
                 title: String?
             ) -> [UIActivity] {
-                includedActivities(url: URL, pageTitle: title)
+                MainActor.assumeIsolated {
+                    includedActivities(url: URL, pageTitle: title)
+                }
             }
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 excludedActivityTypesFor URL: URL,
                 title: String?
             ) -> [UIActivity.ActivityType] {
-                excludedActivityTypes(url: URL, pageTitle: title)
+                MainActor.assumeIsolated {
+                    excludedActivityTypes(url: URL, pageTitle: title)
+                }
             }
 
-            func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                onOpenInBrowser?()
+            nonisolated func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
+                MainActor.assumeIsolated {
+                    onOpenInBrowser?()
+                }
             }
 
             // MARK: - Private
@@ -251,10 +264,10 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
             private let presentationStyle: SafariView.PresentationStyle
             private let safariView: (Item) -> SafariView
             private var bindingSetter: (Item?) -> Void
-            private var onInitialLoad: ((Bool) -> Void)?
-            private var onInitialRedirect: ((URL) -> Void)?
-            private var onOpenInBrowser: (() -> Void)?
-            private var onDismiss: (() -> Void)?
+            private var onInitialLoad: (@MainActor (Bool) -> Void)?
+            private var onInitialRedirect: (@MainActor (URL) -> Void)?
+            private var onOpenInBrowser: (@MainActor () -> Void)?
+            private var onDismiss: (@MainActor () -> Void)?
             private var activityButton: AnyObject?
             private var eventAttribution: AnyObject?
 
@@ -324,25 +337,25 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         }
 
         func makeUIView(context: Context) -> UIViewType {
-            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
-            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
-            context.coordinator.barTintColor = barTintColor
-            context.coordinator.controlTintColor = controlTintColor
-            context.coordinator.dismissButtonStyle = dismissButtonStyle
-            context.coordinator.includedActivities = includedActivities
-            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.entersReaderIfAvailable = context.environment.safariViewEntersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = context.environment.safariViewBarCollapsingEnabled
+            context.coordinator.barTintColor = context.environment.safariViewBarTintColor
+            context.coordinator.controlTintColor = context.environment.safariViewControlTintColor
+            context.coordinator.dismissButtonStyle = context.environment.safariViewDismissButtonStyle
+            context.coordinator.includedActivities = context.environment.safariViewIncludedActivities
+            context.coordinator.excludedActivityTypes = context.environment.safariViewExcludedActivityTypes
             context.coordinator.item = item
             return context.coordinator.view
         }
 
         func updateUIView(_ uiView: UIViewType, context: Context) {
-            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
-            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
-            context.coordinator.barTintColor = barTintColor
-            context.coordinator.controlTintColor = controlTintColor
-            context.coordinator.dismissButtonStyle = dismissButtonStyle
-            context.coordinator.includedActivities = includedActivities
-            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.entersReaderIfAvailable = context.environment.safariViewEntersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = context.environment.safariViewBarCollapsingEnabled
+            context.coordinator.barTintColor = context.environment.safariViewBarTintColor
+            context.coordinator.controlTintColor = context.environment.safariViewControlTintColor
+            context.coordinator.dismissButtonStyle = context.environment.safariViewDismissButtonStyle
+            context.coordinator.includedActivities = context.environment.safariViewIncludedActivities
+            context.coordinator.excludedActivityTypes = context.environment.safariViewExcludedActivityTypes
             context.coordinator.item = item
         }
 
@@ -351,30 +364,9 @@ private struct ItemModifier<Item>: ViewModifier where Item: Identifiable {
         @Binding
         private var item: Item?
 
-        @Environment(\.safariViewEntersReaderIfAvailable)
-        private var entersReaderIfAvailable: Bool
-
-        @Environment(\.safariViewBarCollapsingEnabled)
-        private var barCollapsingEnabled: Bool
-
-        @Environment(\.safariViewBarTintColor)
-        private var barTintColor: Color?
-
-        @Environment(\.safariViewControlTintColor)
-        private var controlTintColor: Color
-
-        @Environment(\.safariViewDismissButtonStyle)
-        private var dismissButtonStyle: SafariView.DismissButtonStyle
-
-        @Environment(\.safariViewIncludedActivities)
-        private var includedActivities: SafariView.IncludedActivities
-
-        @Environment(\.safariViewExcludedActivityTypes)
-        private var excludedActivityTypes: SafariView.ExcludedActivityTypes
-
         private let presentationStyle: SafariView.PresentationStyle
         private let safariView: (Item) -> SafariView
-        private let onDismiss: (() -> Void)?
+        private let onDismiss: (@MainActor () -> Void)?
 
     }
 
@@ -400,3 +392,5 @@ extension UIView {
     }
 
 }
+
+extension UIActivity: @retroactive @unchecked Sendable {}

@@ -26,17 +26,17 @@
 import Foundation
 import UIKit
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension SafariView {
 
     /// A struct used to include custom activities in the share sheet of a ``SafariView``
-    struct IncludedActivities: ExpressibleByArrayLiteral {
+    struct IncludedActivities: Sendable, ExpressibleByArrayLiteral {
 
         // MARK: - Initializers
 
         /// Include activities conditionally, based on the URL and/or page title.
         /// - Parameter includedActivities: Closure used to provide activitues
-        public init(_ includedActivities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
+        public init(_ includedActivities: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
             self.includedActivities = includedActivities
         }
 
@@ -81,7 +81,7 @@ public extension SafariView {
             includedActivities(url, pageTitle)
         }
 
-        private let includedActivities: (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+        private let includedActivities: @Sendable (_ url: URL, _ pageTitle: String?) -> [UIActivity]
 
     }
 

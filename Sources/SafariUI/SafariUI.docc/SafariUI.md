@@ -22,4 +22,4 @@ Both `WebAuthentication` and `SafariView` are separate modules that can be impor
 
 ### View Modifiers
 
-- ``SwiftUI/View``
+- ``SwiftUICore/View``

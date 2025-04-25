@@ -27,7 +27,7 @@ import AuthenticationServices
 import SwiftUI
 
 /// A wrapper for `ASWebAuthenticationSession` in SwiftUI
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public struct WebAuthentication {
 
     // MARK: - Initializers
@@ -36,9 +36,9 @@ public struct WebAuthentication {
     ///
     /// You must present a `WebAuthentication` challenge to your users using one of our provided presentation view modifiers:
     ///
-    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-74m38``
-    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5x82p``
-    /// - ``SwiftUI/View/webAuthentication(_:id:webAuthentication:)``
+    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Bool>,_)``
+    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Item?>,_)``
+    /// - ``SwiftUICore/View/webAuthentication(_:id:webAuthentication:)``
     ///
     /// For example:
     ///
@@ -144,6 +144,7 @@ public struct WebAuthentication {
                 context.coordinator.isPresented = isPresented
             }
 
+            @MainActor
             final class Coordinator: NSObject, WebAuthenticationCoordinator {
                 init(parent: Presenter) {
                     self.parent = parent
@@ -247,6 +248,7 @@ public struct WebAuthentication {
                 context.coordinator.item = item
             }
 
+            @MainActor
             final class Coordinator: NSObject, WebAuthenticationCoordinator {
 
                 // MARK: - Initializers
@@ -353,6 +355,7 @@ public struct WebAuthentication {
     }
 }
 
+@MainActor
 private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, ASWebAuthenticationPresentationContextProviding {
 
     // MARK: - Initializers
@@ -367,8 +370,10 @@ private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, 
 
     // MARK: - ASWebAuthenticationPresentationContextProviding
 
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        coordinator.view.window ?? ASPresentationAnchor()
+    nonisolated func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        MainActor.assumeIsolated {
+            coordinator.view.window ?? ASPresentationAnchor()
+        }
     }
 }
 

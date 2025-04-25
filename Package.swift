@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -7,7 +7,6 @@ let package = Package(
     name: "SafariUI",
     platforms: [
         .iOS(.v14),
-        .visionOS(.v1),
         .macCatalyst(.v14)
     ],
     products: [
@@ -37,7 +36,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/nicklockwood/SwiftFormat",
-            exact: "0.53.6"
+            exact: "0.55.5"
         )
     ],
     targets: [
@@ -46,15 +45,24 @@ let package = Package(
             dependencies: [
                 "SafariView",
                 "WebAuthentication"
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency=complete")
             ]
         ),
         .target(
             name: "SafariView",
-            dependencies: []
+            dependencies: [],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency=complete")
+            ]
         ),
         .target(
             name: "WebAuthentication",
-            dependencies: []
+            dependencies: [],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency=complete")
+            ]
         ),
     ]
 )

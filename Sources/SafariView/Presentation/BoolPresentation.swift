@@ -28,7 +28,7 @@ import SafariServices
 import SwiftUI
 import UIKit
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Presents a ``SafariView`` when a binding to a Boolean value that you provide is `true`.
@@ -172,28 +172,29 @@ private struct IsPresentedModifier: ViewModifier {
         }
 
         func makeUIView(context: Context) -> UIViewType {
-            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
-            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
-            context.coordinator.barTintColor = barTintColor
-            context.coordinator.controlTintColor = controlTintColor
-            context.coordinator.dismissButtonStyle = dismissButtonStyle
-            context.coordinator.includedActivities = includedActivities
-            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.entersReaderIfAvailable = context.environment.safariViewEntersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = context.environment.safariViewBarCollapsingEnabled
+            context.coordinator.barTintColor = context.environment.safariViewBarTintColor
+            context.coordinator.controlTintColor = context.environment.safariViewControlTintColor
+            context.coordinator.dismissButtonStyle = context.environment.safariViewDismissButtonStyle
+            context.coordinator.includedActivities = context.environment.safariViewIncludedActivities
+            context.coordinator.excludedActivityTypes = context.environment.safariViewExcludedActivityTypes
             context.coordinator.isPresented = isPresented
             return context.coordinator.view
         }
 
         func updateUIView(_ uiView: UIViewType, context: Context) {
-            context.coordinator.entersReaderIfAvailable = entersReaderIfAvailable
-            context.coordinator.barCollapsingEnabled = barCollapsingEnabled
-            context.coordinator.barTintColor = barTintColor
-            context.coordinator.controlTintColor = controlTintColor
-            context.coordinator.dismissButtonStyle = dismissButtonStyle
-            context.coordinator.includedActivities = includedActivities
-            context.coordinator.excludedActivityTypes = excludedActivityTypes
+            context.coordinator.entersReaderIfAvailable = context.environment.safariViewEntersReaderIfAvailable
+            context.coordinator.barCollapsingEnabled = context.environment.safariViewBarCollapsingEnabled
+            context.coordinator.barTintColor = context.environment.safariViewBarTintColor
+            context.coordinator.controlTintColor = context.environment.safariViewControlTintColor
+            context.coordinator.dismissButtonStyle = context.environment.safariViewDismissButtonStyle
+            context.coordinator.includedActivities = context.environment.safariViewIncludedActivities
+            context.coordinator.excludedActivityTypes = context.environment.safariViewExcludedActivityTypes
             context.coordinator.isPresented = isPresented
         }
 
+        @MainActor
         final class Coordinator: NSObject, SFSafariViewControllerDelegate {
 
             init(
@@ -245,37 +246,49 @@ private struct IsPresentedModifier: ViewModifier {
             var includedActivities: SafariView.IncludedActivities = []
             var excludedActivityTypes: SafariView.ExcludedActivityTypes = []
 
-            func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-                onInitialLoad?(didLoadSuccessfully)
+            nonisolated func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+                MainActor.assumeIsolated {
+                    onInitialLoad?(didLoadSuccessfully)
+                }
             }
 
-            func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
-                onInitialRedirect?(URL)
+            nonisolated func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {
+                MainActor.assumeIsolated {
+                    onInitialRedirect?(URL)
+                }
             }
 
-            func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-                onDismiss?()
-                bindingSetter(false)
+            nonisolated func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+                MainActor.assumeIsolated {
+                    onDismiss?()
+                    bindingSetter(false)
+                }
             }
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 activityItemsFor URL: URL,
                 title: String?
             ) -> [UIActivity] {
-                includedActivities(url: URL, pageTitle: title)
+                MainActor.assumeIsolated {
+                    includedActivities(url: URL, pageTitle: title)
+                }
             }
 
-            func safariViewController(
+            nonisolated func safariViewController(
                 _ controller: SFSafariViewController,
                 excludedActivityTypesFor URL: URL,
                 title: String?
             ) -> [UIActivity.ActivityType] {
-                excludedActivityTypes(url: URL, pageTitle: title)
+                MainActor.assumeIsolated {
+                    excludedActivityTypes(url: URL, pageTitle: title)
+                }
             }
 
-            func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
-                onOpenInBrowser?()
+            nonisolated func safariViewControllerWillOpenInBrowser(_ controller: SFSafariViewController) {
+                MainActor.assumeIsolated {
+                    onOpenInBrowser?()
+                }
             }
 
             // MARK: - Private
@@ -343,27 +356,6 @@ private struct IsPresentedModifier: ViewModifier {
 
         @Binding
         private var isPresented: Bool
-
-        @Environment(\.safariViewEntersReaderIfAvailable)
-        private var entersReaderIfAvailable: Bool
-
-        @Environment(\.safariViewBarCollapsingEnabled)
-        private var barCollapsingEnabled: Bool
-
-        @Environment(\.safariViewBarTintColor)
-        private var barTintColor: Color?
-
-        @Environment(\.safariViewControlTintColor)
-        private var controlTintColor: Color
-
-        @Environment(\.safariViewDismissButtonStyle)
-        private var dismissButtonStyle: SafariView.DismissButtonStyle
-
-        @Environment(\.safariViewIncludedActivities)
-        private var includedActivities: SafariView.IncludedActivities
-
-        @Environment(\.safariViewExcludedActivityTypes)
-        private var excludedActivityTypes: SafariView.ExcludedActivityTypes
 
         private let url: URL
         private let presentationStyle: SafariView.PresentationStyle

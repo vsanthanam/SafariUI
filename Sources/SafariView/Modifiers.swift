@@ -25,7 +25,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, visionOS 1.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, *)
 public extension View {
 
     /// Set the automatic reader behavior of safari views within this view
@@ -147,7 +147,7 @@ public extension View {
     ///
     /// - Parameter activities: Closure used to conditionally include activities
     /// - Returns: The modified content
-    func includedSafariActivities(_ activities: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
+    func includedSafariActivities(_ activities: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
         ModifiedContent(
             content: self,
             modifier: SafariViewIncludedActivitiesModifier(
@@ -212,7 +212,7 @@ public extension View {
     /// - Parameter activityTypes: Closure used to conditionally exclude activities
     /// - Returns: The modified content
     func excludedSafariActivityTypes(
-        _ activityTypes: @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]
+        _ activityTypes: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]
     ) -> some View {
         ModifiedContent(
             content: self,
