@@ -23,5 +23,5 @@ fi
 # Step 3: Transform for static hosting
 xcrun docc process-archive transform-for-static-hosting \
   --hosting-base-path SafariUI/docs \
-  --output-path docs \
+  --output-path docs/html \
   "$doccarchive_path"
