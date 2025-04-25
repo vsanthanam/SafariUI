@@ -17,9 +17,9 @@ jobs:
       - name: Build Documentation
         run: |
           xcodebuild docbuild \
-            -scheme SafariUI
-            -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro"
-            -sdk iphonesimulator
+            -scheme SafariUI \
+            -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
+            -sdk iphonesimulator \
             -derivedDataPath docs
       - name: Compress DocC Archive
         run: |
