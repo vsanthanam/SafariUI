@@ -144,6 +144,7 @@ public struct WebAuthentication {
                 context.coordinator.isPresented = isPresented
             }
 
+            @MainActor
             final class Coordinator: NSObject, WebAuthenticationCoordinator {
                 init(parent: Presenter) {
                     self.parent = parent
@@ -247,6 +248,7 @@ public struct WebAuthentication {
                 context.coordinator.item = item
             }
 
+            @MainActor
             final class Coordinator: NSObject, WebAuthenticationCoordinator {
 
                 // MARK: - Initializers
@@ -353,6 +355,7 @@ public struct WebAuthentication {
     }
 }
 
+@MainActor
 private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, ASWebAuthenticationPresentationContextProviding {
 
     // MARK: - Initializers
@@ -367,8 +370,10 @@ private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, 
 
     // MARK: - ASWebAuthenticationPresentationContextProviding
 
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        coordinator.view.window ?? ASPresentationAnchor()
+    nonisolated func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        MainActor.assumeIsolated {
+            coordinator.view.window ?? ASPresentationAnchor()
+        }
     }
 }
 

@@ -30,11 +30,11 @@ import UIKit
 public extension SafariView {
 
     /// A struct used to exclude activity types from the share sheet of a ``SafariView``.
-    struct ExcludedActivityTypes: ExpressibleByArrayLiteral {
+    struct ExcludedActivityTypes: Sendable, ExpressibleByArrayLiteral {
 
         /// Exclude activity types conditionally, based on the URL and/or page title.
         /// - Parameter excludedActivityTypes: Closure used to exclude activity types
-        public init(_ excludedActivityTypes: @escaping (URL, String?) -> [UIActivity.ActivityType]) {
+        public init(_ excludedActivityTypes: @Sendable @escaping (URL, String?) -> [UIActivity.ActivityType]) {
             self.excludedActivityTypes = excludedActivityTypes
         }
 
@@ -79,7 +79,7 @@ public extension SafariView {
             excludedActivityTypes(url, pageTitle)
         }
 
-        private let excludedActivityTypes: (URL, String?) -> [UIActivity.ActivityType]
+        private let excludedActivityTypes: @Sendable (URL, String?) -> [UIActivity.ActivityType]
 
     }
 

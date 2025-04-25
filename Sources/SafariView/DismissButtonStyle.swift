@@ -41,7 +41,7 @@ public extension SafariView {
         case cancel
 
         /// The default dismiss button style.
-        public static var `default`: DismissButtonStyle = .close
+        public static let `default`: DismissButtonStyle = .close
 
         var uikit: SFSafariViewController.DismissButtonStyle {
             switch self {

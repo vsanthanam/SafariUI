@@ -42,9 +42,9 @@ public struct SafariView: View {
     ///   - onOpenInBrowser: Closure to execute if a user moves from a `SafariView` to `Safari.app`
     public init(
         url: URL,
-        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
-        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
-        onOpenInBrowser: (() -> Void)? = nil
+        onInitialLoad: (@MainActor (_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: (@MainActor (_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (@MainActor () -> Void)? = nil
     ) {
         self.url = url
         activityButton = nil
@@ -65,9 +65,9 @@ public struct SafariView: View {
     public init(
         url: URL,
         activityButton: ActivityButton?,
-        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
-        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
-        onOpenInBrowser: (() -> Void)? = nil
+        onInitialLoad: (@MainActor (_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: (@MainActor (_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (@MainActor () -> Void)? = nil
     ) {
         self.url = url
         self.activityButton = activityButton
@@ -92,9 +92,9 @@ public struct SafariView: View {
         url: URL,
         activityButton: ActivityButton? = nil,
         eventAttribution: UIEventAttribution?,
-        onInitialLoad: ((_ didLoadSuccessfully: Bool) -> Void)? = nil,
-        onInitialRedirect: ((_ url: URL) -> Void)? = nil,
-        onOpenInBrowser: (() -> Void)? = nil
+        onInitialLoad: (@MainActor (_ didLoadSuccessfully: Bool) -> Void)? = nil,
+        onInitialRedirect: (@MainActor (_ url: URL) -> Void)? = nil,
+        onOpenInBrowser: (@MainActor () -> Void)? = nil
     ) {
         self.url = url
         self.activityButton = activityButton
@@ -279,9 +279,9 @@ public struct SafariView: View {
     }
 
     package let url: URL
-    package let onInitialLoad: ((Bool) -> Void)?
-    package let onInitialRedirect: ((URL) -> Void)?
-    package let onOpenInBrowser: (() -> Void)?
+    package let onInitialLoad: (@MainActor (Bool) -> Void)?
+    package let onInitialRedirect: (@MainActor (URL) -> Void)?
+    package let onOpenInBrowser: (@MainActor () -> Void)?
     package let activityButton: AnyObject?
     package let eventAttribution: AnyObject?
 
