@@ -10,10 +10,10 @@ xcodebuild docbuild \
   -scheme SafariUI \
   -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
   -sdk iphonesimulator \
-  -derivedDataPath docs
+  -derivedDataPath build
 
 # Step 2: Check if the .doccarchive exists and is a directory
-doccarchive_path="docs/Build/Products/Debug-iphonesimulator/SafariUI.doccarchive"
+doccarchive_path="build/Build/Products/Debug-iphonesimulator/SafariUI.doccarchive"
 
 if [ ! -d "$doccarchive_path" ]; then
   echo "❌ Error: Expected a directory at '$doccarchive_path', but it does not exist or is not a directory."
@@ -23,5 +23,5 @@ fi
 # Step 3: Transform for static hosting
 xcrun docc process-archive transform-for-static-hosting \
   --hosting-base-path SafariUI/docs \
-  --output-path docs/html \
+  --output-path docs \
   "$doccarchive_path"
