@@ -1,9 +1,5 @@
 #  ``SafariView``
 
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
-
 ## Overview
 
 The view includes Safari features such as Reader, AutoFill, Fraudulent Website Detection, and content blocking. The user's activity and interaction with `SafariView` are not visible to your app, which cannot access AutoFill data, browsing history, or website data. You do not need to secure data between your app and Safari. If you would like to share data between your app and Safari, so it is easier for a user to log in only one time, use ``WebAuthentication`` instead.
@@ -19,11 +15,11 @@ UI features include the following:
 
 You can present a `SafariView` using the built-in presentation view modifiers:
 
-- ``SwiftUI/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(isPresented:url:presentationStyle:onDismiss:)``
-- ``SwiftUI/View/safari(item:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
-- ``SwiftUI/View/safari(url:presentationStyle:onDismiss:)``
+- ``SwiftUICore/View/safari(isPresented:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(isPresented:url:presentationStyle:onDismiss:)``
+- ``SwiftUICore/View/safari(item:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(item:id:presentationStyle:onDismiss:safariView:)``
+- ``SwiftUICore/View/safari(url:presentationStyle:onDismiss:)``
 
 These modifiers use the standard presentation mechanism that you would otherwise use to present an `SFSafariViewController` in a UIKit application. To customize the behavior of the modifier, see the ``SafariView/PresentationStyle`` enumeration.
 
@@ -63,5 +59,5 @@ A `SafariView` is also a regular SwiftUI view, and can be presented through any 
 
 ### Environment Values
 
-- ``SwiftUI/EnvironmentValues/safariViewIncludedActivities``
-- ``SwiftUI/EnvironmentValues/safariViewExcludedActivityTypes``
+- ``SwiftUICore/EnvironmentValues/safariViewIncludedActivities``
+- ``SwiftUICore/EnvironmentValues/safariViewExcludedActivityTypes``

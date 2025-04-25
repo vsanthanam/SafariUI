@@ -36,9 +36,9 @@ public struct WebAuthentication {
     ///
     /// You must present a `WebAuthentication` challenge to your users using one of our provided presentation view modifiers:
     ///
-    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-74m38``
-    /// - ``SwiftUI/View/webAuthentication(_:webAuthentication:)-5x82p``
-    /// - ``SwiftUI/View/webAuthentication(_:id:webAuthentication:)``
+    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Bool>,_)``
+    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Item?>,_)``
+    /// - ``SwiftUICore/View/webAuthentication(_:id:webAuthentication:)``
     ///
     /// For example:
     ///

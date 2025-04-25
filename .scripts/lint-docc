@@ -6,24 +6,21 @@ temp_dir=$(mktemp -d)
 trap 'rm -rf "$temp_dir"' EXIT
 
 set +e
-output=$(swift package \
-    --allow-writing-to-directory "$temp_dir" \
-    generate-documentation \
-    --target SafariUI \
-    --output-path "$temp_dir" \
-    --transform-for-static-hosting \
-    --hosting-base-path temp-docs 2>&1)
-exit_code=$?
+output=$(xcodebuild docbuild \
+    -scheme SafariUI \
+    -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
+    -derivedDataPath "$temp_dir" 2>&1)
+build_exit_code=$?
 set -e
 
 echo "$output"
 
-if [ $exit_code -ne 0 ]; then
+if [ $build_exit_code -ne 0 ]; then
     echo "❌ Documentation generation failed with errors."
-    exit $exit_code
+    exit $build_exit_code
 fi
 
-if echo "$output" | grep -q '\bwarning:'; then
+if echo "$output" | grep -q 'warning:'; then
     echo "❌ Documentation generation succeeded, but warnings were emitted."
     exit 1
 fi

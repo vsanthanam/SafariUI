@@ -1,8 +1,13 @@
 #!/bin/bash
 
-swift package --allow-writing-to-directory docs \
-    generate-documentation --target SafariUI \
-    --disable-indexing \
-    --transform-for-static-hosting \
-    --hosting-base-path SafaiUI/docs \
-    --output-path docs
+set -euo pipefail
+
+xcodebuild docbuild \
+  -scheme SafariUI \
+  -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
+  -derivedDataPath docs
+
+docc process-archive transform-for-static-hosting \
+  --hosting-base-path SafariUI/docs \
+  --output-path docs/html \
+  docs/Build/Products/Debug-iphoneos/SafariUI.doccarchive
