@@ -23,13 +23,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SafariServices
+#if os(iOS)
+    import SafariServices
+#endif
 
 @available(iOS 14.0, macCatalyst 14.0, *)
-public extension SafariView {
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension SafariView {
 
     /// An enumeration describing the various dismiss buttons styles available in a ``SafariView``
-    enum DismissButtonStyle: Equatable, Hashable, Sendable {
+    public enum DismissButtonStyle: Equatable, Hashable, Sendable {
 
         /// The done dismiss button style.
         case done
@@ -43,12 +48,16 @@ public extension SafariView {
         /// The default dismiss button style.
         public static let `default`: DismissButtonStyle = .close
 
-        var uikit: SFSafariViewController.DismissButtonStyle {
-            switch self {
-            case .done: .done
-            case .close: .close
-            case .cancel: .cancel
+        #if os(iOS)
+            var uikit: SFSafariViewController.DismissButtonStyle {
+                switch self {
+                case .done: .done
+                case .close: .close
+                case .cancel: .cancel
+                }
             }
-        }
+        #endif
+
     }
+
 }

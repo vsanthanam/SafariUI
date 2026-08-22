@@ -12,12 +12,12 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build-docc:
-    runs-on: macos-15
+    runs-on: macos-26
     outputs:
       artifact-name: docs
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Xcode Version
         run: ./.scripts/xcode-select
       - name: Build Documentation
@@ -25,7 +25,7 @@ jobs:
       - name: Compress Documentation
         run: zip -r docs.zip docs
       - name: Upload Documentation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docs
           path: docs.zip
@@ -34,9 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Download Documentation
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: docs
           path: .
@@ -45,14 +45,14 @@ jobs:
       - name: Setup Jekyll Configuration
         run: ./.scripts/setup-theme 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
   deploy:
     environment:
       name: github-pages
@@ -62,4 +62,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

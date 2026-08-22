@@ -3,7 +3,7 @@
 [![MIT License](https://img.shields.io/github/license/vsanthanam/SafariUI)](https://github.com/vsanthanam/SafariUI/blob/main/LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/vsanthanam/SafariUI?include_prereleases)](https://github.com/vsanthanam/SafariUI/releases)
 [![Build Status](https://img.shields.io/github/check-runs/vsanthanam/SafariUI/main)](https://github.com/vsanthanam/SafariUI/actions)
-[![Swift Version](https://img.shields.io/badge/swift-6.1-critical)](https://swift.org)
+[![Swift Version](https://img.shields.io/badge/swift-6.3-critical)](https://swift.org)
 [![Documentation](https://img.shields.io/badge/Documentation-GitHub-8A2BE2)](https://www.safariui.com/docs/documentation/safariui)
 
 SwiftUI wrappers for `SFSafariViewController` and `ASWebAuthenticationSession`
@@ -16,7 +16,7 @@ To add SafariUI as a dependency to an existing Swift package, add the following 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "5.0.0"))
+    .package(url: "https://github.com/vsanthanam/SafariUI.git", .upToNextMajor(from: "6.0.0"))
 ]
 ```
 
@@ -27,7 +27,7 @@ To add SafariUI as a dependency to an Xcode Project:
 
 Other distribution mechanisms like CocoaPods or Carthage may be added in the future.
 
-*Note: The package contains multiple modules. You can depend on the whole library by importing the `SwiftUI` module, or you can depend on individual modules like `SafariView` or `WebAuthentication` as needed.*
+*Note: The package contains multiple modules. You can depend on the whole library by importing the `SafariUI` module, or you can depend on individual modules like `SafariView` or `WebAuthentication` as needed.*
 
 ## Usage & Documentation
 

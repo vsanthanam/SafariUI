@@ -1,5 +1,5 @@
 // SafariUI
-// SafariUI.swift
+// PresentationStyle.swift
 //
 // MIT License
 //
@@ -23,7 +23,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@_exported import SafariView
-@_exported import WebAuthentication
+@available(iOS 14.0, macCatalyst 14.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension SafariView {
 
-public enum _SafariUI {}
+    /// The available presentation styles of a ``SafariView``
+    public enum PresentationStyle: Equatable, Hashable, Sendable {
+
+        /// Standard Presentation
+        case standard
+
+        /// Form Sheet Presentation
+        case formSheet
+
+        /// Page Sheet Presentation
+        case pageSheet
+
+        /// Default Presentation
+        public static let `default`: PresentationStyle = .standard
+
+    }
+
+}

@@ -23,28 +23,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SafariServices
+import Foundation
+#if os(iOS)
+    import SafariServices
+#endif
 
 @available(iOS 15.0, macCatalyst 15.0, *)
-public extension SafariView {
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension SafariView {
+
+    @discardableResult
+    public static func prewarmConnections(to URLs: [URL]) -> PrewarmingToken {
+        #if os(iOS)
+            let token = SFSafariViewController.prewarmConnections(to: URLs)
+            return .init(token, urls: URLs)
+        #else
+            fatalError("unavailable")
+        #endif
+    }
 
     /// A type created when SafariServices begins prewarming a connection.
-    final class PrewarmingToken {
+    public final class PrewarmingToken {
 
         /// The URLs who's connections are being prewarmed.
         public let urls: [URL]
 
         /// Invalidate the prewarmed connections.
         public func invalidate() {
-            token.invalidate()
+            #if os(iOS)
+                let token = unsafeDowncast(
+                    token,
+                    to: SFSafariViewController.PrewarmingToken.self
+                )
+                token.invalidate()
+            #endif
         }
 
-        init(_ token: SFSafariViewController.PrewarmingToken, urls: [URL]) {
+        init(
+            _ token: AnyObject,
+            urls: [URL]
+        ) {
             self.token = token
             self.urls = urls
         }
 
-        private let token: SFSafariViewController.PrewarmingToken
+        /// Stored type-erased so the class can be declared on platforms
+        /// where SafariServices' token type does not exist.
+        private let token: AnyObject
 
     }
 

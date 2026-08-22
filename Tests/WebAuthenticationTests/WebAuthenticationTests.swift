@@ -1,5 +1,5 @@
 // SafariUI
-// Environment.swift
+// WebAuthenticationTests.swift
 //
 // MIT License
 //
@@ -23,21 +23,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SwiftUI
-
-extension EnvironmentValues {
-
-    var webAuthenticationPrefersEphemeralWebBrowserSession: Bool {
-        get { self[WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey.self] }
-        set { self[WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey.self] = newValue }
-    }
-
-}
-
-private struct WebAuthenticationPrefersEphemeralWebBrowserSessionEnvironmentKey: EnvironmentKey {
-
-    typealias Value = Bool
-
-    static let defaultValue: Bool = false
-
-}
+@testable import WebAuthentication

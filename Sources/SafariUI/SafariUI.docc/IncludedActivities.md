@@ -5,17 +5,17 @@
 You can initialize instances of this type using an array literal of `UIActivity` values. For example:
 
 ```swift
-let excluded: SafariView.IncludedActivities = [someActivity, someOtherActivity]
+let included: SafariView.IncludedActivities = [someActivity, someOtherActivity]
 ```
 
-To change the the included activities used by ``SafariView`` at the current scope, use the ``SwiftUICore/View/includedSafariActivities(_:)-2u8l9`` view modifier, or the ``SwiftUICore/EnvironmentValues/safariViewIncludedActivities`` environment value.
+To change the included activities used by ``SafariView`` at the current scope, use the ``SwiftUICore/View/safariViewIncludedActivities(_:)-(SafariView.IncludedActivities)`` view modifier to replace the current value, or the ``SwiftUICore/View/includingSafariViewActivities(_:)-(SafariView.IncludedActivities)`` view modifier to append to it.
 
 ## Topics
 
 ### Initializers
 
 - ``init(_:)-([UIActivity])``
-- ``init(_:)-((URL,String?)->[UIActivity])``
+- ``init(_:)-f33s``
 
 ### Operators
 

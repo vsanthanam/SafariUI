@@ -8,14 +8,14 @@ You can initialize instances of this type using an array literal of `UIActivity.
 let excluded: SafariView.ExcludedActivityTypes = [.addToReadingList, .airDrop, .print, .sharePlay]
 ```
 
-To change the the excluded activity types used by ``SafariView`` at the current scope, use the ``SwiftUICore/View/excludedSafariActivityTypes(_:)-tvrg`` view modifier, or the ``SwiftUICore/EnvironmentValues/safariViewExcludedActivityTypes`` environment value.
+To change the excluded activity types used by ``SafariView`` at the current scope, use the ``SwiftUICore/View/safariViewExcludedActivityTypes(_:)-(SafariView.ExcludedActivityTypes)`` view modifier to replace the current value, or the ``SwiftUICore/View/excludingSafariViewActivityTypes(_:)-(SafariView.ExcludedActivityTypes)`` view modifier to append to it.
 
 ## Topics
 
 ### Initializers
 
 - ``init(_:)-([UIActivity.ActivityType])``
-- ``init(_:)-((URL,String?)->[UIActivity.ActivityType])``
+- ``init(_:)-3s2tk``
 
 ### Operators
 
@@ -23,5 +23,5 @@ To change the the excluded activity types used by ``SafariView`` at the current 
 
 ### Literal Expression Support
 
-- ``ArrayLiteralElement``
 - ``init(arrayLiteral:)``
+- ``ArrayLiteralElement``

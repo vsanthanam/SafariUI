@@ -23,64 +23,79 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
-import UIKit
+#if os(iOS)
 
-@available(iOS 14.0, macCatalyst 14.0, *)
-public extension SafariView {
+    import Foundation
+    import UIKit
 
-    /// A struct used to exclude activity types from the share sheet of a ``SafariView``.
-    struct ExcludedActivityTypes: Sendable, ExpressibleByArrayLiteral {
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    extension SafariView {
 
-        /// Exclude activity types conditionally, based on the URL and/or page title.
-        /// - Parameter excludedActivityTypes: Closure used to exclude activity types
-        public init(_ excludedActivityTypes: @Sendable @escaping (URL, String?) -> [UIActivity.ActivityType]) {
-            self.excludedActivityTypes = excludedActivityTypes
-        }
+        /// A struct used to exclude activity types from the share sheet of a ``SafariView``.
+        @MainActor
+        public struct ExcludedActivityTypes: @MainActor ExpressibleByArrayLiteral {
 
-        /// Exclude activity types using a predefined list
-        /// - Parameter excludedActivityTypes: A list of activity types to exclude from the share sheet
-        public init(_ excludedActivityTypes: [UIActivity.ActivityType] = []) {
-            self.excludedActivityTypes = { _, _ in excludedActivityTypes }
-        }
-
-        // MARK: - API
-
-        public static func + (lhs: ExcludedActivityTypes, rhs: ExcludedActivityTypes) -> ExcludedActivityTypes {
-            .init { url, pageTitle in
-                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+            /// Exclude activity types conditionally, based on the URL and/or page title.
+            /// - Parameter excludedActivityTypes: Closure used to exclude activity types
+            public init(
+                _ excludedActivityTypes: @escaping @MainActor (URL, String?) -> [UIActivity.ActivityType]
+            ) {
+                self.excludedActivityTypes = excludedActivityTypes
             }
+
+            /// Exclude activity types using a predefined list
+            /// - Parameter excludedActivityTypes: A list of activity types to exclude from the share sheet
+            public init(
+                _ excludedActivityTypes: [UIActivity.ActivityType] = []
+            ) {
+                self.excludedActivityTypes = { _, _ in excludedActivityTypes }
+            }
+
+            // MARK: - API
+
+            public static func + (
+                lhs: ExcludedActivityTypes,
+                rhs: ExcludedActivityTypes
+            ) -> ExcludedActivityTypes {
+                .init { url, pageTitle in
+                    lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+                }
+            }
+
+            // MARK: - ExpressiblyByArrayLiteral
+
+            /// The type of the elements of an array literal.
+            public typealias ArrayLiteralElement = UIActivity.ActivityType
+
+            /// Creates an `ExcludedActivityTypes` containing the elements of the given array literal
+            ///
+            /// Do not call this initializer directly. It is used by the compiler when you use an array literal. Instead, create a new `ExcludedActivityTypes` using an array literal as its value by enclosing a comma-separated list of values in square brackets. You can use an array literal anywhere an `ExcludedActivityTypes` is expected by the type context. For example:
+            ///
+            /// ```swift
+            /// let excluded: SafariView.ExcludedActivityTypes = [.addToReadingList, .airDrop, .print, .sharePlay]
+            /// ```
+            ///
+            /// In this example, the assignment to the `excluded` constant calls this array literal initializer behind the scenes.
+            /// - Parameter elements: A variadic list of activity types.
+            public init(arrayLiteral elements: ArrayLiteralElement...) {
+                self.init { _, _ in elements }
+            }
+
+            // MARK: - Private
+
+            static let `default`: ExcludedActivityTypes = .init()
+
+            func callAsFunction(
+                url: URL,
+                pageTitle: String?
+            ) -> [UIActivity.ActivityType] {
+                excludedActivityTypes(url, pageTitle)
+            }
+
+            private let excludedActivityTypes: @MainActor (URL, String?) -> [UIActivity.ActivityType]
+
         }
-
-        // MARK: - ExpressiblyByArrayLiteral
-
-        /// The type of the elements of an array literal.
-        public typealias ArrayLiteralElement = UIActivity.ActivityType
-
-        /// Creates an `ExcludedActivityTypes` containing the elements of the given array literal
-        ///
-        /// Do not call this initializer directly. It is used by the compiler when you use an array literal. Instead, create a new `ExcludedActivityTypes` using an array literal as its value by enclosing a comma-separated list of values in square brackets. You can use an array literal anywhere an `ExcludedActivityTypes` is expected by the type context. For example:
-        ///
-        /// ```swift
-        /// let excluded: SafariView.ExcludedActivityTypes = [.addToReadingList, .airDrop, .print, .sharePlay]
-        /// ```
-        ///
-        /// In this example, the assignment to the `excluded` constant calls this array literal initializer behind the scenes.
-        /// - Parameter elements: A variadic list of activity types.
-        public init(arrayLiteral elements: ArrayLiteralElement...) {
-            self.init { _, _ in elements }
-        }
-
-        // MARK: - Private
-
-        static let `default`: ExcludedActivityTypes = .init()
-
-        func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity.ActivityType] {
-            excludedActivityTypes(url, pageTitle)
-        }
-
-        private let excludedActivityTypes: @Sendable (URL, String?) -> [UIActivity.ActivityType]
 
     }
 
-}
+#endif

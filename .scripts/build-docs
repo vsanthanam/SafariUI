@@ -8,7 +8,7 @@ set -euo pipefail
 # Step 1: Build docs
 xcodebuild docbuild \
   -scheme SafariUI \
-  -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
+  -destination "generic/platform=iOS Simulator" \
   -sdk iphonesimulator \
   -derivedDataPath build
 
