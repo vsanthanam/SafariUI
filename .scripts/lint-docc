@@ -8,7 +8,7 @@ trap 'rm -rf "$temp_dir"' EXIT
 set +e
 output=$(xcodebuild docbuild \
     -scheme SafariUI \
-    -destination "platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro" \
+    -destination "generic/platform=iOS Simulator" \
     -derivedDataPath "$temp_dir" 2>&1)
 build_exit_code=$?
 set -e

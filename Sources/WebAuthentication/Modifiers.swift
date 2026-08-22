@@ -25,39 +25,39 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macCatalyst 14.0, *)
-public extension View {
+@available(iOS 14.0, macCatalyst 14.0, macOS 11.0, watchOS 7.0, *)
+@available(tvOS, unavailable)
+extension View {
 
-    /// Set the private authentication requirements for authentication sessions within this view.
+    /// Set whether web authentication sessions within this view should ask the browser for a private authentication session
     ///
-    /// This modifier is the equivelent of the of the [`prefersEphemeralWebBrowserSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession/3237231-prefersephemeralwebbrowsersessio) property of a [`ASWebAuthnticationSession`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession)
-    ///
-    /// - Parameter prefersEphemeralWebBrowserSession: Whether or not the web authentication session should ask for a private authentication session.
+    /// - Important: The value is consumed when a session starts. Changing it has no effect on a session that is already running; the new value applies to the next session that starts.
+    /// - Parameter prefersEphemeralWebBrowserSession: Whether the session should ask the browser for a private authentication session
     /// - Returns: The modified view
-    func webAuthenticationPrefersEphemeralWebBrowserSession(_ prefersEphemeralWebBrowserSession: Bool = true) -> some View {
-        let modifer = WebAuthenticationPrefersEphemeralWebBrowserSessionModifier(prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession)
-        return ModifiedContent(content: self, modifier: modifer)
+    public func webAuthenticationPrefersEphemeralWebBrowserSession(
+        _ prefersEphemeralWebBrowserSession: Bool = true
+    ) -> some View {
+        modifier(
+            WebAuthenticationPrefersEphemeralWebBrowserSessionModifier(
+                prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession
+            )
+        )
     }
 
 }
 
+@available(iOS 14.0, macCatalyst 14.0, macOS 11.0, watchOS 7.0, *)
+@available(tvOS, unavailable)
 private struct WebAuthenticationPrefersEphemeralWebBrowserSessionModifier: ViewModifier {
 
-    // MARK: - Initializers
+    let prefersEphemeralWebBrowserSession: Bool
 
-    init(prefersEphemeralWebBrowserSession: Bool) {
-        self.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environment(\.webAuthenticationPrefersEphemeralWebBrowserSession, prefersEphemeralWebBrowserSession)
+            .environment(
+                \.webAuthenticationPrefersEphemeralWebBrowserSession,
+                prefersEphemeralWebBrowserSession
+            )
     }
 
-    // MARK: - Private
-
-    private let prefersEphemeralWebBrowserSession: Bool
 }

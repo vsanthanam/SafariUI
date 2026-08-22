@@ -23,66 +23,80 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
-import UIKit
+#if os(iOS)
 
-@available(iOS 14.0, macCatalyst 14.0, *)
-public extension SafariView {
+    import UIKit
 
-    /// A struct used to include custom activities in the share sheet of a ``SafariView``
-    struct IncludedActivities: Sendable, ExpressibleByArrayLiteral {
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    extension SafariView {
 
-        // MARK: - Initializers
+        /// A struct used to include custom activities in the share sheet of a ``SafariView``
+        @MainActor
+        public struct IncludedActivities: @MainActor ExpressibleByArrayLiteral {
 
-        /// Include activities conditionally, based on the URL and/or page title.
-        /// - Parameter includedActivities: Closure used to provide activitues
-        public init(_ includedActivities: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) {
-            self.includedActivities = includedActivities
-        }
+            // MARK: - Initializers
 
-        /// Include activities using a predefined list
-        /// - Parameter includedActivities: A list of activities to include in the share sheet
-        public init(_ includedActivities: [UIActivity]) {
-            self.includedActivities = { _, _ in includedActivities }
-        }
-
-        // MARK: - API
-
-        public static func + (lhs: IncludedActivities, rhs: IncludedActivities) -> IncludedActivities {
-            .init { url, pageTitle in
-                lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+            /// Include activities conditionally, based on the URL and/or page title.
+            /// - Parameter includedActivities: Closure used to provide activitues
+            public init(
+                _ includedActivities: @escaping @MainActor (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+            ) {
+                self.includedActivities = includedActivities
             }
+
+            /// Include activities using a predefined list
+            /// - Parameter includedActivities: A list of activities to include in the share sheet
+            public init(
+                _ includedActivities: [UIActivity]
+            ) {
+                self.includedActivities = { _, _ in includedActivities }
+            }
+
+            // MARK: - API
+
+            public static func + (
+                lhs: IncludedActivities,
+                rhs: IncludedActivities
+            ) -> IncludedActivities {
+                .init { url, pageTitle in
+                    lhs(url: url, pageTitle: pageTitle) + rhs(url: url, pageTitle: pageTitle)
+                }
+            }
+
+            // MARK: - ExpressiblyByArrayLiteral
+
+            /// The type of the elements of an array literal.
+            public typealias ArrayLiteralElement = UIActivity
+
+            /// Creates an `IncludedActivities` containing the elements of the given array literal
+            ///
+            /// Do not call this initializer directly. It is used by the compiler when you use an array literal. Instead, create a new `IncludedActivities` using an array literal as its value by enclosing a comma-separated list of values in square brackets. You can use an array literal anywhere an `IncludedActivities` is expected by the type context. For example:
+            ///
+            /// ```swift
+            /// let included: SafariView.IncludedActivities = [someActivity, someOtherActivity]
+            /// ```
+            ///
+            /// In this example, the assignment to the `included` constant calls this array literal initializer behind the scenes.
+            /// - Parameter elements: A variadic list of activities.
+            public init(arrayLiteral elements: ArrayLiteralElement...) {
+                self.init { _, _ in elements }
+            }
+
+            // MARK: - Private
+
+            static let `default`: IncludedActivities = .init()
+
+            func callAsFunction(
+                url: URL,
+                pageTitle: String?
+            ) -> [UIActivity] {
+                includedActivities(url, pageTitle)
+            }
+
+            private let includedActivities: @MainActor (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+
         }
-
-        // MARK: - ExpressiblyByArrayLiteral
-
-        /// The type of the elements of an array literal.
-        public typealias ArrayLiteralElement = UIActivity
-
-        /// Creates an `IncludedActivities` containing the elements of the given array literal
-        ///
-        /// Do not call this initializer directly. It is used by the compiler when you use an array literal. Instead, create a new `IncludedActivities` using an array literal as its value by enclosing a comma-separated list of values in square brackets. You can use an array literal anywhere an `IncludedActivities` is expected by the type context. For example:
-        ///
-        /// ```swift
-        /// let included: SafariView.IncludedActivities = [someActivity, someOtherActivity]
-        /// ```
-        ///
-        /// In this example, the assignment to the `included` constant calls this array literal initializer behind the scenes.
-        /// - Parameter elements: A variadic list of activities.
-        public init(arrayLiteral elements: ArrayLiteralElement...) {
-            self.init { _, _ in elements }
-        }
-
-        // MARK: - Private
-
-        static let `default`: IncludedActivities = .init()
-
-        func callAsFunction(url: URL, pageTitle: String?) -> [UIActivity] {
-            includedActivities(url, pageTitle)
-        }
-
-        private let includedActivities: @Sendable (_ url: URL, _ pageTitle: String?) -> [UIActivity]
 
     }
 
-}
+#endif

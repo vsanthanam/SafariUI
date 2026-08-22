@@ -9,20 +9,47 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build-maccatalyst-xcode:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: Select Xcode Version
       run: ./.scripts/xcode-select
     - name: Build SafariUI
       run: ./.scripts/build-maccatalyst-xcode
   build-ios-xcode:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: Select Xcode Version
       run: ./.scripts/xcode-select
     - name: Build SafariUI
       run: ./.scripts/build-ios-xcode
+  build-macos-xcode:
+    runs-on: macos-26
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+    - name: Select Xcode Version
+      run: ./.scripts/xcode-select
+    - name: Build SafariUI
+      run: ./.scripts/build-macos-xcode
+  build-watchos-xcode:
+    runs-on: macos-26
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+    - name: Select Xcode Version
+      run: ./.scripts/xcode-select
+    - name: Build SafariUI
+      run: ./.scripts/build-watchos-xcode
+  build-tvos-xcode:
+    runs-on: macos-26
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+    - name: Select Xcode Version
+      run: ./.scripts/xcode-select
+    - name: Build SafariUI
+      run: ./.scripts/build-tvos-xcode

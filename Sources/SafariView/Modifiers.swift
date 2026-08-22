@@ -24,376 +24,439 @@
 // SOFTWARE.
 
 import SwiftUI
+#if os(iOS)
+    import UIKit
+#endif
 
 @available(iOS 14.0, macCatalyst 14.0, *)
-public extension View {
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension View {
 
-    /// Set the automatic reader behavior of safari views within this view
-    ///
-    /// This modifier is the equivelent of the of the [`entersReaderIfAvailable`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration/1648471-entersreaderifavailable) property of a [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
-    ///
-    /// - Parameter entersReaderIfAvailable: Whether or not the safari view should automatically enter reader mode if available.
-    /// - Returns: The modified view
-    func safariEntersReaderIfAvailable(_ entersReaderIfAvailable: Bool = true) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewEntersReaderIfAvailableModifier(entersReaderIfAvailable: entersReaderIfAvailable)
-        )
-    }
-
-    /// Set the bar collapsing behavior of safari views within this view
-    ///
-    /// This modifier is the equivelent of the of the [`barCollapsingEnabled`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration/2887469-barcollapsingenabled) property of a [`SFSafariViewController.Configuration`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/configuration)
-    ///
-    /// - Parameter barCollapsingEnabled: Whether or not bar collpasing should be enabled.
-    /// - Returns: The modified view
-    func safariBarCollapsingEnabled(_ barCollapsingEnabled: Bool = true) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewBarCollapsingEnabledModifier(barCollapsingEnabled: barCollapsingEnabled)
-        )
-    }
-
-    /// Set the bar tint color of safari views within this view
-    ///
-    /// This modifier is the equivelent of the [`.preferredBarTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274394-preferredbartintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
-    ///
-    /// - Parameter color: The color to use, or `nil` for the system default
-    /// - Returns: The modified view
-    func safariBarTintColor(_ color: Color?) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewBarTintColorModifier(safariViewBarTintColor: color)
-        )
-    }
-
-    /// Set the control tint color of safari views within this view
-    ///
-    /// This modifier is the equivelent of the [`.preferredControlTintColor`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2274393-preferredcontroltintcolor) property of a [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
-    ///
-    /// - Parameter color: The color to use
-    /// - Returns: The modified view
-    func safariControlTintColor(_ color: Color) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewControlTintColorModifier(safariViewControlTintColor: color)
-        )
-    }
-
-    /// Set the safari view's dismiss button style
-    ///
-    /// This modifer is the equivelent of the [`.dismissButtonStyle` ](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller/2875838-dismissbuttonstyle) property of a  [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)
-    ///
-    /// - Parameter dismissButtonStyle: The desired dismiss button style
-    /// - Returns: The modified content
-    func safariDismissButtonStyle(_ dismissButtonStyle: SafariView.DismissButtonStyle) -> some View {
-        let modifier = SafariViewDismissButtonStyleModifier(safariViewDismissButtonStyle: dismissButtonStyle)
-        return ModifiedContent(content: self, modifier: modifier)
-    }
-
-    /// Include additional activities in the share sheet of safari views within this view.
-    ///
-    /// Use this modifier to include a list of activities to display in the share sheet of a ``SafariView``
-    ///
-    /// This modifier replaces the previous values in the environment with the supplied values.
-    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewIncludedActivities)
-    ///     var safariActivities
-    ///
-    ///     var body: some View {
-    ///         SafariView(url: some_url)
-    ///             .includedSafariActivities(safariActivities + newValues)
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameter activities: The activities to include. You may use an array literal of `UIActivity` types.
-    /// - Returns: The modified content
-    func includedSafariActivities(_ activities: SafariView.IncludedActivities) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewIncludedActivitiesModifier(activities: activities)
-        )
-    }
-
-    /// Conditionally include activities in the share sheet of safari views within this view.
-    ///
-    /// Use this modifier to conditionally include additional activities to display in the share sheet of a ``SafariView``, based in the URL and page title.
-    ///
-    /// This modifier replaces the previous values in the environment with the supplied values.
-    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewIncludedActivities)
-    ///     var safariActivities
-    ///
-    ///     var body: some View {
-    ///         SafariView(url: some_url)
-    ///             .includedSafariActivities { url, pageTitle in
-    ///                 // custom logic
-    ///                 return safariActivities + newValues
-    ///             }
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameter activities: Closure used to conditionally include activities
-    /// - Returns: The modified content
-    func includedSafariActivities(_ activities: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity]) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewIncludedActivitiesModifier(
-                activities: .init(activities)
-            )
-        )
-    }
-
-    /// Exclude activity types from the share sheet of safari views within this view.
-    ///
-    /// Use this modifier to exclude a list of activity types from the share sheet of a ``SafariView``
-    ///
-    /// This modifier replaces the previous values in the environment with the supplied values.
-    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewExcludedActivityTypes)
-    ///     var excludedTypes
-    ///
-    ///     var body: some View {
-    ///         SafariView(url: some_url)
-    ///             .excludedSafariActivityTypes(excludedTypes + newValues)
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameter activityTypes: The activity types to exclude. You may use an array literal of `UIActivity.ActivityType` values.
-    /// - Returns: The modified content
-    func excludedSafariActivityTypes(_ activityTypes: SafariView.ExcludedActivityTypes) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewExcludedActivityTypesModifier(activityTypes: activityTypes)
-        )
-    }
-
-    /// Conditionally exclude activity types from the share sheet of safari views within this view.
-    ///
-    /// Use this modifier to conditionally exclude activity types from the share sheet of a ``SafariView``, based on the URL and page title.
-    ///
-    /// This modifier replaces the previous values in the environment with the supplied values.
-    /// If you wish to append values to the existing environment instead, you'll need to retrieve them first, like so:
-    ///
-    /// ```swift
-    /// struct MyView: View {
-    ///
-    ///     @Environment(\.safariViewExcludedActivityTypes)
-    ///     var excludedTypes
-    ///
-    ///     var body: some View {
-    ///         SafariView(url: some_url) { url, pageTitle in
-    ///             // custom logic
-    ///             return excludedTypes + newValues
-    ///         }
-    ///     }
-    ///
-    /// }
-    /// ```
-    ///
-    /// - Parameter activityTypes: Closure used to conditionally exclude activities
-    /// - Returns: The modified content
-    func excludedSafariActivityTypes(
-        _ activityTypes: @Sendable @escaping (_ url: URL, _ pageTitle: String?) -> [UIActivity.ActivityType]
+    @available(iOS, introduced: 14.0, deprecated: 26.0)
+    @available(macCatalyst, introduced: 14.0, deprecated: 26.0)
+    public func safariViewBarTintColor(
+        _ barTintColor: Color?
     ) -> some View {
-        ModifiedContent(
-            content: self,
-            modifier: SafariViewExcludedActivityTypesModifier(
-                activityTypes: .init(activityTypes)
+        #if os(iOS)
+            modifier(
+                SafariViewBarTintColorModifier(
+                    barTintColor: barTintColor
+                )
             )
-        )
+        #else
+            self
+        #endif
+    }
+
+    @available(iOS, introduced: 14.0, deprecated: 26.0)
+    @available(macCatalyst, introduced: 14.0, deprecated: 26.0)
+    public func safariViewControlTintColor(
+        _ controlTintColor: Color?
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewControlTintColorModifier(
+                    controlTintColor: controlTintColor
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    /// Set the configuration of safari views within this view
+    ///
+    /// - Important: Configuration values are consumed once, when the underlying `SFSafariViewController` is created — when an embedded ``SafariView`` first appears, or when a presentation modifier presents one. `SFSafariViewController` does not support changing its configuration after creation, so changing this value has no effect on an existing view. The new value applies to the next Safari view that is created or presented.
+    /// - Parameter configuration: The configuration to use
+    /// - Returns: The modified view
+    public func safariViewConfiguration(
+        _ configuration: SafariView.Configuration
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewConfigurationModifier(
+                    configuration: configuration
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    public func safariViewDismissButtonStyle(
+        _ dismissButtonStyle: SafariView.DismissButtonStyle
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewDismissButtonStyleModifier(
+                    dismissButtonStyle: dismissButtonStyle
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    public func safariViewOnInitialLoad(
+        _ onInitialLoad: @escaping @MainActor (Bool) -> Void
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewOnInitialLoadModifier(
+                    onInitialLoad: onInitialLoad
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    public func safariViewOnDismiss(
+        _ onDismiss: @escaping @MainActor () -> Void
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewOnDismissModifier(
+                    onDismiss: onDismiss
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    public func safariViewOnInitialRedirect(
+        _ onInitialRedirect: @escaping @MainActor (URL) -> Void
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewOnInitialRedirectModifier(
+                    onInitialRedirect: onInitialRedirect
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
+    public func safariViewOnOpenInBrowser(
+        _ onOpenInBrowser: @escaping @MainActor () -> Void
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                SafariViewOnOpenInBrowserModifier(
+                    onOpenInBrowser: onOpenInBrowser
+                )
+            )
+        #else
+            self
+        #endif
     }
 
 }
 
-private struct SafariViewEntersReaderIfAvailableModifier: ViewModifier {
+#if os(iOS)
 
-    // MARK: - Initializers
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    extension View {
 
-    init(entersReaderIfAvailable: Bool) {
-        self.entersReaderIfAvailable = entersReaderIfAvailable
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
-                \.safariViewEntersReaderIfAvailable,
-                entersReaderIfAvailable
+        public func includingSafariViewActivities(
+            _ includedActivities: SafariView.IncludedActivities
+        ) -> some View {
+            modifier(
+                SafariViewAddIncludedActivitiesModifier(
+                    includedActivities: includedActivities
+                )
             )
-    }
+        }
 
-    // MARK: - Private
-
-    private let entersReaderIfAvailable: Bool
-
-}
-
-private struct SafariViewBarCollapsingEnabledModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(barCollapsingEnabled: Bool) {
-        self.barCollapsingEnabled = barCollapsingEnabled
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
-                \.safariViewBarCollapsingEnabled,
-                barCollapsingEnabled
+        public func includingSafariViewActivities(
+            _ includedActivities: [UIActivity]
+        ) -> some View {
+            modifier(
+                SafariViewAddIncludedActivitiesModifier(
+                    includedActivities: .init(includedActivities)
+                )
             )
-    }
+        }
 
-    // MARK: - Private
-
-    private let barCollapsingEnabled: Bool
-}
-
-private struct SafariViewControlTintColorModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(safariViewControlTintColor: Color) {
-        self.safariViewControlTintColor = safariViewControlTintColor
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
-                \.safariViewControlTintColor,
-                safariViewControlTintColor
+        public func includingSafariViewActivities(
+            _ includedActivities: @escaping @MainActor (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+        ) -> some View {
+            modifier(
+                SafariViewAddIncludedActivitiesModifier(
+                    includedActivities: .init(includedActivities)
+                )
             )
-    }
+        }
 
-    // MARK: - Private
-
-    private let safariViewControlTintColor: Color
-
-}
-
-private struct SafariViewBarTintColorModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(safariViewBarTintColor: Color?) {
-        self.safariViewBarTintColor = safariViewBarTintColor
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
-                \.safariViewBarTintColor,
-                safariViewBarTintColor
+        public func safariViewIncludedActivities(
+            _ includedActivities: SafariView.IncludedActivities
+        ) -> some View {
+            modifier(
+                SafariViewReplaceIncludedActivitiesModifier(
+                    includedActivities: includedActivities
+                )
             )
-    }
+        }
 
-    // MARK: - Private
-
-    private let safariViewBarTintColor: Color?
-
-}
-
-private struct SafariViewDismissButtonStyleModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(safariViewDismissButtonStyle: SafariView.DismissButtonStyle) {
-        self.safariViewDismissButtonStyle = safariViewDismissButtonStyle
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
-                \.safariViewDismissButtonStyle,
-                safariViewDismissButtonStyle
+        public func safariViewIncludedActivities(
+            _ includedActivities: [UIActivity]
+        ) -> some View {
+            modifier(
+                SafariViewReplaceIncludedActivitiesModifier(
+                    includedActivities: .init(includedActivities)
+                )
             )
+        }
+
+        public func safariViewIncludedActivities(
+            _ includedActivities: @escaping @MainActor (_ url: URL, _ pageTitle: String?) -> [UIActivity]
+        ) -> some View {
+            modifier(
+                SafariViewReplaceIncludedActivitiesModifier(
+                    includedActivities: .init(includedActivities)
+                )
+            )
+        }
+
+        public func excludingSafariViewActivityTypes(
+            _ excluedActivityTypes: SafariView.ExcludedActivityTypes
+        ) -> some View {
+            modifier(
+                SafariViewAddExcludedActivityTypesModifier(
+                    excludedActivityTypes: excluedActivityTypes
+                )
+            )
+        }
+
+        public func excludingSafariViewActivityTypes(
+            _ excludedActivityTypes: [UIActivity.ActivityType]
+        ) -> some View {
+            modifier(
+                SafariViewAddExcludedActivityTypesModifier(
+                    excludedActivityTypes: .init(excludedActivityTypes)
+                )
+            )
+        }
+
+        public func excludingSafariViewActivityTypes(
+            _ excludedActivityTypes: @escaping @MainActor (URL, String?) -> [UIActivity.ActivityType]
+        ) -> some View {
+            modifier(
+                SafariViewAddExcludedActivityTypesModifier(
+                    excludedActivityTypes: .init(excludedActivityTypes)
+                )
+            )
+        }
+
+        public func safariViewExcludedActivityTypes(
+            _ excludedActivityTypes: SafariView.ExcludedActivityTypes
+        ) -> some View {
+            modifier(
+                SafariViewReplaceExcludedActivityTypesModifier(
+                    excludedActivityTypes: excludedActivityTypes
+                )
+            )
+        }
+
+        public func safariViewExcludedActivityTypes(
+            _ excludedActivityTypes: [UIActivity.ActivityType]
+        ) -> some View {
+            modifier(
+                SafariViewReplaceExcludedActivityTypesModifier(
+                    excludedActivityTypes: .init(excludedActivityTypes)
+                )
+            )
+        }
+
+        public func safariViewExcludedActivityTypes(
+            _ excludedActivityTypes: @escaping @MainActor (URL, String?) -> [UIActivity.ActivityType]
+        ) -> some View {
+            modifier(
+                SafariViewReplaceExcludedActivityTypesModifier(
+                    excludedActivityTypes: .init(excludedActivityTypes)
+                )
+            )
+        }
     }
 
-    // MARK: - Private
+    @available(iOS, introduced: 14.0, deprecated: 26.0)
+    @available(macCatalyst, introduced: 14.0, deprecated: 26.0)
+    private struct SafariViewBarTintColorModifier: ViewModifier {
 
-    private let safariViewDismissButtonStyle: SafariView.DismissButtonStyle
+        let barTintColor: Color?
 
-}
+        func body(content: Content) -> some View {
+            content
+                .environment(
+                    \.safariViewBarTintColor,
+                    barTintColor
+                )
+        }
 
-private struct SafariViewIncludedActivitiesModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(activities: SafariView.IncludedActivities) {
-        self.activities = activities
     }
 
-    // MARK: - ViewModifier
+    @available(iOS, introduced: 14.0, deprecated: 26.0)
+    @available(macCatalyst, introduced: 14.0, deprecated: 26.0)
+    private struct SafariViewControlTintColorModifier: ViewModifier {
 
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
+        let controlTintColor: Color?
+
+        func body(content: Content) -> some View {
+            content
+                .environment(
+                    \.safariViewControlTintColor,
+                    controlTintColor
+                )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewConfigurationModifier: ViewModifier {
+
+        let configuration: SafariView.Configuration
+
+        func body(content: Content) -> some View {
+            content
+                .environment(
+                    \.safariViewConfiguration,
+                    configuration
+                )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewDismissButtonStyleModifier: ViewModifier {
+
+        let dismissButtonStyle: SafariView.DismissButtonStyle
+
+        func body(content: Content) -> some View {
+            content
+                .environment(
+                    \.safariViewDismissButtonStyle,
+                    dismissButtonStyle
+                )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewAddIncludedActivitiesModifier: ViewModifier {
+
+        let includedActivities: SafariView.IncludedActivities
+
+        func body(content: Content) -> some View {
+            content.transformEnvironment(
+                \.safariViewIncludedActivities
+            ) { activities in
+                activities = activities + includedActivities
+            }
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewReplaceIncludedActivitiesModifier: ViewModifier {
+
+        let includedActivities: SafariView.IncludedActivities
+
+        func body(content: Content) -> some View {
+            content.environment(
                 \.safariViewIncludedActivities,
-                activities
+                includedActivities
             )
+        }
+
     }
 
-    // MARK: - Private
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewAddExcludedActivityTypesModifier: ViewModifier {
 
-    private let activities: SafariView.IncludedActivities
+        let excludedActivityTypes: SafariView.ExcludedActivityTypes
 
-}
-
-private struct SafariViewExcludedActivityTypesModifier: ViewModifier {
-
-    // MARK: - Initializers
-
-    init(activityTypes: SafariView.ExcludedActivityTypes) {
-        self.activityTypes = activityTypes
-    }
-
-    // MARK: - ViewModifier
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        content
-            .environment(
+        func body(content: Content) -> some View {
+            content.transformEnvironment(
                 \.safariViewExcludedActivityTypes,
-                activityTypes
-            )
+            ) { activityTypes in
+                activityTypes = activityTypes + excludedActivityTypes
+            }
+        }
+
     }
 
-    // MARK: - Private
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewReplaceExcludedActivityTypesModifier: ViewModifier {
 
-    private let activityTypes: SafariView.ExcludedActivityTypes
+        let excludedActivityTypes: SafariView.ExcludedActivityTypes
 
-}
+        func body(content: Content) -> some View {
+            content.environment(
+                \.safariViewExcludedActivityTypes,
+                excludedActivityTypes
+            )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewOnInitialLoadModifier: ViewModifier {
+
+        let onInitialLoad: @MainActor (Bool) -> Void
+
+        func body(content: Content) -> some View {
+            content.environment(
+                \.safariViewOnInitialLoad,
+                onInitialLoad
+            )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewOnDismissModifier: ViewModifier {
+
+        let onDismiss: @MainActor () -> Void
+
+        func body(content: Content) -> some View {
+            content.environment(
+                \.safariViewOnDismiss,
+                onDismiss
+            )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewOnInitialRedirectModifier: ViewModifier {
+
+        let onInitialRedirect: @MainActor (URL) -> Void
+
+        func body(content: Content) -> some View {
+            content.environment(
+                \.safariViewOnInitialRedirect,
+                onInitialRedirect
+            )
+        }
+
+    }
+
+    @available(iOS 14.0, macCatalyst 14.0, *)
+    private struct SafariViewOnOpenInBrowserModifier: ViewModifier {
+
+        let onOpenInBrowser: @MainActor () -> Void
+
+        func body(content: Content) -> some View {
+            content.environment(
+                \.safariViewOnOpenInBrowser,
+                onOpenInBrowser
+            )
+        }
+
+    }
+
+#endif

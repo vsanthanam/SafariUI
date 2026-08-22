@@ -1,5 +1,5 @@
 // SafariUI
-// SafariUI.swift
+// SafariUITests.swift
 //
 // MIT License
 //
@@ -23,7 +23,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@_exported import SafariView
-@_exported import WebAuthentication
+@testable import SafariUI
+import Testing
 
-public enum _SafariUI {}
+@Test func example() {
+    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    // Swift Testing Documentation
+    // https://developer.apple.com/documentation/testing
+}

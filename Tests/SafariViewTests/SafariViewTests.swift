@@ -1,5 +1,5 @@
 // SafariUI
-// SafariUI.swift
+// SafariViewTests.swift
 //
 // MIT License
 //
@@ -23,7 +23,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@_exported import SafariView
-@_exported import WebAuthentication
-
-public enum _SafariUI {}
+@testable import SafariView

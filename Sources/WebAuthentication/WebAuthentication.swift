@@ -24,60 +24,18 @@
 // SOFTWARE.
 
 import AuthenticationServices
-import SwiftUI
+import Foundation
 
-/// A wrapper for `ASWebAuthenticationSession` in SwiftUI
-@available(iOS 14.0, macCatalyst 14.0, *)
+@available(iOS 14.0, macCatalyst 14.0, macOS 11.0, tvOS 16.0, watchOS 7.0, *)
 public struct WebAuthentication {
 
-    // MARK: - Initializers
-
-    /// Create a web authentication session
+    /// Create a web authentication session with a custom callback URL scheme
     ///
-    /// You must present a `WebAuthentication` challenge to your users using one of our provided presentation view modifiers:
-    ///
-    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Bool>,_)``
-    /// - ``SwiftUICore/View/webAuthentication(_:webAuthentication:)-(Binding<Item?>,_)``
-    /// - ``SwiftUICore/View/webAuthentication(_:id:webAuthentication:)``
-    ///
-    /// For example:
-    ///
-    /// ```swift
-    /// struct AuthenticateButton: View {
-    ///     var body: some View {
-    ///
-    ///         @State
-    ///         var isPresented = false
-    ///
-    ///         static let authURL = URL(string: "https://www.myserver.com/auth?argument=foo")!
-    ///         static let scheme = "myserver"
-    ///
-    ///         Button("Connect Github") {
-    ///             isPresented.toggle()
-    ///         }
-    ///         .webAuthentication($isPresented) {
-    ///             WebAuthentication(
-    ///                 url: authURL,
-    ///                 callbackURLScheme: scheme
-    ///             ) { result in
-    ///                 do {
-    ///                     let callback = try result.get()
-    ///                     // Authentication complete. Perform callback.
-    ///                 } catch {
-    ///                     // Authentication failed. Display error message to user.
-    ///                 }
-    ///             }
-    ///         }
-    ///     }
-    /// }
-    /// ```
-    ///
-    /// You cannot display a `WebAuthentication` cannot be displayed any other way.
-    ///
+    /// A `WebAuthentication` can only be displayed using one of the provided presentation view modifiers; it cannot be displayed any other way.
     /// - Parameters:
     ///   - url: The URL pointing to the authentication page
-    ///   - callbackURLScheme: The URL scheme that the app should expect when receiving the authentication callback
-    ///   - completionHandler: Completion Handler
+    ///   - callbackURLScheme: The custom URL scheme that the app expects when receiving the authentication callback
+    ///   - completionHandler: The closure invoked with the callback URL when the session completes, or with an error if the session fails or is canceled
     public init(
         url: URL,
         callbackURLScheme: String?,
@@ -88,297 +46,50 @@ public struct WebAuthentication {
         self.completionHandler = completionHandler
     }
 
-    // MARK: - API
+    /// Create a web authentication session with a callback
+    ///
+    /// Unlike the callback URL scheme initializer, a ``Callback`` can also match `https` callbacks with a specific host and path.
+    ///
+    /// A `WebAuthentication` can only be displayed using one of the provided presentation view modifiers; it cannot be displayed any other way.
+    /// - Parameters:
+    ///   - url: The URL pointing to the authentication page
+    ///   - callback: The callback that the app expects when the authentication completes
+    ///   - completionHandler: The closure invoked with the callback URL when the session completes, or with an error if the session fails or is canceled
+    @available(iOS 17.4, macCatalyst 17.4, macOS 14.4, tvOS 17.4, watchOS 10.4, *)
+    public init(
+        url: URL,
+        callback: Callback,
+        completionHandler: @escaping CompletionHandler
+    ) {
+        self.url = url
+        callbackURLScheme = nil
+        storedCallback = callback
+        self.completionHandler = completionHandler
+    }
 
     /// A completion handler for the web authentication session.
-    public typealias CompletionHandler = (Result<URL, any Error>) -> Void
+    public typealias CompletionHandler = @MainActor (Result<URL, any Error>) -> Void
 
-    // MARK: - Private
+    /// A convenience typealias for [`ASWebAuthenticationSession.Callback`](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession/callback)
+    @available(iOS 17.4, macCatalyst 17.4, macOS 14.4, tvOS 17.4, watchOS 10.4, *)
+    public typealias Callback = ASWebAuthenticationSession.Callback
 
-    private let url: URL
-    private let callbackURLScheme: String?
-    private let completionHandler: CompletionHandler
+    let url: URL
+    let callbackURLScheme: String?
+    let completionHandler: CompletionHandler
 
-    struct BoolModifier: ViewModifier {
-
-        @Binding
-        var isPresented: Bool
-
-        let build: () -> WebAuthentication
-
-        @ViewBuilder
-        func body(content: Content) -> some View {
-            content
-                .background(
-                    Presenter(
-                        isPresented: $isPresented,
-                        prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession,
-                        build: build
-                    )
-                )
+    @available(iOS 17.4, macCatalyst 17.4, macOS 14.4, tvOS 17.4, watchOS 10.4, *)
+    var callback: Callback? {
+        guard let storedCallback else {
+            return nil
         }
-
-        @Environment(\.webAuthenticationPrefersEphemeralWebBrowserSession)
-        private var prefersEphemeralWebBrowserSession: Bool
-
-        private struct Presenter: UIViewRepresentable {
-
-            @Binding
-            var isPresented: Bool
-
-            let prefersEphemeralWebBrowserSession: Bool
-            let build: () -> WebAuthentication
-
-            // MARK: - UIViewRepresentable
-
-            func makeCoordinator() -> Coordinator {
-                Coordinator(parent: self)
-            }
-
-            func makeUIView(context: Context) -> UIView {
-                context.coordinator.view
-            }
-
-            func updateUIView(_ uiView: UIView, context: Context) {
-                context.coordinator.parent = self
-                context.coordinator.isPresented = isPresented
-            }
-
-            @MainActor
-            final class Coordinator: NSObject, WebAuthenticationCoordinator {
-                init(parent: Presenter) {
-                    self.parent = parent
-                }
-
-                let view = UIView()
-                var parent: Presenter
-
-                var isPresented: Bool = false {
-                    didSet {
-                        guard isPresented != oldValue else { return }
-                        if isPresented {
-                            start()
-                        } else {
-                            session?.cancel()
-                        }
-                    }
-                }
-
-                private lazy var contextProvider = ContextProvider<Coordinator>(coordinator: self)
-
-                private weak var session: ASWebAuthenticationSession?
-
-                private func start() {
-                    let representation = parent.build()
-                    let session = ASWebAuthenticationSession(
-                        url: representation.url,
-                        callbackURLScheme: representation.callbackURLScheme
-                    ) { callback, error in
-                        self.parent.isPresented = false
-                        if let callback {
-                            representation.completionHandler(.success(callback))
-                        } else if let error {
-                            representation.completionHandler(.failure(error))
-                        } else {
-                            representation.completionHandler(.failure(UnknownError()))
-                        }
-                    }
-
-                    session.presentationContextProvider = contextProvider
-                    session.prefersEphemeralWebBrowserSession = parent.prefersEphemeralWebBrowserSession
-
-                    session.start()
-
-                    self.session = session
-                }
-            }
-        }
+        return unsafeDowncast(
+            storedCallback,
+            to: Callback.self
+        )
     }
 
-    struct IdentifiableItemModitifer<Item>: ViewModifier where Item: Identifiable {
+    /// Stored type-erased because stored properties cannot be availability-gated.
+    private var storedCallback: AnyObject?
 
-        // MARK: - API
-
-        @Binding
-        var item: Item?
-
-        let build: (Item) -> WebAuthentication
-
-        // MARK: - ViewModifier
-
-        @ViewBuilder
-        func body(content: Content) -> some View {
-            content
-                .background(
-                    Presenter(
-                        item: $item,
-                        prefersEphemeralWebBrowserSession: prefersEphemeralWebBrowserSession,
-                        build: build
-                    )
-                )
-        }
-
-        // MARK: - Private
-
-        @Environment(\.webAuthenticationPrefersEphemeralWebBrowserSession)
-        private var prefersEphemeralWebBrowserSession: Bool
-
-        private struct Presenter: UIViewRepresentable {
-
-            // MARK: - API
-
-            @Binding
-            var item: Item?
-
-            let prefersEphemeralWebBrowserSession: Bool
-            let build: (Item) -> WebAuthentication
-
-            // MARK: - UIViewRepresentable
-
-            func makeCoordinator() -> Coordinator {
-                Coordinator(parent: self)
-            }
-
-            func makeUIView(context: Context) -> UIView {
-                context.coordinator.view
-            }
-
-            func updateUIView(_ uiView: UIView, context: Context) {
-                context.coordinator.parent = self
-                context.coordinator.item = item
-            }
-
-            @MainActor
-            final class Coordinator: NSObject, WebAuthenticationCoordinator {
-
-                // MARK: - Initializers
-
-                init(parent: Presenter) {
-                    self.parent = parent
-                }
-
-                // MARK: - API
-
-                let view = UIView()
-                var parent: Presenter
-
-                var item: Item? {
-                    didSet {
-                        guard item?.id != oldValue?.id else {
-                            return
-                        }
-                        switch (oldValue, item) {
-                        case (.none, .none):
-                            break
-                        case let (.none, .some(new)):
-                            start(new)
-                        case (.some, .some):
-                            break
-                        case (.some, .none):
-                            session?.cancel()
-                        }
-                    }
-                }
-
-                // MARK: - Private
-
-                private lazy var contextProvider = ContextProvider<Coordinator>(coordinator: self)
-
-                private weak var session: ASWebAuthenticationSession?
-
-                private func start(_ item: Item) {
-                    let representation = parent.build(item)
-                    let session = ASWebAuthenticationSession(
-                        url: representation.url,
-                        callbackURLScheme: representation.callbackURLScheme
-                    ) { callback, error in
-                        self.parent.item = nil
-                        if let callback {
-                            representation.completionHandler(.success(callback))
-                        } else if let error {
-                            representation.completionHandler(.failure(error))
-                        } else {
-                            representation.completionHandler(.failure(UnknownError()))
-                        }
-                    }
-
-                    session.presentationContextProvider = contextProvider
-                    session.prefersEphemeralWebBrowserSession = parent.prefersEphemeralWebBrowserSession
-
-                    session.start()
-
-                    self.session = session
-                }
-            }
-        }
-    }
-
-    struct ItemModifier<Item, Identifier>: ViewModifier where Identifier: Hashable {
-
-        // MARK: - Initializers
-
-        @Binding
-        var item: Item?
-
-        let id: KeyPath<Item, Identifier>
-        let build: (Item) -> WebAuthentication
-
-        // MARK: - ViewModifier
-
-        @ViewBuilder
-        func body(content: Content) -> some View {
-            content
-                .webAuthentication(wrapped) { item in
-                    build(item.wrapped)
-                }
-        }
-
-        // MARK: - Private
-
-        private struct WrappedItem: Identifiable {
-            let wrapped: Item
-            let path: KeyPath<Item, Identifier>
-            var id: Identifier { wrapped[keyPath: path] }
-        }
-
-        private var wrapped: Binding<WrappedItem?> {
-            Binding<WrappedItem?> {
-                item.map(wrap)
-            } set: { newValue in
-                item = newValue?.wrapped
-            }
-        }
-
-        private func wrap(_ item: Item) -> WrappedItem {
-            .init(wrapped: item, path: id)
-        }
-    }
 }
-
-@MainActor
-private final class ContextProvider<T: WebAuthenticationCoordinator>: NSObject, ASWebAuthenticationPresentationContextProviding {
-
-    // MARK: - Initializers
-
-    init(coordinator: T) {
-        self.coordinator = coordinator
-    }
-
-    // MARK: - API
-
-    unowned var coordinator: T
-
-    // MARK: - ASWebAuthenticationPresentationContextProviding
-
-    nonisolated func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        MainActor.assumeIsolated {
-            coordinator.view.window ?? ASPresentationAnchor()
-        }
-    }
-}
-
-private protocol WebAuthenticationCoordinator: NSObject {
-    var view: UIView { get }
-}
-
-private struct UnknownError: Error {}
