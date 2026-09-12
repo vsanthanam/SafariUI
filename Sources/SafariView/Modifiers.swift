@@ -155,6 +155,21 @@ extension View {
         #endif
     }
 
+    @available(iOS 15.0, macCatalyst 15.0, *)
+    public func openURLsInSafariView(
+        _ presentationStyle: SafariView.PresentationStyle = .default
+    ) -> some View {
+        #if os(iOS)
+            modifier(
+                OpenURLsInSafariViewModifier(
+                    presentationStyle: presentationStyle
+                )
+            )
+        #else
+            self
+        #endif
+    }
+
 }
 
 #if os(iOS)
@@ -455,6 +470,53 @@ extension View {
                 \.safariViewOnOpenInBrowser,
                 onOpenInBrowser
             )
+        }
+
+    }
+
+    @available(iOS 15.0, macCatalyst 15.0, *)
+    private struct OpenURLsInSafariViewModifier: ViewModifier {
+
+        @State
+        private var activeURL: URL?
+
+        let presentationStyle: SafariView.PresentationStyle
+
+        func body(content: Content) -> some View {
+            content
+                .environment(
+                    \.openURL,
+                    OpenURLAction { url in
+                        if isValid(url.absoluteString) {
+                            activeURL = url
+                            return .handled
+                        } else {
+                            return .systemAction(url)
+                        }
+                    }
+                )
+                .safariView(
+                    presentationStyle,
+                    url: $activeURL
+                )
+        }
+
+        private func isValid(_ url: String) -> Bool {
+            let range = NSRange(url.startIndex..., in: url)
+            if let linkDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue),
+               let match = linkDetector.firstMatch(
+                   in: url,
+                   options: [],
+                   range: range
+               ),
+               match.range == range,
+               let url = match.url,
+               let scheme = url.scheme?.lowercased(),
+               scheme == "http" || scheme == "https" {
+                return true
+            } else {
+                return false
+            }
         }
 
     }
